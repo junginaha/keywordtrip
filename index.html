@@ -317,6 +317,8 @@ body{overscroll-behavior-y:none}
 .crawl-cities{margin:34px 0 24px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.crawl-cities h2{font-size:18px;margin:0 0 6px}.crawl-cities>p{margin:0 0 14px;color:var(--muted);font-size:13px}.crawl-cities nav{display:flex;flex-wrap:wrap;gap:8px}.crawl-cities a{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:13px;text-decoration:none}.crawl-cities a:hover{border-color:var(--blue)}
 
 .tripshare{width:100%;margin:12px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.tripshare:hover{border-color:var(--green)}
+
+.seasonal-guides{margin:26px 0;padding:18px;border:1px solid var(--line);border-radius:16px}.seasonal-guides h2{font-size:18px;margin:0 0 12px}.seasonal-guides nav{display:grid;gap:8px}.seasonal-guides a{padding:10px 12px;border-radius:10px;background:#12182A;text-decoration:none;font-size:14px}.seasonal-guides a:hover{outline:1px solid var(--pink)}
 </style>
 </head>
 <body>
@@ -365,6 +367,12 @@ body{overscroll-behavior-y:none}
     <details class="fxall" id="fxall"><summary>전체 환율표<small id="fxMeta"></small></summary><div class="fxgrid" id="fxgrid"></div>
       <p class="fxsrc"><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>. 시장 중간값 기준이라 은행·환전소 고시 환율과 차이가 있습니다.</p></details>
 
+
+
+    <section class="seasonal-guides" aria-labelledby="seasonalGuideTitle">
+      <h2 id="seasonalGuideTitle">지금부터 찾는 여행</h2>
+      <nav aria-label="월별 해외여행 가이드"><a href="/guides/10-month-overseas-travel">10월 해외여행 추천</a><a href="/guides/11-month-overseas-travel">11월 해외여행 추천</a><a href="/guides/12-month-overseas-travel">12월 해외여행 추천</a></nav>
+    </section>
 
     <section class="crawl-cities" aria-labelledby="popularTripLinks">
       <h2 id="popularTripLinks">인기 여행지 바로가기</h2>
