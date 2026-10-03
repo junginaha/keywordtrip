@@ -37,7 +37,7 @@ jobs:
                   changed=subprocess.check_output(["git","diff","--name-only",before,sha],text=True).splitlines()
               except Exception:
                   seed=True
-          if any(p in {".github/workflows/indexnow.yml","a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9.txt"} for p in changed):
+          if any(p in {".github/workflows/indexnow.yml","4c7e19b6a2d84f75b913ce6048a21fd3.txt"} for p in changed):
               seed=True
           urls=set()
           if seed or "sitemap.xml" in changed:
@@ -61,7 +61,7 @@ jobs:
 
       - name: Verify IndexNow key on production
         env:
-          INDEXNOW_KEY: a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9
+          INDEXNOW_KEY: 4c7e19b6a2d84f75b913ce6048a21fd3
         run: |
           KEY_URL="https://keywordtrip.com/$INDEXNOW_KEY.txt"
           READY=false
@@ -81,7 +81,7 @@ jobs:
       - name: Submit to IndexNow
         if: env.INDEXNOW_READY == 'true'
         env:
-          INDEXNOW_KEY: a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9
+          INDEXNOW_KEY: 4c7e19b6a2d84f75b913ce6048a21fd3
         run: |
           COUNT=$(python -c 'import json; print(len(json.load(open("indexnow-urls.json"))))')
           if [ "$COUNT" = "0" ]; then
