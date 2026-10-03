@@ -1,65 +1,145 @@
-# KeywordTrip Monetization v1
+# KeywordTrip Monetization v2 — 2026-10-03
 
 ## Positioning
 KeywordTrip is not another generic itinerary chatbot. It captures **travel intent before booking**:
-keyword / mood / visa need / season -> destination decision -> booking click.
 
-The commercial asset to build is the anonymized **intent graph**:
-search keyword -> destination viewed -> partner category clicked -> partner booking result.
+keyword / mood / visa need / season -> destination decision -> partner click -> completed booking.
+
+The commercial asset to build is a privacy-safe intent graph:
+destination viewed -> partner category clicked -> completed booking result.
+
+Do not store names, emails, phone numbers, account IDs, IP addresses, or raw free-form search text in the intent graph.
 
 ## Revenue order
 
-### 1. Trip.com — first
-- Broad inventory: flights, hotels, trains, tours/tickets.
-- Official program says individuals and companies can apply.
-- Website cookie: 30 days.
-- Basic commission advertised up to 7%.
-- No website traffic threshold stated on the official program page.
-- Partner link generator + dashboard are available.
+### 1. Trip.com — approval pending, primary broad inventory
+- Official program accepts individuals and companies.
+- No website ownership requirement and no stated traffic minimum on the public program page.
+- Basic commission is advertised up to 7%.
+- Covers flights, hotels, trains, tours/tickets.
 - Official: https://www.trip.com/partners/index
 
-Action after account approval:
-replace PARTNER_LINKS.flights (and later hotel) in index.html with the generated affiliate deep-link template.
+Current status:
+- User reports application submitted.
+- Approval / account activation has not yet been verified by a completion email or affiliate dashboard.
 
-### 2. Klook — experiences
+Action after approval:
+- Replace `PARTNER_LINKS.flights` with the approved Trip.com affiliate deep-link template.
+- Evaluate using Trip.com for stay inventory as well, but keep only one primary CTA per transaction type.
+
+### 2. Klook — experiences, application/account status to verify
 - Strong fit with KeywordTrip destination cards.
-- Website affiliate tools include widgets, search boxes, banners; advanced integration offers data feeds/API/white label.
+- Public affiliate page offers widgets, search boxes, banners, referral codes, performance bonuses, data feeds/API/white label for advanced partners.
 - Official: https://affiliate.klook.com/
 
-Action after account approval:
-replace PARTNER_LINKS.activity with the approved Klook affiliate deep link.
+Important:
+- A public official source confirming “automatic deactivation after six months with no sales” has not been found.
+- Do not treat that claim as a verified program rule unless it appears in the user's affiliate email, portal terms, account page, or an official support response.
 
-### 3. Booking.com — accommodation
-- Official affiliate program routes applicants through its affiliate network (CJ by region).
+Action after approval:
+- Replace `PARTNER_LINKS.activity` with the approved Klook affiliate deep link.
+- Track completed bookings, not clicks alone.
+
+### 3. Viator — apply now, strong immediate backup / second experiences network
+- Quick, free sign-up.
+- Official page states no traffic or follower minimum.
+- 8% commission on completed experience bookings.
+- 30-day cookie window.
+- Weekly payouts are available for PayPal.
+- Official: https://partnerresources.viator.com/
+
+Why it matters:
+- Low entry friction makes it useful while Klook status is still being verified.
+- A/B test by destination or category rather than showing two competing activity CTAs at once.
+
+Action after approval:
+- Add a `viator` provider template to the centralized partner config.
+- Use Viator on destinations/categories where it has better inventory or conversion than Klook.
+
+### 4. Airalo — apply now, cross-sell eSIM
+- Official affiliate page targets travel bloggers, content creators, comparison sites and apps.
+- Standard commission: 10% of final sale value after discounts.
+- Minimum payout threshold: USD 15.
+- Payout: 28th of the following month; bank or PayPal.
+- Official: https://partners.airalo.com/solutions/affiliates
+
+Why it matters:
+- eSIM is destination-agnostic and can monetize nearly every international trip page.
+- It does not compete directly with flight/stay/activity CTAs.
+
+Action after approval:
+- Add one low-friction “eSIM 확인” CTA below transaction CTAs for international destinations only.
+- Do not show it on domestic trips.
+
+### 5. Booking.com — accommodation expansion, later
+- Official affiliate program routes applicants through Awin or CJ depending on region.
 - Monetizes qualified bookings.
 - Official: https://www.booking.com/affiliate-program/v2/index.html
 
-Action after approval:
-replace PARTNER_LINKS.stay with the approved Booking.com affiliate URL/template.
+Why later:
+- Additional affiliate-network onboarding adds friction versus Trip.com / Viator / Airalo.
+- Apply when accommodation click volume is measurable or Trip.com stay performance is insufficient.
 
-### 4. Skyscanner — later, after traffic
-- Official affiliate acceptance criteria include HTTPS, current travel content, good UX, and >5,000 unique visitors/month.
-- 30-day referral data window; widgets/text links available.
-- Official: https://www.partners.skyscanner.net/product/affiliates
+### 6. DiscoverCars — later, high-intent rental-car pages
+- Official program advertises roughly USD 20 average commission per booking.
+- 365-day cookie.
+- Commission is based on DiscoverCars' profit, not customer booking value.
+- Official terms restrict PPC, display ads and paid social traffic.
+- Official: https://www.discovercars.com/affiliate
 
-Do not spend founder time here until KeywordTrip crosses the traffic threshold.
+Why later:
+- Best fit is destination content with a clear rental-car use case.
+- Confirm tax/payout eligibility before prioritizing in the current no-business-registration state.
+
+### 7. 12Go / GetYourGuide — reserve pool
+- 12Go is relevant to rail / bus / ferry-heavy destinations and its official agreement states cookie tracking of at least 30 days.
+- GetYourGuide has an affiliate partner program; partner commission is defined in its partner portal/terms rather than a fixed public headline rate.
+- Add only if inventory or conversion meaningfully improves a specific destination.
 
 ## Current implementation
 - Destination sheet has three transaction CTAs: flights / stays / activities.
-- Partner clicks send only provider + destination + city + timestamp to /api/outbound.
-- Search URLs are shareable via ?q=.
-- Destination URLs are shareable via ?d=.
-- 18 curated city URLs are included in sitemap.xml.
-- PARTNER_LINKS is intentionally centralized in index.html so approved affiliate URLs can be swapped in one place.
+- Partner clicks send only provider + destination + city + timestamp to `/api/outbound`.
+- Search URLs are shareable via `?q=`.
+- Destination URLs are shareable via `?d=`.
+- Curated city URLs are included in `sitemap.xml`.
+- `PARTNER_LINKS` is centralized in `index.html` so approved affiliate URLs can be swapped in one place.
+- Current outbound URLs are generic provider/search URLs unless an approved affiliate tracking template has been inserted.
+
+## Conversion rules
+1. One primary partner CTA per transaction category.
+2. Never show two competing activity buttons by default; choose Klook or Viator by inventory/performance.
+3. Do not call a click “revenue.”
+4. Booking completion reported by the affiliate dashboard is the revenue-conversion source of truth.
+5. Do not claim affiliate approval until the partner completion email or dashboard activation is verified.
+6. Affiliate disclosure should be clear once commission-generating links are active.
+
+## 60-day execution
+### Days 0–14
+- Verify Trip.com approval state.
+- Verify Klook account/portal state and actual inactivity rule.
+- Apply to Viator and Airalo.
+- Keep generic links until approved tracking links are available.
+
+### Days 15–30
+- Insert approved tracking links in the centralized partner config.
+- Confirm outbound click events by provider and destination.
+- Build top 10 high-intent destination/category pages around transaction intent.
+
+### Days 31–60
+- Compare partner CTR with affiliate-dashboard completed bookings.
+- Keep the best-converting provider per category/destination.
+- Add eSIM only to international destination flows.
+- Test rental car only on destinations where it is a real itinerary need.
 
 ## Funnel KPIs
 1. Organic sessions
 2. Search use rate
 3. Destination detail open rate
-4. Partner click-through rate (CTR)
-5. Booking conversion reported by affiliate dashboard
-6. Revenue per 1,000 sessions (RPM)
-7. Top search keyword -> top booked destination
+4. Partner CTR
+5. Completed bookings reported by partner dashboard
+6. Commission revenue
+7. Revenue per 1,000 sessions (RPM)
+8. Top destination -> top transaction category -> completed booking
 
 ## 90-day rule
 Only build features that improve at least one of:
