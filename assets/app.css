@@ -157,19 +157,6 @@ body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .p-head{display:block;font-size:clamp(19px,5.4vw,24px);font-weight:700;line-height:1.35;margin:14px 0 0;max-width:20em}
 .p-btn{gap:18px}
 
-.mscrim{position:fixed;inset:0;z-index:30;background:rgba(5,7,15,.72);opacity:0;pointer-events:none;transition:opacity .2s}
-.mscrim.on{opacity:1;pointer-events:auto}
-.mpop{position:fixed;z-index:31;left:50%;top:50%;width:min(88vw,380px);transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:.22s cubic-bezier(.2,.8,.2,1);background:var(--bg);border:1.5px solid var(--green);border-radius:22px;padding:26px 22px 18px;box-shadow:0 0 40px rgba(57,255,20,.25);text-align:center}
-.mpop.on{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
-.mp-icon{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:var(--pink);display:grid;place-items:center;box-shadow:0 0 28px rgba(255,31,175,.6)}
-.mp-icon svg{width:30px;height:30px;fill:none;stroke:var(--night);stroke-width:2.2;stroke-linecap:round}
-.mpop h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0 0 8px}
-.mpop p{margin:0 0 8px;font-size:15px;line-height:1.6}
-.mpop .mp-note{font-size:12px;color:var(--muted)}
-.mpop ol{text-align:left;margin:4px 0 10px;padding-left:20px;font-size:14px;line-height:1.7}
-.mp-act{display:grid;gap:8px;margin-top:14px}
-.mp-later{all:unset;cursor:pointer;padding:10px;font-size:14px;color:var(--muted)}
-.mp-later:focus-visible{outline:2px solid var(--green);border-radius:8px}
 
 .pp{position:fixed;inset:0;z-index:30;display:grid;place-items:end center;background:rgba(5,7,15,.72);padding:0 16px calc(16px + env(safe-area-inset-bottom,0px))}
 .pp-card{width:100%;max-width:420px;background:var(--bg);border:1.5px solid var(--green);border-radius:22px;padding:28px 22px 18px;text-align:center;box-shadow:0 0 40px rgba(57,255,20,.25);animation:rise .35s cubic-bezier(.2,.8,.2,1) both}
@@ -357,3 +344,5 @@ header.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-
   .dock{gap:9px;padding-top:10px}
   .mic{width:44px;height:44px}
 }
+
+.site-answer{margin:-2px 0 20px;color:var(--muted);font-size:14px;line-height:1.65;max-width:46em}
