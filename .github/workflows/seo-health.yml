@@ -19,4 +19,8 @@ jobs:
         with:
           node-version: "22"
       - name: Check JavaScript syntax
-        run: node --check assets/data.js && node --check assets/app.js\n      - name: Run technical SEO guardrails\n        run: node scripts/seo-check.mjs
+        run: |
+          node --check assets/data.js
+          node --check assets/app.js
+      - name: Run technical SEO guardrails
+        run: node scripts/seo-check.mjs
