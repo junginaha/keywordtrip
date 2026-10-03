@@ -1,0 +1,84 @@
+name: IndexNow
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Build changed URL list
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os, re, subprocess
+          host="https://keywordtrip.com"
+          event=os.environ.get("EVENT_NAME","")
+          before=os.environ.get("BEFORE","")
+          sha=os.environ.get("SHA","")
+          seed = event == "workflow_dispatch" or not before or set(before)=={"0"}
+          changed=[]
+          if not seed:
+              try:
+                  changed=subprocess.check_output(["git","diff","--name-only",before,sha],text=True).splitlines()
+              except Exception:
+                  seed=True
+          if any(p in {".github/workflows/indexnow.yml","a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9.txt"} for p in changed):
+              seed=True
+          urls=set()
+          if seed or "sitemap.xml" in changed:
+              try:
+                  xml=open("sitemap.xml",encoding="utf-8").read()
+                  urls.update(re.findall(r"<loc>(https://keywordtrip\.com/[^<]*)</loc>",xml))
+              except Exception:
+                  pass
+          if not seed:
+              for p in changed:
+                  if p=="index.html":
+                      urls.add(host+"/")
+                  elif p.startswith("trips/") and p.endswith(".html"):
+                      urls.add(host+"/"+p[:-5])
+          urls=sorted(urls)
+          with open("indexnow-urls.json","w",encoding="utf-8") as f:
+              json.dump(urls,f,ensure_ascii=False)
+          print("IndexNow URLs:", len(urls))
+          for u in urls: print(u)
+          PY
+
+      - name: Submit to IndexNow
+        run: |
+          python - <<'PY'
+          import json
+          key="a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9"
+          urls=json.load(open("indexnow-urls.json",encoding="utf-8"))
+          payload={
+            "host":"keywordtrip.com",
+            "key":key,
+            "keyLocation":f"https://keywordtrip.com/{key}.txt",
+            "urlList":urls
+          }
+          json.dump(payload,open("indexnow-payload.json","w",encoding="utf-8"),ensure_ascii=False)
+          PY
+          COUNT=$(python -c 'import json; print(len(json.load(open("indexnow-urls.json"))))')
+          if [ "$COUNT" = "0" ]; then
+            echo "No changed public URLs to submit."
+            exit 0
+          fi
+          CODE=$(curl -sS -o indexnow-response.txt -w "%{http_code}"             -H "Content-Type: application/json; charset=utf-8"             --data-binary @indexnow-payload.json             https://api.indexnow.org/indexnow)
+          echo "IndexNow HTTP $CODE"
+          cat indexnow-response.txt || true
+          if [ "$CODE" != "200" ] && [ "$CODE" != "202" ]; then
+            exit 1
+          fi
