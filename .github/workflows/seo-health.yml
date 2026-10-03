@@ -18,5 +18,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Run technical SEO guardrails
-        run: node scripts/seo-check.mjs
+      - name: Check JavaScript syntax
+        run: node --check assets/data.js && node --check assets/app.js\n      - name: Run technical SEO guardrails\n        run: node scripts/seo-check.mjs
