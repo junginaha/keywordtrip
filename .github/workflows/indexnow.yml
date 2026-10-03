@@ -66,7 +66,7 @@ jobs:
           KEY_URL="https://keywordtrip.com/$INDEXNOW_KEY.txt"
           READY=false
           for attempt in 1 2 3 4; do
-            BODY=$(curl -fsSL --max-time 10 "$KEY_URL" 2>/dev/null || true)
+            BODY=$(curl -fsS --max-time 10 "$KEY_URL" 2>/dev/null || true)
             if [ "$BODY" = "$INDEXNOW_KEY" ]; then
               READY=true
               break
@@ -102,5 +102,6 @@ jobs:
           echo "IndexNow HTTP $CODE"
           cat indexnow-response.txt || true
           if [ "$CODE" != "200" ] && [ "$CODE" != "202" ]; then
-            exit 1
+            echo "::warning::IndexNow rejected this submission with HTTP $CODE. The scheduled run will retry after domain/key verification catches up."
+            exit 0
           fi
