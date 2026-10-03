@@ -2,9 +2,9 @@ name: IndexNow
 on:
   push:
     branches: [main]
-  workflow_dispatch:
   schedule:
     - cron: "43 0 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Build changed URL list
+      - name: Build URL list
         env:
           EVENT_NAME: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
@@ -30,15 +30,18 @@ jobs:
           event=os.environ.get("EVENT_NAME","")
           before=os.environ.get("BEFORE","")
           sha=os.environ.get("SHA","")
-          seed = event == "workflow_dispatch" or not before or set(before)=={"0"}
+          seed = event in {"workflow_dispatch","schedule"} or not before or set(before)=={"0"}
           changed=[]
           if not seed:
               try:
                   changed=subprocess.check_output(["git","diff","--name-only",before,sha],text=True).splitlines()
               except Exception:
                   seed=True
+
+          # Changing the IndexNow workflow or key intentionally triggers a full sitemap refresh.
           if any(p in {".github/workflows/indexnow.yml","4c7e19b6a2d84f75b913ce6048a21fd3.txt"} for p in changed):
               seed=True
+
           urls=set()
           if seed or "sitemap.xml" in changed:
               try:
@@ -46,16 +49,21 @@ jobs:
                   urls.update(re.findall(r"<loc>(https://keywordtrip\.com/[^<]*)</loc>",xml))
               except Exception:
                   pass
+
           if not seed:
               for p in changed:
                   if p=="index.html":
                       urls.add(host+"/")
+                  elif p=="about.html":
+                      urls.add(host+"/about")
                   elif p.startswith("trips/") and p.endswith(".html"):
                       urls.add(host+"/"+p[:-5])
+                  elif p.startswith("guides/") and p.endswith(".html"):
+                      urls.add(host+"/"+p[:-5])
+
           urls=sorted(urls)
-          with open("indexnow-urls.json","w",encoding="utf-8") as f:
-              json.dump(urls,f,ensure_ascii=False)
-          print("IndexNow URLs:", len(urls))
+          json.dump(urls,open("indexnow-urls.json","w",encoding="utf-8"),ensure_ascii=False)
+          print("IndexNow URLs:",len(urls))
           for u in urls: print(u)
           PY
 
@@ -64,40 +72,42 @@ jobs:
           INDEXNOW_KEY: 4c7e19b6a2d84f75b913ce6048a21fd3
         run: |
           KEY_URL="https://keywordtrip.com/$INDEXNOW_KEY.txt"
-          READY=false
-          for attempt in 1 2 3 4; do
-            BODY=$(curl -fsS --max-time 10 "$KEY_URL" 2>/dev/null || true)
-            if [ "$BODY" = "$INDEXNOW_KEY" ]; then
-              READY=true
-              break
-            fi
-            sleep 10
-          done
-          echo "INDEXNOW_READY=$READY" >> "$GITHUB_ENV"
-          if [ "$READY" != "true" ]; then
-            echo "::warning::IndexNow skipped because the verification key is not yet reachable on keywordtrip.com. A scheduled run will retry."
+          BODY=$(curl -fsSL --max-time 15 "$KEY_URL" 2>/dev/null || true)
+          if [ "$BODY" = "$INDEXNOW_KEY" ]; then
+            echo "INDEXNOW_READY=true" >> "$GITHUB_ENV"
+            echo "IndexNow key verified on production."
+          else
+            echo "INDEXNOW_READY=false" >> "$GITHUB_ENV"
+            echo "::warning::IndexNow skipped because the key file is not reachable yet. Scheduled run will retry."
           fi
 
-      - name: Submit to IndexNow
+      - name: Submit URLs to IndexNow
         if: env.INDEXNOW_READY == 'true'
         env:
           INDEXNOW_KEY: 4c7e19b6a2d84f75b913ce6048a21fd3
         run: |
-          COUNT=$(python -c 'import json; print(len(json.load(open("indexnow-urls.json"))))')
-          if [ "$COUNT" = "0" ]; then
+          mapfile -t URLS < <(python -c 'import json; print("\n".join(json.load(open("indexnow-urls.json"))))')
+          if [ "${#URLS[@]}" -eq 0 ]; then
             echo "No changed public URLs to submit."
             exit 0
           fi
+
           FAIL=0
-          python -c 'import json; print("\n".join(json.load(open("indexnow-urls.json"))))' | while IFS= read -r URL; do
+          ACCEPTED=0
+          for URL in "${URLS[@]}"; do
             ENCODED=$(python -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$URL")
-            CODE=$(curl -sS -o indexnow-response.txt -w "%{http_code}" "https://www.bing.com/indexnow?url=$ENCODED&key=$INDEXNOW_KEY")
-            echo "IndexNow HTTP $CODE $URL"
-            cat indexnow-response.txt || true
-            if [ "$CODE" != "200" ] && [ "$CODE" != "202" ]; then
-              FAIL=1
+            CODE=$(curl -sS -o indexnow-response.txt -w "%{http_code}" --max-time 20 "https://www.bing.com/indexnow?url=$ENCODED&key=$INDEXNOW_KEY")
+            BODY=$(cat indexnow-response.txt 2>/dev/null || true)
+            echo "IndexNow HTTP $CODE $URL $BODY"
+            if [ "$CODE" = "200" ] || [ "$CODE" = "202" ]; then
+              ACCEPTED=$((ACCEPTED+1))
+            else
+              FAIL=$((FAIL+1))
             fi
           done
-          if [ "$FAIL" = "1" ]; then
-            echo "::warning::One or more IndexNow submissions were rejected. Scheduled run will retry."
+
+          echo "IndexNow accepted: $ACCEPTED / ${#URLS[@]}"
+          if [ "$FAIL" -gt 0 ]; then
+            echo "::warning::$FAIL IndexNow submissions were rejected; scheduled run will retry."
+            exit 1
           fi
