@@ -297,8 +297,6 @@ body{overscroll-behavior-y:none}
 .bookgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .bookbtn{display:flex;align-items:center;justify-content:center;min-height:44px;padding:9px 8px;border:1px solid var(--line);border-radius:11px;text-decoration:none;font-size:13px;font-weight:700;text-align:center;background:#12182b}
 .bookbtn:hover,.bookbtn:focus-visible{border-color:var(--pink);color:var(--pink)}
-.partnerlink{display:inline-block;margin-top:10px;color:var(--pink);font-size:12px;text-decoration:none}
-.partnerlink:hover{text-decoration:underline}
 .wantbox{margin:12px 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
 .wantbtn{all:unset;display:flex;align-items:center;width:100%;box-sizing:border-box;min-height:42px;cursor:pointer;font-size:15px;font-weight:700}
 .wantbtn::after{content:"+";margin-left:auto;color:var(--muted);font-weight:400}
@@ -311,14 +309,87 @@ body{overscroll-behavior-y:none}
 .wantsave{margin-top:12px;width:100%;min-height:42px;border:0;border-radius:10px;background:var(--pink);color:var(--night);font:inherit;font-weight:800;cursor:pointer}
 .wantsave:disabled{opacity:.35;cursor:default}
 .wantdone{margin:10px 0 0;font-size:13px;color:var(--muted)}
-@media(max-width:430px){.bookgrid{grid-template-columns:1fr}.bookbtn{justify-content:flex-start;padding-left:14px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-
-.crawl-cities{margin:34px 0 24px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.crawl-cities h2{font-size:18px;margin:0 0 6px}.crawl-cities>p{margin:0 0 14px;color:var(--muted);font-size:13px}.crawl-cities nav{display:flex;flex-wrap:wrap;gap:8px}.crawl-cities a{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:13px;text-decoration:none}.crawl-cities a:hover{border-color:var(--blue)}
 
 .tripshare{width:100%;margin:12px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.tripshare:hover{border-color:var(--green)}
 
-.seasonal-guides{margin:26px 0;padding:18px;border:1px solid var(--line);border-radius:16px}.seasonal-guides h2{font-size:18px;margin:0 0 12px}.seasonal-guides nav{display:grid;gap:8px}.seasonal-guides a{padding:10px 12px;border-radius:10px;background:#12182A;text-decoration:none;font-size:14px}.seasonal-guides a:hover{outline:1px solid var(--pink)}
+
+/* 2026-10 mobile curation-first alignment */
+:root{--gutter:clamp(16px,5vw,24px)}
+.wrap{padding-left:var(--gutter);padding-right:var(--gutter)}
+.sheet .inner{padding-left:var(--gutter);padding-right:var(--gutter)}
+.dock{padding-left:var(--gutter);padding-right:var(--gutter)}
+
+header.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
+.brand{min-width:0}
+.brand span{max-width:29ch;line-height:1.45}
+.live{white-space:nowrap}
+
+.p-btn{min-width:0}
+.p-top,.p-bottom{width:100%;gap:12px;min-width:0}
+.p-top>span:first-child,.p-bottom #pTitle{min-width:0}
+.p-go{flex:none;white-space:nowrap}
+.p-kw{width:100%;font-size:clamp(40px,13vw,82px);line-height:1;letter-spacing:-.035em;gap:1px}
+.p-kw span{max-width:100%}
+.meta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:baseline}
+.meta>span{min-width:0}
+.meta time{white-space:nowrap}
+.facts div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline}
+.facts dd{text-align:right;min-width:0}
+.links{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px 18px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--line);font-size:13px}
+.links a{white-space:nowrap}
+.tripshare{width:auto;margin:10px 0 0;padding:7px 0;border:0;border-radius:0;color:var(--muted);font-size:12px;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.tripshare:hover{border:0;color:var(--ink)}
+.more-guides{margin:34px 0 8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0}
+.more-guides summary{cursor:pointer;list-style:none;font-size:13px;color:var(--muted)}
+.more-guides summary::-webkit-details-marker{display:none}
+.more-guides summary::after{content:"+";float:right;color:var(--pink)}
+.more-guides[open] summary::after{content:"−"}
+.more-guides-body{padding:14px 0 4px;display:grid;gap:14px}
+.more-guides nav{display:flex;flex-wrap:wrap;gap:7px}
+.more-guides a{border:1px solid var(--line);border-radius:999px;padding:6px 9px;text-decoration:none;font-size:12px;color:var(--muted)}
+
+@media(max-width:520px){
+  body{font-size:15px}
+  header.top{padding:20px 0 15px}
+  .brand{font-size:21px}
+  .brand span{font-size:12px}
+  .live{font-size:11px;padding-top:2px}
+  .about{margin-bottom:18px}
+  .poster{margin:0 0 24px}
+  .p-btn{min-height:min(500px,66svh);padding:19px 18px 18px;border-radius:20px;gap:14px}
+  .p-top,.p-bottom{font-size:12px;align-items:center}
+  .p-head{font-size:clamp(18px,5vw,21px);line-height:1.32;margin:4px 0 0;max-width:18em}
+  .p-bottom #pTitle{font-size:21px}
+  .p-go{font-size:12px}
+  .controls{padding-top:8px;padding-bottom:7px}
+  .chips{gap:7px;padding-bottom:1px}
+  .chip{font-size:12px;padding:5px 10px}
+  .dest button{padding:22px 0}
+  .kw{font-size:clamp(26px,7.4vw,34px);line-height:1.12;margin:5px 0 4px}
+  .hook{font-size:13px;line-height:1.55}
+  .divider{padding-top:32px}
+  .divider h2{font-size:22px}
+  .sheet{max-height:94%}
+  .sh-head{padding-top:13px}
+  .sh-head h2{font-size:25px}
+  .clock{font-size:clamp(54px,16vw,76px);margin:22px 0 5px}
+  .facts{margin:20px 0 18px}
+  .facts div{padding:9px 0;font-size:14px}
+  .info{margin-bottom:18px}
+  .info p,.info ul{font-size:14px}
+  .wantbox{margin:8px 0 14px;padding:11px 0}
+  .bookbox{margin:14px 0 6px;padding:13px}
+  .bookbox h4{font-size:14px}
+  .bookbox .booklead{font-size:12px;margin-bottom:10px}
+  .bookgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .bookbtn{min-height:42px;padding:8px 5px;justify-content:center;font-size:11.5px;line-height:1.25}
+  .links{gap:8px 16px}
+  .faq{padding-top:42px}
+  .fxall{padding-top:36px}
+  .dock{gap:9px;padding-top:10px}
+  .mic{width:44px;height:44px}
+}
 </style>
 </head>
 <body>
@@ -369,16 +440,20 @@ body{overscroll-behavior-y:none}
 
 
 
-    <section class="seasonal-guides" aria-labelledby="seasonalGuideTitle">
-      <h2 id="seasonalGuideTitle">지금부터 찾는 여행</h2>
-      <nav aria-label="월별 해외여행 가이드"><a href="/guides/2026-korean-travel-trends">2026 인기 여행지 데이터</a><a href="/guides/10-month-overseas-travel">10월 해외여행 추천</a><a href="/guides/11-month-overseas-travel">11월 해외여행 추천</a><a href="/guides/12-month-overseas-travel">12월 해외여행 추천</a></nav>
-    </section>
-
-    <section class="crawl-cities" aria-labelledby="popularTripLinks">
-      <h2 id="popularTripLinks">인기 여행지 바로가기</h2>
-      <p>키워드로 고른 여행지를 검색에서도 바로 찾을 수 있게 모았습니다.</p>
-      <nav aria-label="인기 여행지"><a href="/trips/kyoto">교토 여행</a><a href="/trips/osaka">오사카 여행</a><a href="/trips/taipei">타이베이 여행</a><a href="/trips/bangkok">방콕 여행</a><a href="/trips/danang">다낭 여행</a><a href="/trips/bali">발리 여행</a><a href="/trips/jeju">제주 여행</a><a href="/trips/istanbul">이스탄불 여행</a><a href="/trips/paris">파리 여행</a><a href="/trips/barcelona">바르셀로나 여행</a><a href="/trips/lisbon">리스본 여행</a><a href="/trips/rome">로마 여행</a><a href="/trips/reykjavik">레이캬비크 여행</a><a href="/trips/newyork">뉴욕 여행</a><a href="/trips/honolulu">호놀룰루 여행</a><a href="/trips/mexicocity">멕시코시티 여행</a><a href="/trips/sydney">시드니 여행</a><a href="/trips/capetown">케이프타운 여행</a></nav>
-    </section>
+    <details class="more-guides">
+      <summary>더 둘러보기</summary>
+      <div class="more-guides-body">
+        <nav aria-label="여행 가이드">
+          <a href="/guides/2026-korean-travel-trends">2026 인기 여행지</a>
+          <a href="/guides/10-month-overseas-travel">10월 추천</a>
+          <a href="/guides/11-month-overseas-travel">11월 추천</a>
+          <a href="/guides/12-month-overseas-travel">12월 추천</a>
+        </nav>
+        <nav aria-label="추천 여행지">
+          <a href="/trips/kyoto">교토</a><a href="/trips/osaka">오사카</a><a href="/trips/taipei">타이베이</a><a href="/trips/bangkok">방콕</a><a href="/trips/danang">다낭</a><a href="/trips/bali">발리</a><a href="/trips/jeju">제주</a><a href="/trips/istanbul">이스탄불</a><a href="/trips/paris">파리</a><a href="/trips/barcelona">바르셀로나</a><a href="/trips/lisbon">리스본</a><a href="/trips/rome">로마</a><a href="/trips/reykjavik">레이캬비크</a><a href="/trips/newyork">뉴욕</a><a href="/trips/honolulu">호놀룰루</a><a href="/trips/mexicocity">멕시코시티</a><a href="/trips/sydney">시드니</a><a href="/trips/capetown">케이프타운</a>
+        </nav>
+      </div>
+    </details>
 
     <section class="faq" aria-labelledby="faqh">
       <h2 id="faqh">자주 묻는 질문</h2>
@@ -465,9 +540,9 @@ body{overscroll-behavior-y:none}
         <a class="bookbtn" id="stayA" target="_blank" rel="noopener">숙소 비교</a>
         <a class="bookbtn" id="actA" target="_blank" rel="noopener">현지 체험</a>
       </div>
-      <button class="tripshare" id="shareTripBtn" type="button">이 여행지 친구에게 보내기</button>\n      <a class="partnerlink" href="mailto:junginaha@gmail.com?subject=%5BKeywordTrip%5D%20협업%20제안%20문의">협업 제안 문의 →</a>
+      <button class="tripshare" id="shareTripBtn" type="button">이 여행지 친구에게 보내기</button>
     </section>
-    <p class="links"><a id="mapA" target="_blank" rel="noopener">지도</a><a id="wxA" target="_blank" rel="noopener">날씨</a></p>
+    <p class="links"><a id="mapA" target="_blank" rel="noopener">지도</a><a id="wxA" target="_blank" rel="noopener">날씨</a><a href="mailto:junginaha@gmail.com?subject=%5BKeywordTrip%5D%20협업%20제안%20문의">협업 제안 문의</a></p>
   </div>
 </section>
 
@@ -787,9 +862,8 @@ function resetDestinationMeta(){
   const can=document.querySelector('link[rel="canonical"]');if(can)can.href=BASE_META.canonical;
 }
 function fitPoster(){
-  const kw=$("#pKw"), w=$("#pBtn").clientWidth-44;
-  const max=Math.max(...[...kw.children].map(s=>s.textContent.length));
-  kw.style.fontSize=Math.max(32,Math.min(112, Math.floor(w/(max*1.0))))+"px";
+  const kw=$("#pKw");
+  if(kw) kw.style.removeProperty("font-size");
 }
 addEventListener("resize",fitPoster);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>fitPoster());
