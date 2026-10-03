@@ -80,28 +80,24 @@ jobs:
 
       - name: Submit to IndexNow
         if: env.INDEXNOW_READY == 'true'
+        env:
+          INDEXNOW_KEY: a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9
         run: |
-          python - <<'PY'
-          import json
-          key="a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9"
-          urls=json.load(open("indexnow-urls.json",encoding="utf-8"))
-          payload={
-            "host":"keywordtrip.com",
-            "key":key,
-            "keyLocation":f"https://keywordtrip.com/{key}.txt",
-            "urlList":urls
-          }
-          json.dump(payload,open("indexnow-payload.json","w",encoding="utf-8"),ensure_ascii=False)
-          PY
           COUNT=$(python -c 'import json; print(len(json.load(open("indexnow-urls.json"))))')
           if [ "$COUNT" = "0" ]; then
             echo "No changed public URLs to submit."
             exit 0
           fi
-          CODE=$(curl -sS -o indexnow-response.txt -w "%{http_code}"             -H "Content-Type: application/json; charset=utf-8"             --data-binary @indexnow-payload.json             https://api.indexnow.org/indexnow)
-          echo "IndexNow HTTP $CODE"
-          cat indexnow-response.txt || true
-          if [ "$CODE" != "200" ] && [ "$CODE" != "202" ]; then
-            echo "::warning::IndexNow rejected this submission with HTTP $CODE. The scheduled run will retry after domain/key verification catches up."
-            exit 0
+          FAIL=0
+          python -c 'import json; print("\n".join(json.load(open("indexnow-urls.json"))))' | while IFS= read -r URL; do
+            ENCODED=$(python -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$URL")
+            CODE=$(curl -sS -o indexnow-response.txt -w "%{http_code}" "https://www.bing.com/indexnow?url=$ENCODED&key=$INDEXNOW_KEY")
+            echo "IndexNow HTTP $CODE $URL"
+            cat indexnow-response.txt || true
+            if [ "$CODE" != "200" ] && [ "$CODE" != "202" ]; then
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" = "1" ]; then
+            echo "::warning::One or more IndexNow submissions were rejected. Scheduled run will retry."
           fi
