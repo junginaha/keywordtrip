@@ -313,6 +313,8 @@ body{overscroll-behavior-y:none}
 .wantdone{margin:10px 0 0;font-size:13px;color:var(--muted)}
 @media(max-width:430px){.bookgrid{grid-template-columns:1fr}.bookbtn{justify-content:flex-start;padding-left:14px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.crawl-cities{margin:34px 0 24px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.crawl-cities h2{font-size:18px;margin:0 0 6px}.crawl-cities>p{margin:0 0 14px;color:var(--muted);font-size:13px}.crawl-cities nav{display:flex;flex-wrap:wrap;gap:8px}.crawl-cities a{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:13px;text-decoration:none}.crawl-cities a:hover{border-color:var(--blue)}
 </style>
 </head>
 <body>
@@ -360,6 +362,13 @@ body{overscroll-behavior-y:none}
 
     <details class="fxall" id="fxall"><summary>전체 환율표<small id="fxMeta"></small></summary><div class="fxgrid" id="fxgrid"></div>
       <p class="fxsrc"><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>. 시장 중간값 기준이라 은행·환전소 고시 환율과 차이가 있습니다.</p></details>
+
+
+    <section class="crawl-cities" aria-labelledby="popularTripLinks">
+      <h2 id="popularTripLinks">인기 여행지 바로가기</h2>
+      <p>키워드로 고른 여행지를 검색에서도 바로 찾을 수 있게 모았습니다.</p>
+      <nav aria-label="인기 여행지"><a href="/trips/kyoto">교토 여행</a><a href="/trips/osaka">오사카 여행</a><a href="/trips/taipei">타이베이 여행</a><a href="/trips/bangkok">방콕 여행</a><a href="/trips/danang">다낭 여행</a><a href="/trips/bali">발리 여행</a><a href="/trips/jeju">제주 여행</a><a href="/trips/istanbul">이스탄불 여행</a><a href="/trips/paris">파리 여행</a><a href="/trips/barcelona">바르셀로나 여행</a><a href="/trips/lisbon">리스본 여행</a><a href="/trips/rome">로마 여행</a><a href="/trips/reykjavik">레이캬비크 여행</a><a href="/trips/newyork">뉴욕 여행</a><a href="/trips/honolulu">호놀룰루 여행</a><a href="/trips/mexicocity">멕시코시티 여행</a><a href="/trips/sydney">시드니 여행</a><a href="/trips/capetown">케이프타운 여행</a></nav>
+    </section>
 
     <section class="faq" aria-labelledby="faqh">
       <h2 id="faqh">자주 묻는 질문</h2>
