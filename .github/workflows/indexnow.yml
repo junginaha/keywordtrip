@@ -3,6 +3,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "43 0 * * *"
 
 permissions:
   contents: read
@@ -57,7 +59,27 @@ jobs:
           for u in urls: print(u)
           PY
 
+      - name: Verify IndexNow key on production
+        env:
+          INDEXNOW_KEY: a9f4c2e71b6d4c1fa2d3e4f5a6b7c8d9
+        run: |
+          KEY_URL="https://keywordtrip.com/$INDEXNOW_KEY.txt"
+          READY=false
+          for attempt in 1 2 3 4; do
+            BODY=$(curl -fsSL --max-time 10 "$KEY_URL" 2>/dev/null || true)
+            if [ "$BODY" = "$INDEXNOW_KEY" ]; then
+              READY=true
+              break
+            fi
+            sleep 10
+          done
+          echo "INDEXNOW_READY=$READY" >> "$GITHUB_ENV"
+          if [ "$READY" != "true" ]; then
+            echo "::warning::IndexNow skipped because the verification key is not yet reachable on keywordtrip.com. A scheduled run will retry."
+          fi
+
       - name: Submit to IndexNow
+        if: env.INDEXNOW_READY == 'true'
         run: |
           python - <<'PY'
           import json
