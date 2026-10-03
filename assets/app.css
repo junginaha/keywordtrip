@@ -14,9 +14,9 @@ a{color:inherit}
 header.top{display:flex;justify-content:space-between;align-items:flex-start;padding:28px 0 20px}
 .brand{font-family:var(--display);font-weight:400;font-size:22px;margin:0;line-height:1.2}
 .brand > span{display:block;font-family:var(--body);font-size:13px;color:var(--muted);margin-top:4px}
-.brand-line{display:flex!important;flex-wrap:wrap;align-items:center;gap:4px 12px;line-height:1.45;max-width:none!important;color:var(--muted)}
-.brand-line .item{display:inline-flex!important;align-items:center;gap:6px;margin:0!important;font:inherit!important;color:var(--muted);white-space:nowrap}
-.brand-line .dot{display:inline-block;width:6px;height:6px;border-radius:50%;flex:none;box-shadow:0 0 8px currentColor}
+.brand-line{display:flex!important;flex-wrap:nowrap;align-items:center;gap:0 8px;line-height:1.2;max-width:100%!important;color:var(--muted);white-space:nowrap;overflow:visible;font-size:clamp(9px,2.55vw,11.5px)!important;letter-spacing:-.025em}
+.brand-line .item{display:inline-flex!important;align-items:center;gap:4px;margin:0!important;font:inherit!important;color:var(--muted);white-space:nowrap;flex:0 0 auto}
+.brand-line .dot{display:inline-block;width:5px;height:5px;border-radius:50%;flex:none;box-shadow:0 0 7px currentColor}
 .brand-line .dot.pink{color:var(--pink);background:var(--pink)}
 .brand-line .dot.cyan{color:var(--blue);background:var(--blue)}
 .brand-line .dot.green{color:var(--green);background:var(--green)}
@@ -313,7 +313,7 @@ header.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-
   body{font-size:15px}
   header.top{padding:20px 0 15px}
   .brand{font-size:21px}
-  .brand > span{font-size:12px}
+  .brand > span{font-size:12px}.brand-line{font-size:clamp(8.8px,2.45vw,10.8px)!important}
   .live{font-size:11px;padding-top:2px}
   .about{margin-bottom:18px}
   .poster{margin:0 0 24px}
