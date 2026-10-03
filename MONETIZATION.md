@@ -32,13 +32,15 @@ Action after approval:
 - Public affiliate page offers widgets, search boxes, banners, referral codes, performance bonuses, data feeds/API/white label for advanced partners.
 - Official: https://affiliate.klook.com/
 
-Important:
-- A public official source confirming “automatic deactivation after six months with no sales” has not been found.
-- Do not treat that claim as a verified program rule unless it appears in the user's affiliate email, portal terms, account page, or an official support response.
+Verified account rule:
+- Klook's official affiliate welcome email received 2026-10-03 states that affiliate accounts with no sales performance for six months are deactivated.
+- The same email instructs the partner to complete the account profile and payment details, add websites/AIDs, generate affiliate ads, and use the performance dashboard.
+- Treat a completed sale/booking in the affiliate portal as the survival metric; clicks alone do not satisfy the sales requirement.
 
-Action after approval:
-- Replace `PARTNER_LINKS.activity` with the approved Klook affiliate deep link.
-- Track completed bookings, not clicks alone.
+Action now:
+- Complete account profile/payment details and generate the approved Klook affiliate link/AID.
+- Then replace `PARTNER_LINKS.activity` with the approved Klook affiliate deep link.
+- Internal safety checkpoints: 120 days = conversion review, 150 days = concentrated action, 170 days = account/support/fallback review.
 
 ### 3. Viator — apply now, strong immediate backup / second experiences network
 - Quick, free sign-up.
