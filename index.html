@@ -299,6 +299,18 @@ body{overscroll-behavior-y:none}
 .bookbtn:hover,.bookbtn:focus-visible{border-color:var(--pink);color:var(--pink)}
 .partnerlink{display:inline-block;margin-top:10px;color:var(--pink);font-size:12px;text-decoration:none}
 .partnerlink:hover{text-decoration:underline}
+.wantbox{margin:12px 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
+.wantbtn{all:unset;display:flex;align-items:center;width:100%;box-sizing:border-box;min-height:42px;cursor:pointer;font-size:15px;font-weight:700}
+.wantbtn::after{content:"+";margin-left:auto;color:var(--muted);font-weight:400}
+.wantbtn[aria-expanded="true"]::after{content:"−"}
+.wantpanel{padding:8px 0 4px}
+.wantq{margin:10px 0 7px;font-size:12px;color:var(--muted)}
+.wantopts{display:flex;gap:7px;flex-wrap:wrap}
+.wantopts button{font:inherit;font-size:13px;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.wantopts button.on{border-color:var(--pink);color:var(--ink);background:rgba(255,31,175,.08)}
+.wantsave{margin-top:12px;width:100%;min-height:42px;border:0;border-radius:10px;background:var(--pink);color:var(--night);font:inherit;font-weight:800;cursor:pointer}
+.wantsave:disabled{opacity:.35;cursor:default}
+.wantdone{margin:10px 0 0;font-size:13px;color:var(--muted)}
 @media(max-width:430px){.bookgrid{grid-template-columns:1fr}.bookbtn{justify-content:flex-start;padding-left:14px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -306,14 +318,14 @@ body{overscroll-behavior-y:none}
 <body>
 <div class="wrap">
   <header class="top">
-    <h1 class="brand">키워드트립<span>330개 국가·지역 + 추천 도시, 키워드로 고르는 여행</span></h1>
+    <h1 class="brand">키워드트립<span>흩어진 여행정보를 한눈에, 키워드로 고르는 여행</span></h1>
     <span class="live"><i></i><span id="seoul">서울</span></span>
   </header>
   <details class="about" id="about">
     <summary>키워드트립 소개</summary>
     <div class="about-body">
-      <p class="lead">전 세계 330개 국가·지역과 추천 도시를 키워드 3개로 고르는 여행 큐레이션.</p>
-      <p>나라의 기준보다 여행자의 경험을 기준으로 골랐습니다. 행정·입국·지리·문화가 뚜렷이 다른 곳은 하나의 여행지로 포함했습니다.</p>
+      <p class="lead">흩어진 여행정보를 모아, 선택에 필요한 것만 간단하게 보여주는 여행 큐레이션.</p>
+      <p>비자·환율·현지 시각·여행 적기처럼 여러 곳을 찾아봐야 하는 정보를 한곳에 모으고, 여행지는 키워드와 경험을 기준으로 골랐습니다.</p>
       <p>목록은 여행자 클럽 TCC(Travelers' Century Club)의 330개 국가·지역 분류를 따릅니다. 하와이, 갈라파고스, 티베트처럼 독립국은 아니지만 여행 경험이 뚜렷이 다른 곳도 각각 한 곳으로 셉니다. 330곳 모두가 독립국이라는 뜻은 아닙니다.</p>
       <h3>형광색 읽는 법</h3>
       <ul class="legend-l">
@@ -412,6 +424,20 @@ body{overscroll-behavior-y:none}
     <div id="monthsWrap"><div class="months" id="months" aria-label="월별 여행 적기"></div>
     <p class="legend"><span style="color:var(--cbg)">●</span> 적기　○ 이번 달</p></div>
     <div class="info" id="info"></div>
+    <section class="wantbox" id="wantbox" hidden>
+      <button class="wantbtn" id="wantBtn" type="button" aria-expanded="false">♡ 가고 싶어요</button>
+      <div class="wantpanel" id="wantPanel" hidden>
+        <p class="wantq">언제쯤 가세요?</p>
+        <div class="wantopts" id="whenOpts"></div>
+        <p class="wantq">누구와 가세요?</p>
+        <div class="wantopts" id="partyOpts">
+          <button type="button" data-party="solo">혼자</button>
+          <button type="button" data-party="together">함께</button>
+        </div>
+        <button class="wantsave" id="wantSave" type="button" disabled>담기</button>
+        <p class="wantdone" id="wantDone" hidden>내 여행에 담았어요.</p>
+      </div>
+    </section>
     <section class="bookbox" id="bookbox" aria-labelledby="bookTitle">
       <h4 id="bookTitle">이 여행, 실제로 떠난다면</h4>
       <p class="booklead">목적지를 정했다면 가격과 현지 체험을 바로 비교하세요.</p>
@@ -589,7 +615,7 @@ function openSheet(id,from){
   $("#fNowRow").hidden=!x.best; $("#monthsWrap").hidden=!x.best;
   if(x.best) $("#fNow").textContent=isBest(x)?"지금이 적기":`다음 적기 ${nextBest(x,m)}월`;
   $("#fCur").textContent=`${CUR[x.cur]||""} (${x.cur})`;
-  renderInfo(x); renderBooking(x); setDestinationMeta(x);
+  renderInfo(x); renderWant(x); renderBooking(x); setDestinationMeta(x);
   $("#months").innerHTML=Array.from({length:12},(_,i)=>`<span class="${(x.best||[]).includes(i+1)?"b":""} ${i+1===m?"now":""}" title="${i+1}월">${i+1}</span>`).join("");
   $("#mapA").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.en);
   $("#wxA").href="https://www.google.com/search?q="+encodeURIComponent((x.cap||x.city)+" 날씨");
@@ -637,6 +663,60 @@ function renderInfo(x){
   }
 }
 
+
+const CURATED_IDS=new Set(DEST.filter(d=>!d.country).map(d=>d.id));
+let wantState={when:"",party:""};
+function monthLabel(offset){
+  const d=new Date(); d.setMonth(d.getMonth()+offset);
+  return (d.getMonth()+1)+"월";
+}
+function renderWant(x){
+  const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), done=$("#wantDone"), save=$("#wantSave");
+  const eligible=CURATED_IDS.has(x.id);
+  box.hidden=!eligible;
+  if(!eligible) return;
+  wantState={when:"",party:""};
+  const saved=(()=>{
+    try{return JSON.parse(localStorage.getItem("kt_want_"+x.id)||"null")}catch(e){return null}
+  })();
+  btn.textContent=saved?"♥ 가고 싶어요":"♡ 가고 싶어요";
+  btn.setAttribute("aria-expanded","false");
+  panel.hidden=true; done.hidden=true; save.disabled=true;
+  $("#whenOpts").innerHTML=[
+    [monthLabel(0),"this_month"],
+    [monthLabel(1),"next_month"],
+    ["날짜 미정","someday"]
+  ].map(([label,val])=>`<button type="button" data-when="${val}">${label}</button>`).join("");
+  $("#whenOpts").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    wantState.when=b.dataset.when;
+    $("#whenOpts").querySelectorAll("button").forEach(v=>v.classList.toggle("on",v===b));
+    save.disabled=!(wantState.when&&wantState.party);
+  });
+  $("#partyOpts").querySelectorAll("button").forEach(b=>{
+    b.classList.remove("on");
+    b.onclick=()=>{
+      wantState.party=b.dataset.party;
+      $("#partyOpts").querySelectorAll("button").forEach(v=>v.classList.toggle("on",v===b));
+      save.disabled=!(wantState.when&&wantState.party);
+    };
+  });
+  btn.onclick=()=>{
+    const open=panel.hidden;
+    panel.hidden=!open;
+    btn.setAttribute("aria-expanded",String(open));
+  };
+  save.onclick=()=>saveWant(x);
+}
+async function saveWant(x){
+  if(!(wantState.when&&wantState.party)) return;
+  const payload={destination:x.id,city:x.city,when:wantState.when,party:wantState.party,at:new Date().toISOString()};
+  try{localStorage.setItem("kt_want_"+x.id,JSON.stringify(payload))}catch(e){}
+  $("#wantBtn").textContent="♥ 가고 싶어요";
+  $("#wantDone").hidden=false;
+  $("#wantSave").disabled=true;
+  try{window.dataLayer&&window.dataLayer.push({event:"travel_interest",destination:x.id,when:wantState.when,party:wantState.party})}catch(e){}
+  try{await fetch("/api/interest",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),keepalive:true})}catch(e){}
+}
 const BASE_META={
   title:document.title,
   desc:document.querySelector('meta[name="description"]')?.content||"",
@@ -665,9 +745,9 @@ function renderBooking(x){
   links.forEach(([id,p,url])=>{const a=$("#"+id);a.href=url;a.onclick=()=>partnerClick(p,x)});
 }
 function setDestinationMeta(x){
-  document.title=`${x.city} 여행 | 비자·환율·적기·예약 | 키워드트립`;
+  document.title=`${x.city} 여행 | 비자·환율·적기 한눈에 | 키워드트립`;
   const d=document.querySelector('meta[name="description"]');
-  if(d)d.content=`${x.city} 여행을 ${x.kw.join("·")} 키워드로 살펴보고 한국 여권 입국 정보, 환율, 현지 시각, 여행 적기와 예약 링크를 한 번에 확인하세요.`;
+  if(d)d.content=`${x.city} 여행을 ${x.kw.join("·")} 키워드로 살펴보고 한국 여권 입국 정보, 환율, 현지 시각과 여행 적기를 한눈에 확인하세요.`;
   const can=document.querySelector('link[rel="canonical"]');
   if(can)can.href="https://keywordtrip.com/?d="+encodeURIComponent(x.id);
 }
