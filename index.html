@@ -764,6 +764,7 @@ function renderBooking(x){
     ["actA","activity",PARTNER_LINKS.activity(x)]
   ];
   links.forEach(([id,p,url])=>{const a=$("#"+id);a.href=url;a.onclick=()=>partnerClick(p,x)});
+  const sh=$("#shareTripBtn"); if(sh) sh.onclick=()=>shareTrip(x);
 }
 function setDestinationMeta(x){
   document.title=`${x.city} 여행 | 비자·환율·적기 한눈에 | 키워드트립`;
