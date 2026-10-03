@@ -152,3 +152,30 @@ Only build features that improve at least one of:
 - repeat/referral traffic
 
 Community features come after transaction demand is proven. The first community use case should be trip-specific (save/share/join a trip), not a generic social feed.
+
+
+## Traffic growth engine
+
+Revenue requires qualified traffic before affiliate optimization.
+
+### Organic search
+- Every curated city must have an indexable canonical `/trips/{id}` landing page.
+- `sitemap.xml` uses those canonical landing pages, not query-string detail states.
+- Homepage exposes crawlable internal links to all curated city landing pages.
+- IndexNow notifies participating search engines when public URLs change.
+- Google Search Console property for KeywordTrip is still not connected as of 2026-10-03; do not invent search metrics before verification.
+
+### Referral loop
+- Destination detail includes a native mobile share action.
+- Shared URLs open the same destination state with `?d=`.
+- Track share action separately from partner clicks; a share is not revenue.
+
+### Content expansion rule
+Prioritize new city/search landing pages from verified Korean travel demand and commercial intent, then measure:
+1. impressions
+2. organic clicks
+3. destination detail opens
+4. partner CTR
+5. verified affiliate bookings
+
+2026 demand signals currently support prioritizing Japan short-haul demand plus rising destinations such as Phu Quoc, while existing KeywordTrip pages already cover Osaka, Bangkok and Da Nang. Add new destinations only when content quality and transaction relevance are sufficient; avoid thin programmatic pages.
