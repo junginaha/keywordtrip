@@ -28,14 +28,14 @@ function nextBest(x,m){for(let i=1;i<=12;i++){const n=(m-1+i)%12+1;if(x.best.inc
 function bestRange(x){return x.best.map(m=>m+"월").join(", ")}
 
 /* curation info */
-function visaOf(x){const cc=x.cc;const base=INFO.sch.includes(cc)?INFO.schTxt:(INFO.visa[cc]||"");const n=INFO.note[cc];const xv=INFO.xvisa[x.id];return [base,n,xv].filter(Boolean).join(" ")}
+function visaOf(x){const cc=x.cc;const base=INFO.sch.includes(cc)?INFO.schTxt:(INFO.visa[cc]||"");const n=INFO.note[cc];const xv=INFO.xvisa[x.id];return [base,n,xv].filter(Boolean).join(" ")||"입국 조건을 확인할 자료가 부족합니다. 출발 전 목적지 정부·이민기관의 공식 안내를 확인하세요."}
 const CLS={green:{c:"var(--green)",hex:"#39FF14",l:"무비자"},blue:{c:"var(--blue)",hex:"#2DE2FF",l:"사전 신청"},yellow:{c:"var(--yellow)",hex:"#FFE600",l:"비자·허가 필요"},orange:{c:"var(--orange)",hex:"#FF5E1A",l:"금지·경보"}};
 function isBan(x){return INFO.ban.includes(x.cc)}
 function isWarn(x){return INFO.warn.includes(x.cc)||INFO.warnId.includes(x.id)}
 function vt(x){if(x._v) return x._v;
   let v=INFO.vtypeId[x.id]||null;
   if(!v&&isBan(x)) v=["orange",x.cc==="NE"?"대부분 여행금지":"여행금지",""];
-  if(!v) v=INFO.vtype[x.cc]||["green","무비자",""];
+  if(!v) v=INFO.vtype[x.cc]||["yellow","입국 조건 확인 필요",""];
   return x._v=v}
 function classOf(x){return vt(x)[0]}
 function vShort(x){const [c,l,s]=vt(x);if(c==="orange")return l;if(c==="yellow")return l;return l+(s?" "+s:"")}
@@ -176,8 +176,8 @@ function briefHTML(x){
   const now=new Date(), m=monthIn(x.tz), [c,l,s]=vt(x);
   const rows=[];
   rows.push(["지금",`${fmt(x.tz,{month:"long",day:"numeric",weekday:"short"}).format(now)} ${timeIn(x.tz)}, ${season(x,m)}`]);
-  if(x.best) rows.push(["시기",isBest(x)?`${m}월은 여행 적기`:`${m}월은 적기가 아님, 다음 적기 ${nextBest(x,m)}월`]);
-  const prep={green:"출발 전 별도 신청 없음",blue:"출발 전 또는 도착 시 절차 필요",yellow:"출발 전 비자·허가를 받아야 함",orange:"정부 허가 없이 방문 불가"}[c];
+  if(x.best) rows.push(["시기",isBest(x)?`${m}월은 일반 기후 기준 추천 시기`:`다음 일반 기후 기준 추천 시기 ${nextBest(x,m)}월`]);
+  const prep=l==="입국 조건 확인 필요"?"목적지 정부·이민기관에서 확인":{green:"무비자 체류 범위와 별도 입국 절차 확인",blue:"출발 전 또는 도착 시 절차 확인",yellow:"비자·입국 허가 조건 확인",orange:"외교부 최신 여행경보와 방문 허가 확인"}[c];
   rows.push(["입국",`${vShort(x)}. ${prep}`]);
   const per=krwPer(x.cur);
   if(per) rows.push(["환율",`1만원 = ${fmtLocal(10000/per)} ${CUR[x.cur]||x.cur}`]);
@@ -190,7 +190,7 @@ function renderInfo(x){
   if(isBan(x)) h+=`<div class="alert"><b>${x.cc==="NE"?"대부분 지역 여행금지":"여행금지국가"}</b> 대한민국 정부의 예외적 여권 사용 허가 없이 방문하면 여권법 위반으로 처벌될 수 있습니다.</div>`;
   else if(isWarn(x)) h+=`<div class="alert soft"><b>일부 지역 여행금지·경보</b> 아래 입국 정보의 금지 지역과 외교부 최신 경보를 확인하세요.</div>`;
   h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p></section>`;
-  h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 환율(하루 1회 갱신), 실제 환전·카드 결제 환율과 다를 수 있음</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
+  h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 참고 환율 · 외부 데이터 연결 실패 시 저장된 값 표시 · 실제 환전·카드 결제 환율과 다를 수 있음</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
   if(tips.length) h+=`<section><h4 class="h-tip">키워드트립 팁</h4><ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul></section>`;
   $("#info").innerHTML=h;
   if(rl){

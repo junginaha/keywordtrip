@@ -179,3 +179,6 @@ Prioritize new city/search landing pages from verified Korean travel demand and 
 5. verified affiliate bookings
 
 2026 demand signals currently support prioritizing Japan short-haul demand plus rising destinations such as Phu Quoc, while existing KeywordTrip pages already cover Osaka, Bangkok and Da Nang. Add new destinations only when content quality and transaction relevance are sufficient; avoid thin programmatic pages.
+
+## 2026-10-05 — AI reference applied
+Destination suitability FAQs now describe visitor intent and tradeoffs. Visible FAQ answers and JSON-LD use the same text. Missing entry data no longer defaults to visa-free; visa-free no longer implies no entry procedure. FX timestamps identify reference data, including the stored fallback. Provider clicks remain distinct from verified completed bookings and earned commission. Review source URL, affected field and actual edit date when correcting travel data; editorial dates are not claims of a full immigration audit. Keep curation separate from affiliate terms, and preserve the existing provider configuration until approved links are verified.
