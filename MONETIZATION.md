@@ -12,20 +12,25 @@ Do not store names, emails, phone numbers, account IDs, IP addresses, or raw fre
 
 ## Revenue order
 
-### 1. Trip.com — approval pending, primary broad inventory
+### 1. Trip.com — account activated 2026-10-05, primary broad inventory
+- Completion email received from Trip.com on 2026-10-05; regular-user completion email means the account is activated and ready to use.
 - Official program accepts individuals and companies.
 - No website ownership requirement and no stated traffic minimum on the public program page.
-- Basic commission is advertised up to 7%.
 - Covers flights, hotels, trains, tours/tickets.
 - Official: https://www.trip.com/partners/index
 
 Current status:
-- User reports application submitted.
-- Approval / account activation has not yet been verified by a completion email or affiliate dashboard.
+- Partner account activation is verified by the completion email.
+- The Gmail text body exposes the AID label but not the actual AID value.
+- Revenue attribution is NOT active on KeywordTrip yet because AID/SID-bearing affiliate URLs must be generated inside the authenticated Trip.com partner platform.
 
-Action after approval:
-- Replace `PARTNER_LINKS.flights` with the approved Trip.com affiliate deep-link template.
-- Evaluate using Trip.com for stay inventory as well, but keep only one primary CTA per transaction type.
+Immediate activation action:
+- Sign in to Trip.com Partner > Affiliate Link.
+- Select/create the KeywordTrip Site ID (SID).
+- Generate tracked URLs for flights, hotels, and tours/tickets.
+- Use trip_sub1 values such as keywordtrip_flight, keywordtrip_stay, keywordtrip_activity for channel attribution where the tool allows it.
+- Replace the centralized `PARTNER_LINKS` targets in `assets/app.js` with the generated Trip.com affiliate URLs.
+- Keep one primary CTA per transaction type and verify the first click in both KeywordTrip outbound logs and the Trip.com dashboard before calling the channel live.
 
 ### 2. Klook — experiences, application/account status to verify
 - Strong fit with KeywordTrip destination cards.
