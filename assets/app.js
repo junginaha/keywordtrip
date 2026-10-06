@@ -127,8 +127,14 @@ function setQuery(v){query=v.trim();
   renderChips();renderList();
   const top=$("#poster").hidden?$(".controls").offsetTop:$(".controls").offsetTop;
   if(query&&scrollY<top) scrollTo({top, behavior:reduce?"auto":"smooth"});}
-let qT=0;$("#q").addEventListener("input",e=>{clearTimeout(qT);const v=e.target.value;qT=setTimeout(()=>setQuery(v),120)});
-$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.target.blur()}});
+/* anonymous search-term counter: only settled queries (1.5s idle or Enter), once per query per visit */
+const qSent=new Set();let qLogT=0;
+function logQuery(now){clearTimeout(qLogT);const go=()=>{const q=query.trim().toLowerCase();if(!q||q.length>40||qSent.has(q))return;qSent.add(q);
+  const n=$("#list").querySelectorAll(".dest").length;const body=JSON.stringify({q,n});
+  try{if(navigator.sendBeacon)navigator.sendBeacon("/api/q",new Blob([body],{type:"application/json"}));else fetch("/api/q",{method:"POST",headers:{"content-type":"application/json"},body,keepalive:true}).catch(()=>{})}catch(e){}};
+  now?go():qLogT=setTimeout(go,1500)}
+let qT=0;$("#q").addEventListener("input",e=>{clearTimeout(qT);const v=e.target.value;qT=setTimeout(()=>{setQuery(v);logQuery(false)},120)});
+$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){clearTimeout(qT);setQuery(e.target.value);logQuery(true);e.target.blur()}});
 
 /* live clocks */
 const visT=new Set();
@@ -351,7 +357,7 @@ function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.ad
   async function permState(){try{if(!navigator.permissions)return "prompt";const s=await navigator.permissions.query({name:"microphone"});return s.state}catch(e){return "prompt"}}
   function start(frame){
     rec=new SR(); rec.lang="ko-KR"; rec.interimResults=true; rec.maxAlternatives=1;
-    rec.onresult=e=>{const s=[...e.results].map(r=>r[0].transcript).join(" ").replace(/[.?!]/g,"").trim();$("#q").value=s;setQuery(s)};
+    rec.onresult=e=>{const s=[...e.results].map(r=>r[0].transcript).join(" ").replace(/[.?!]/g,"").trim();$("#q").value=s;setQuery(s);logQuery(false)};
     rec.onerror=e=>{stop();
       if(e.error==="not-allowed"||e.error==="service-not-allowed"){ if(frame){store.set("frameDenied");dictate()} else {store.set("denied");toast("마이크가 차단돼 있어요. "+howTo,6000)} }
       else if(e.error==="no-speech") toast("말소리가 들리지 않았어요. 다시 눌러 말해 보세요.");
