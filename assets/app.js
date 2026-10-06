@@ -380,6 +380,8 @@ const dock=$("#dock"); if(dock) dock.addEventListener("submit",e=>e.preventDefau
 
 /* init */
 document.querySelectorAll("[data-curated-count]").forEach(e=>e.textContent=DEST.filter(d=>!d.country).length);
+document.querySelectorAll("[data-tcc-count]").forEach(e=>e.textContent=DEST.filter(d=>d.country).length);
+document.querySelectorAll("[data-total-count]").forEach(e=>e.textContent=DEST.length);
 renderPoster(); renderChips(); renderList(); renderFx(); tick();
 const initParams=new URLSearchParams(location.search);
 const initQ=initParams.get("q"); if(initQ){$("#q").value=initQ;setQuery(initQ)}

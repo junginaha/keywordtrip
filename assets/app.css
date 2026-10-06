@@ -381,3 +381,4 @@ footer{font-size:13px;line-height:1.7}
 .about-body .askbtn{display:inline-flex;align-items:center;min-height:44px;padding:10px 16px;border-radius:12px;background:var(--pink);color:var(--night);font-weight:800;font-size:15px;text-decoration:none;margin-bottom:6px}
 .count .snote{color:var(--muted);font-size:13px;margin-left:4px}
 .empty a{display:inline-block;margin-top:10px;color:var(--pink)}
+.about-body .total{padding:12px 14px;border-radius:12px;background:rgba(255,31,175,.08);border:1px solid rgba(255,31,175,.35)}
