@@ -5,8 +5,9 @@ import path from "node:path";
 
 const root = process.cwd();
 const HOST = "https://keywordtrip.com";
-const TODAY = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 const { DEST, INFO, CUR } = new Function(fs.readFileSync(path.join(root, "assets/data.js"), "utf8") + ";return {DEST,INFO,CUR};")();
+// content revision date (not bumped by the daily FX refresh, so lastmod stays honest)
+const TODAY = INFO.rev || new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 const FAQ = JSON.parse(fs.readFileSync(path.join(root, "scripts/data/trip-faq.json"), "utf8"));
 
 const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -30,6 +31,11 @@ const vShort = x => { const [c, l, s] = vt(x); return c === "orange" || c === "y
 function visaOf(x) {
   const base = INFO.sch.includes(x.cc) ? INFO.schTxt : (INFO.visa[x.cc] || "");
   return [base, INFO.note[x.cc], INFO.xvisa[x.id]].filter(Boolean).join(" ") || "출발 전 목적지 정부·이민기관의 공식 안내에서 입국 조건을 확인하세요.";
+}
+function officialOf(x) {
+  const a = [...((INFO.official || {})[x.cc] || []), ...((INFO.sch.includes(x.cc) && INFO.schLinks) || [])];
+  a.push(["외교부 해외안전여행 (여행경보·최신 공지)", "https://www.0404.go.kr/"]);
+  return a;
 }
 function moneyOf(x) {
   let m = INFO.xmoney[x.id] || INFO.money[x.cc] || "";
@@ -66,11 +72,19 @@ function bestSpan(ms) { // compress into ranges in seasonal order, e.g. 11월~2�
   return out.map(r => r.length > 2 ? `${r[0]}월~${r[r.length - 1]}월` : r.map(m => m + "월").join("·")).join(", ");
 }
 const fxDate = new Date(INFO.fx.t).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", month: "long", day: "numeric" });
+const FX_UNIT = { JPY: 100, VND: 100, IDR: 100 };
+const FX_SRC = { koreaexim: "한국수출입은행 매매기준율", ecb: "ECB 기준환율", erapi: "ExchangeRate-API" };
+function unitFor(c) { if (FX_UNIT[c]) return FX_UNIT[c]; const per = 1 / INFO.fx.r[c]; for (const m of [1, 100, 1000, 10000, 100000]) if (per * m >= 1) return m; return 100000; }
+const curLabel = (c, n) => { const nm = CUR[c] || c; return n.toLocaleString("ko-KR") + (/\s/.test(nm) ? " " : "") + nm; };
+const wonText = v => v.toLocaleString("ko-KR", { minimumFractionDigits: v >= 10000 ? 0 : 2, maximumFractionDigits: v >= 10000 ? 0 : 2 }) + "원";
 function rateLine(x) {
   const r = INFO.fx.r[x.cur]; if (!r || x.cur === "KRW") return "";
-  const v = 10000 * r;
-  return `1만원 ≈ ${v.toLocaleString("ko-KR", { maximumFractionDigits: v >= 100 ? 0 : v >= 1 ? 2 : 4 })} ${CUR[x.cur] || x.cur}`;
+  const u = unitFor(x.cur);
+  return `${curLabel(x.cur, u)} = ${wonText(u / r)}`;
 }
+const fxSrc = c => FX_SRC[(INFO.fx.s && INFO.fx.s[c]) || "erapi"];
+const fxSpan = x => `<span data-fx="${x.cur}">${esc(rateLine(x))}</span>`;
+const fxWhen = x => `<span data-fx-when>${fxDate}</span> 기준 · <span data-fx-src="${x.cur}">${esc(fxSrc(x.cur))}</span>`;
 const josa = (w, a, b) => { const c = [...String(w).replace(/\s*\(.*\)$/, "")].pop() || ""; const k = c.charCodeAt(0) - 0xAC00; return w + (k >= 0 && k <= 11171 ? (k % 28 ? a : b) : b); };
 const curName = x => `${CUR[x.cur] || x.cur} (${x.cur})`;
 const placeName = x => x.country ? x.city : `${x.city}`;
@@ -138,7 +152,7 @@ function page(x) {
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0C1020">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
-</head>
+${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
 <body>
 <main class="w">
 <nav class="crumb" aria-label="현재 위치"><a href="/">키워드트립</a><span>›</span><a href="/trips">전체 여행지</a><span>›</span><span>${esc(name)}</span></nav>
@@ -151,7 +165,7 @@ function page(x) {
 ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
 <div><dt>입국 (한국 여권)</dt><dd><i class="dot" style="--vc:${CLS[vc].hex}"></i>${esc(status)}</dd></div>
 <div><dt>여행 적기</dt><dd>${esc(best)}</dd></div>
-<div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${esc(rate)} · ${fxDate} 기준</small>` : ""}</dd></div>
+<div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${fxSpan(x)} · <span data-fx-when>${fxDate}</span> 기준</small>` : ""}</dd></div>
 <div><dt>시차</dt><dd>${esc(tzl)}</dd></div>
 </dl>
 <section class="card">
@@ -164,10 +178,13 @@ ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국�
 <h2>한국인 입국 조건</h2>
 <p class="badge" style="--vc:${CLS[vc].hex}">${esc(status)}</p>
 <p>${esc(visa)}</p>
+<p class="offl"><span>공식 확인처</span>${officialOf(x).map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</p>
+<p class="checked">최종 확인 ${INFO.rev ? INFO.rev.replace(/-/g, ".") : TODAY} · 출발 직전 공식 안내로 다시 확인하세요.</p>
 </section>
 ${x.cur && x.cur !== "KRW" ? `<section class="card">
 <h2>돈과 결제</h2>
-<p><b>${esc(curName(x))}</b>${rate ? ` · ${esc(rate)} (${fxDate} 기준 참고 환율)` : ""}</p>
+<p><b>${esc(curName(x))}</b>${rate ? ` · <b>${fxSpan(x)}</b>` : ""}</p>
+${rate ? `<p class="fxnote">${fxWhen(x)}. 은행 매매기준율과 같은 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>` : ""}
 ${money ? `<p>${esc(money)}</p>` : ""}
 </section>
 ` : ""}${tips.length ? `<section class="card tips">
@@ -271,7 +288,7 @@ const llms = `# 키워드트립 (KeywordTrip)
 
 - 입국 정보 기준: ${INFO.visaSrc}
 - 여행 적기: 일반 기후·성수기 기준 (우기 표시 포함)
-- 환율: ExchangeRate-API 시장 중간값, ${fxDate} 기준 (사이트에서는 1시간 단위 갱신)
+- 환율: 원화 기준 중간값(은행 매매기준율과 같은 개념). 주요 통화는 ECB 기준환율, 그 밖의 통화는 ExchangeRate-API를 쓰고 두 출처를 교차 확인. ${fxDate} 기준 스냅샷이며 사이트에서는 30분마다 갱신
 - 마지막 수정: ${TODAY}
 
 ## 핵심 페이지

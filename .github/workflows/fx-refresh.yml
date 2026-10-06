@@ -1,0 +1,34 @@
+name: FX snapshot refresh
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 12:17 KST, after the 11:00 Korea Eximbank publication
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fx-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Update embedded FX snapshot
+        env:
+          KOREAEXIM_KEY: ${{ secrets.KOREAEXIM_KEY }}
+        run: node scripts/update-fx.mjs
+      - name: Rebuild static pages
+        run: node scripts/build-pages.mjs && node scripts/seo-check.mjs
+      - name: Commit if changed
+        run: |
+          if git diff --quiet; then echo "no change"; exit 0; fi
+          git config user.name "keywordtrip-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(fx): refresh exchange-rate snapshot"
+          git push

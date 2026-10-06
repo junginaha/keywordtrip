@@ -39,19 +39,24 @@ function vt(x){if(x._v) return x._v;
   return x._v=v}
 function classOf(x){return vt(x)[0]}
 function vShort(x){const [c,l,s]=vt(x);if(c==="orange")return l;if(c==="yellow")return l;return l+(s?" "+s:"")}
+function officialOf(x){const a=[...((INFO.official||{})[x.cc]||[]),...((INFO.sch.includes(x.cc)&&INFO.schLinks)||[])];a.push(["외교부 해외안전여행 (여행경보·최신 공지)","https://www.0404.go.kr/"]);return a}
 function moneyOf(x){
   let m=(INFO.xmoney[x.id])||INFO.money[x.cc]||"";
   if(!m&&x.cur==="XOF") m=INFO.cfaW; if(!m&&x.cur==="XAF") m=INFO.cfaC; if(!m&&x.cur==="XCD") m=INFO.xcd;
   return m;
 }
 function tipsOf(x){const a=[...(INFO.xtips[x.id]||[]),...(INFO.tips[x.id]||[]),...((x.country&&!x.sub&&INFO.tips[x.cc])||[])];if(INFO.left.includes(x.cc))a.push("자동차는 좌측 통행(운전석이 오른쪽). 렌터카 운전과 길 건널 때 오른쪽부터 확인.");return [...new Set(a)]}
-function unitFor(code){const per=1/INFO.fx.r[code];for(const m of [1,100,1000,10000]){if(per*m>=10)return m}return 10000}
+/* FX: bank-style KRW quotes (100엔 = 850.42원) */
+const FX_SRC={koreaexim:"한국수출입은행 매매기준율",ecb:"유럽중앙은행(ECB) 기준환율",erapi:"ExchangeRate-API 시장 중간값"};
+const FX_UNIT={JPY:100,VND:100,IDR:100};
 function krwPer(code){const r=INFO.fx.r[code];return r?1/r:null}
-function rateLine(x){
-  const c=x.cur, per=krwPer(c); if(!per) return "";
-  return `1만원 = ${fmtLocal(10000/per)} ${CUR[c]||c}`;
-}
+function unitFor(code){if(FX_UNIT[code])return FX_UNIT[code];const per=krwPer(code);for(const m of [1,100,1000,10000,100000]){if(per*m>=1)return m}return 100000}
+function curLabel(code,n){const nm=CUR[code]||code;return n.toLocaleString("ko-KR")+(/\s/.test(nm)?" ":"")+nm}
+function wonText(v){return v.toLocaleString("ko-KR",{minimumFractionDigits:v>=10000?0:2,maximumFractionDigits:v>=10000?0:2})+"원"}
+function quote(code){const per=krwPer(code);if(!per)return "";const u=unitFor(code);return `${curLabel(code,u)} = ${wonText(per*u)}`}
+function rateLine(x){return x.cur&&x.cur!=="KRW"?quote(x.cur):""}
 function fmtLocal(v){return v.toLocaleString("ko-KR",{maximumFractionDigits:v>=100?0:v>=1?2:4})}
+function fxSrcText(code){const k=(INFO.fx.s&&INFO.fx.s[code])||"erapi";const c=INFO.fx.chk&&INFO.fx.chk[code];return FX_SRC[k]+(c?` (${FX_SRC[c].split(" ")[0]}와 교차 확인)`:"")}
 function fxTimeText(){return fmt("Asia/Seoul",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(INFO.fx.t))}
 /* list */
 let region="전체", bestOnly=false, query="";
@@ -180,7 +185,7 @@ function briefHTML(x){
   const prep=l==="입국 조건 확인 필요"?"목적지 정부·이민기관에서 확인":{green:"무비자 체류 범위와 별도 입국 절차 확인",blue:"출발 전 또는 도착 시 절차 확인",yellow:"비자·입국 허가 조건 확인",orange:"외교부 최신 여행경보와 방문 허가 확인"}[c];
   rows.push(["입국",`${vShort(x)}. ${prep}`]);
   const per=krwPer(x.cur);
-  if(per) rows.push(["환율",`1만원 = ${fmtLocal(10000/per)} ${CUR[x.cur]||x.cur}`]);
+  if(per) rows.push(["환율",quote(x.cur)]);
   if(INFO.left.includes(x.cc)) rows.push(["도로","좌측 통행"]);
   return `<section class="fbrief"><h4 class="h-tip">이번 달 브리핑</h4><dl>${rows.map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl></section>`;
 }
@@ -189,8 +194,8 @@ function renderInfo(x){
   let h=briefHTML(x);
   if(isBan(x)) h+=`<div class="alert"><b>${x.cc==="NE"?"대부분 지역 여행금지":"여행금지국가"}</b> 대한민국 정부의 예외적 여권 사용 허가 없이 방문하면 여권법 위반으로 처벌될 수 있습니다.</div>`;
   else if(isWarn(x)) h+=`<div class="alert soft"><b>일부 지역 여행금지·경보</b> 아래 입국 정보의 금지 지역과 외교부 최신 경보를 확인하세요.</div>`;
-  h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p></section>`;
-  h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 참고 환율 · 예산 비교에 활용하고 최종 적용 환율은 환전·카드 결제처에서 확인</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
+  h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p><p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
+  h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 · ${fxSrcText(x.cur)}. 은행 매매기준율과 같은 개념의 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
   if(tips.length) h+=`<section><h4 class="h-tip">키워드트립 팁</h4><ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul></section>`;
   $("#info").innerHTML=h;
   if(rl){
@@ -327,7 +332,7 @@ function renderFx(){
   const used=[...new Set(DEST.map(d=>d.cur))].filter(c=>INFO.fx.r[c]&&c!=="KRW");
   const rows=used.map(c=>({c,n:CUR[c]||c,m:unitFor(c),v:krwPer(c)})).sort((a,b)=>a.n.localeCompare(b.n,"ko"));
   $("#fxMeta").textContent=`여행지 통화 ${rows.length}개, ${fxTimeText()} 기준`;
-  $("#fxgrid").innerHTML=rows.map(o=>`<div><b>${o.n} <span>${o.c}</span></b><span>1만원 = ${fmtLocal(10000/o.v)}</span></div>`).join("");
+  $("#fxgrid").innerHTML=rows.map(o=>`<div><b>${o.n} <span>${o.c}</span></b><span>${curLabel(o.c,o.m)} = ${wonText(o.v*o.m)}</span></div>`).join("");
 }
 /* voice search with pre-permission popup */
 function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),ms)}
