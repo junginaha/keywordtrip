@@ -82,24 +82,20 @@ function renderChips(){
     const s=b.dataset.s; const v=(query===s)?"":s; $("#q").value=v; setQuery(v);
   });
 }
-function match(x){
-    if(bestOnly&&!isBest(x)) return false;
+function chipOk(x){
+  if(bestOnly&&!isBest(x)) return false;
   if(clsF&&classOf(x)!==clsF) return false;
-  if(!query) return true;
-  const hay=[x.city,x.en,x.c,x.reg,...x.kw,x.hook||"",x.cur,CUR[x.cur]||"",visaOf(x),moneyOf(x),...tipsOf(x),vShort(x)].join(" ").toLowerCase();
-  const ws=query.toLowerCase().replace(/[.,!?]/g," ").split(/\s+/).filter(w=>w&&!STOP.includes(w));
-  if(!ws.length) return true;
-  return ws[anyMode?"some":"every"](w=>hay.includes(w)||(ALIAS[w]||[]).some(x=>hay.includes(x.toLowerCase())));
+  return true;
 }
-let anyMode=false;
+let searchNote="";
 function renderList(){
-  anyMode=false;
-  let items=DEST.filter(match);
-  if(!items.length&&query.trim().split(/\s+/).length>1){anyMode=true;items=DEST.filter(match)}
+  const base=DEST.filter(chipOk);
+  let items=base, ranked=false; searchNote="";
+  if(query){const r=KTSearch(query,base);items=r.items;ranked=r.ranked;searchNote=r.note}
   $("#empty").hidden=items.length>0;
   const active=!!query||bestOnly||!!clsF;
   $("#poster").hidden=active;
-  $("#count").textContent=active?`${items.length}곳`:"";
+  $("#count").innerHTML=active?`<b>${items.length}곳</b>${searchNote?` <span class="snote">${searchNote}</span>`:""}`:"";
   const REG=["아시아","중동","유럽","아프리카","북미","중남미","오세아니아","남극"];
   const cur0=items.filter(x=>!x.country), cs=items.filter(x=>x.country).sort((a,b)=>(REG.indexOf(a.reg)-REG.indexOf(b.reg))||a.city.localeCompare(b.city,"ko"));
   const row=x=>{const c=classOf(x);return `
@@ -111,6 +107,13 @@ function renderList(){
     </button>
   </li>`};
   let html="";
+  if(ranked){
+    html=`<li class="divider pinkd"><h2>검색 결과</h2><span>${items.length}곳</span></li>`+items.map(row).join("");
+    if(io) io.disconnect();
+    $("#list").innerHTML=html; watchTimes(); lastListTick=0;
+    $("#list").querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>openSheet(b.dataset.id,b));
+    return;
+  }
   if(cur0.length) html+=`<li class="divider pinkd"><h2>키워드트립 추천 도시</h2><span>${cur0.length}곳</span></li>`+cur0.map(row).join("");
   let last="";
   if(cs.length) html+=`<li class="divider"><h2>모든 국가·지역</h2><span>${cs.length}곳</span></li>`;
@@ -376,6 +379,7 @@ function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.ad
 const dock=$("#dock"); if(dock) dock.addEventListener("submit",e=>e.preventDefault());
 
 /* init */
+document.querySelectorAll("[data-curated-count]").forEach(e=>e.textContent=DEST.filter(d=>!d.country).length);
 renderPoster(); renderChips(); renderList(); renderFx(); tick();
 const initParams=new URLSearchParams(location.search);
 const initQ=initParams.get("q"); if(initQ){$("#q").value=initQ;setQuery(initQ)}
