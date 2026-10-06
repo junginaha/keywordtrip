@@ -1,0 +1,77 @@
+# 키워드트립 (KeywordTrip)
+
+> 한국 여권 소지자를 위한 한국어 여행 큐레이션. 추천 도시 56곳과 TCC 기준 330개 국가·지역의 입국 조건(무비자·사전 신청·비자), 여행 적기, 통화·환율, 서울과의 시차, 현지 팁을 정리합니다.
+
+- 입국 정보 기준: IATA Timatic 기반 공개 정리(위키백과 '대한민국 국민 비자 요건')와 외교부 여행경보 공지, 2026년 10월 1일 조회
+- 여행 적기: 일반 기후·성수기 기준 (우기 표시 포함)
+- 환율: ExchangeRate-API 시장 중간값, 10월 1일 기준 (사이트에서는 1시간 단위 갱신)
+- 마지막 수정: 2026-10-06
+
+## 핵심 페이지
+- [전체 여행지 목록](https://keywordtrip.com/trips): 모든 목적지의 입국 조건과 여행 적기 비교
+- [서비스·출처·업데이트 기준](https://keywordtrip.com/about)
+- [guides/10-month-overseas-travel](https://keywordtrip.com/guides/10-month-overseas-travel)
+- [guides/11-month-overseas-travel](https://keywordtrip.com/guides/11-month-overseas-travel)
+- [guides/12-month-overseas-travel](https://keywordtrip.com/guides/12-month-overseas-travel)
+- [guides/2026-korean-travel-trends](https://keywordtrip.com/guides/2026-korean-travel-trends)
+
+## 추천 도시
+- [도쿄](https://keywordtrip.com/trips/tokyo): 일본, 무비자 90일, 적기 3월~5월, 10월·11월
+- [오사카](https://keywordtrip.com/trips/osaka): 일본, 무비자 90일, 적기 3월~5월, 10월·11월
+- [후쿠오카](https://keywordtrip.com/trips/fukuoka): 일본, 무비자 90일, 적기 3월~5월, 10월·11월
+- [교토](https://keywordtrip.com/trips/kyoto): 일본, 무비자 90일, 적기 3월~5월, 10월·11월
+- [삿포로](https://keywordtrip.com/trips/sapporo): 일본, 무비자 90일, 적기 2월, 6월~9월
+- [오키나와](https://keywordtrip.com/trips/okinawa): 일본, 무비자 90일, 적기 3월·4월, 10월·11월
+- [다낭](https://keywordtrip.com/trips/danang): 베트남, 무비자 45일, 적기 2월~8월
+- [나트랑](https://keywordtrip.com/trips/nhatrang): 베트남, 무비자 45일, 적기 2월~8월
+- [푸꾸옥](https://keywordtrip.com/trips/phuquoc): 베트남, 무비자 45일, 적기 11월~4월
+- [하노이](https://keywordtrip.com/trips/hanoi): 베트남, 무비자 45일, 적기 3월·4월, 10월~12월
+- [호치민](https://keywordtrip.com/trips/hochiminh): 베트남, 무비자 45일, 적기 12월~4월
+- [방콕](https://keywordtrip.com/trips/bangkok): 태국, 무비자 90일, 적기 11월~2월
+- [치앙마이](https://keywordtrip.com/trips/chiangmai): 태국, 무비자 90일, 적기 11월~2월
+- [푸껫](https://keywordtrip.com/trips/phuket): 태국, 무비자 90일, 적기 11월~4월
+- [타이베이](https://keywordtrip.com/trips/taipei): 대만, 무비자 90일, 적기 3월·4월, 10월~12월
+- [홍콩](https://keywordtrip.com/trips/hongkong): 중국 특별행정구, 무비자 90일, 적기 10월~2월
+- [마카오](https://keywordtrip.com/trips/macau): 중국 특별행정구, 무비자 90일, 적기 10월~2월
+- [싱가포르](https://keywordtrip.com/trips/singapore): 싱가포르, 무비자 90일, 적기 2월~4월, 7월·8월
+- [발리](https://keywordtrip.com/trips/bali): 인도네시아, 도착비자 30일, 적기 4월~10월
+- [세부](https://keywordtrip.com/trips/cebu): 필리핀, 무비자 30일, 적기 1월~5월
+- [보라카이](https://keywordtrip.com/trips/boracay): 필리핀, 무비자 30일, 적기 11월~5월
+- [코타키나발루](https://keywordtrip.com/trips/kotakinabalu): 말레이시아, 무비자 90일, 적기 2월~9월
+- [쿠알라룸푸르](https://keywordtrip.com/trips/kualalumpur): 말레이시아, 무비자 90일, 적기 6월~8월, 1월·2월
+- [상하이](https://keywordtrip.com/trips/shanghai): 중국, 무비자 30일, 적기 4월·5월, 10월·11월
+- [베이징](https://keywordtrip.com/trips/beijing): 중국, 무비자 30일, 적기 4월·5월, 9월·10월
+- [칭다오](https://keywordtrip.com/trips/qingdao): 중국, 무비자 30일, 적기 5월·6월, 8월~10월
+- [울란바토르](https://keywordtrip.com/trips/ulaanbaatar): 몽골, 무비자 90일, 적기 6월~9월
+- [제주](https://keywordtrip.com/trips/jeju): 한국, 국내, 적기 4월·5월, 9월·10월
+- [괌](https://keywordtrip.com/trips/guam): 미국령, 무비자 45일, 적기 1월~5월
+- [사이판](https://keywordtrip.com/trips/saipan): 미국령, 무비자 45일, 적기 12월~5월
+- [두바이](https://keywordtrip.com/trips/dubai): 아랍에미리트, 무비자 90일, 적기 11월~3월
+- [파리](https://keywordtrip.com/trips/paris): 프랑스, 무비자 90일, 적기 4월~6월, 9월·10월
+- [런던](https://keywordtrip.com/trips/london): 영국, ETA 6개월, 적기 5월~9월
+- [로마](https://keywordtrip.com/trips/rome): 이탈리아, 무비자 90일, 적기 4월·5월, 9월·10월
+- [바르셀로나](https://keywordtrip.com/trips/barcelona): 스페인, 무비자 90일, 적기 5월·6월, 9월·10월
+- [프라하](https://keywordtrip.com/trips/prague): 체코, 무비자 90일, 적기 4월~6월, 9월·10월
+- [빈](https://keywordtrip.com/trips/vienna): 오스트리아, 무비자 90일, 적기 4월~6월, 9월·10월, 12월
+- [부다페스트](https://keywordtrip.com/trips/budapest): 헝가리, 무비자 90일, 적기 4월~6월, 9월·10월
+- [인터라켄](https://keywordtrip.com/trips/interlaken): 스위스, 무비자 90일, 적기 6월~9월
+- [산토리니](https://keywordtrip.com/trips/santorini): 그리스, 무비자 90일, 적기 5월·6월, 9월·10월
+- [두브로브니크](https://keywordtrip.com/trips/dubrovnik): 크로아티아, 무비자 90일, 적기 5월·6월, 9월·10월
+- [리스본](https://keywordtrip.com/trips/lisbon): 포르투갈, 무비자 90일, 적기 4월~6월, 9월·10월
+- [이스탄불](https://keywordtrip.com/trips/istanbul): 튀르키예, 무비자 90일, 적기 4월·5월, 9월·10월
+- [레이캬비크](https://keywordtrip.com/trips/reykjavik): 아이슬란드, 무비자 90일, 적기 2월·3월, 6월~9월
+- [뉴욕](https://keywordtrip.com/trips/newyork): 미국, ESTA 90일, 적기 4월·5월, 9월·10월, 12월
+- [로스앤젤레스](https://keywordtrip.com/trips/losangeles): 미국, ESTA 90일, 적기 3월~5월, 9월~11월
+- [라스베이거스](https://keywordtrip.com/trips/lasvegas): 미국, ESTA 90일, 적기 3월~5월, 10월·11월
+- [샌프란시스코](https://keywordtrip.com/trips/sanfrancisco): 미국, ESTA 90일, 적기 4월·5월, 9월·10월
+- [밴쿠버](https://keywordtrip.com/trips/vancouver): 캐나다, eTA 6개월, 적기 6월~9월
+- [호놀룰루](https://keywordtrip.com/trips/honolulu): 미국, ESTA 90일, 적기 4월·5월, 9월·10월
+- [칸쿤](https://keywordtrip.com/trips/cancun): 멕시코, 무비자 180일, 적기 12월~4월
+- [멕시코시티](https://keywordtrip.com/trips/mexicocity): 멕시코, 무비자 180일, 적기 3월·4월, 10월·11월
+- [시드니](https://keywordtrip.com/trips/sydney): 호주, ETA 3개월, 적기 3월~5월, 9월~11월
+- [멜버른](https://keywordtrip.com/trips/melbourne): 호주, ETA 3개월, 적기 3월·4월, 10월~12월
+- [퀸스타운](https://keywordtrip.com/trips/queenstown): 뉴질랜드, NZeTA 3개월, 적기 7월·8월, 12월~3월
+- [케이프타운](https://keywordtrip.com/trips/capetown): 남아공, 무비자 30일, 적기 11월~3월
+
+## 전체 데이터
+- [llms-full.txt](https://keywordtrip.com/llms-full.txt): 목적지별 입국·적기·통화 요약 전체

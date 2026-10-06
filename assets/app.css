@@ -352,3 +352,25 @@ header.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-
 }
 
 .site-answer{margin:-2px 0 20px;color:var(--muted);font-size:14px;line-height:1.65;max-width:46em}
+
+/* readability layer (2026-10): higher contrast secondary text, larger small type, roomier reading */
+:root{--muted:#A3A9C2;--text2:#D3D7E6}
+body{line-height:1.65;-webkit-text-size-adjust:100%}
+.meta{font-size:14px}
+.hook{font-size:15px;line-height:1.55;color:var(--text2)}
+.vline{font-size:14px}
+.chip{font-size:14px;padding:7px 14px}
+.count,.regh,.legend,.note,.src,.fxsrc,.info .src,.wantq,.wantdone,.more-guides summary,.about summary,.bookbox .booklead{font-size:13px!important}
+.regh{letter-spacing:.02em;color:var(--text2)}
+.info h4{font-size:13px;letter-spacing:.01em}
+.info p{font-size:16px;line-height:1.75;color:var(--text2)}
+.info li{line-height:1.7}
+.fbrief div{font-size:16px;line-height:1.6}
+.faq summary{line-height:1.5}
+.faq p{color:var(--text2);line-height:1.75}
+.about-body{line-height:1.75}
+.conv label span{font-size:12px}
+.more-guides a{font-size:13px;padding:7px 11px;color:var(--text2)}
+.tripshare{font-size:13px}
+footer{font-size:13px;line-height:1.7}
+.clock-sub{font-size:15px;color:var(--text2)}
