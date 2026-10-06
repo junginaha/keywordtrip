@@ -54,3 +54,9 @@ a{color:inherit}
 .offl a{font-size:13px;line-height:1.3;padding:6px 10px;border:1px solid #33405F;border-radius:999px;color:var(--body);text-decoration:none}
 .offl a:hover{border-color:var(--cyan);color:var(--ink)}
 .checked,.fxnote{font-size:13px!important;color:var(--muted)!important;margin-top:10px!important}
+
+.book h2{margin-top:0}
+.bookgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bookbtn{display:flex;align-items:center;justify-content:center;min-height:48px;padding:8px 6px;border:1.5px solid var(--green,#39FF14);border-radius:12px;text-decoration:none;font-weight:800;font-size:14px;text-align:center;color:inherit}
+.bookbtn:hover,.bookbtn:focus-visible{background:var(--green,#39FF14);color:#0C1020}
+.bookdisc{margin:10px 0 0;opacity:.7;font-size:12px;line-height:1.5}

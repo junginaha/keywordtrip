@@ -275,11 +275,8 @@ const BASE_META={
   desc:document.querySelector('meta[name="description"]')?.content||"",
   canonical:document.querySelector('link[rel="canonical"]')?.href||"https://keywordtrip.com/"
 };
-const PARTNER_LINKS={
-  flights:x=>"https://kr.trip.com/flights/",
-  stay:x=>"https://www.booking.com/searchresults.ko.html?ss="+encodeURIComponent((x.city||x.en)+" "+x.c),
-  activity:x=>"https://www.klook.com/ko/search/?query="+encodeURIComponent((x.city||x.en)+" "+x.c)
-};
+// Affiliate URLs live in assets/affiliate.js (shared with the static page builder).
+const PARTNER_LINKS=window.KTAffiliate.LINKS;
 function partnerClick(provider,x){
   const payload={provider,destination:x.id,city:x.city,at:new Date().toISOString()};
   try{
@@ -298,6 +295,10 @@ async function shareTrip(x){
   }catch(e){}
 }
 function renderBooking(x){
+  // No booking CTA for MOFA travel-ban destinations.
+  const noBook=isBan(x)||x.cc==="KP";
+  const box=$("#bookbox"); if(box) box.hidden=noBook;
+  if(noBook) return;
   const links=[
     ["flightA","flights",PARTNER_LINKS.flights(x)],
     ["stayA","stay",PARTNER_LINKS.stay(x)],

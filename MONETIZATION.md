@@ -1,5 +1,15 @@
 # KeywordTrip Monetization v2 — 2026-10-03
 
+## 2026-10-07 — revenue attribution LIVE (Trip.com)
+- Single config: `assets/affiliate.js` (Allianceid 10882425 / SID 332762025 / trip_sub3 kept). Used by app and static builder.
+- `trip_sub1 = <flight|stay|activity>-<destination id>` → per-page, per-button attribution in Trip.com dashboard.
+- All three CTAs (항공권 / 숙소 / 투어·입장권) now route to Trip.com with tracking. Booking.com (not an affiliate) and untracked Klook links removed — they earned 0.
+- Booking block added to all static `/trips/*` pages (organic landing pages had no commercial CTA before). Clicks logged via sendBeacon → `/api/outbound`.
+- No booking CTA on MOFA travel-ban destinations or North Korea.
+- rel="sponsored nofollow noopener" + KFTC disclosure next to every CTA block.
+- `.vercelignore` now blocks *.md / scripts / .github from public serving (this file was publicly reachable before).
+- Next: Klook AID → switch `activity` to Klook only where inventory is better (A/B by destination); Airalo eSIM CTA after approval.
+
 ## Positioning
 KeywordTrip is not another generic itinerary chatbot. It captures **travel intent before booking**:
 

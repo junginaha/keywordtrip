@@ -257,6 +257,7 @@ body{overscroll-behavior-y:none}
 .bookgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .bookbtn{display:flex;align-items:center;justify-content:center;min-height:44px;padding:9px 8px;border:1px solid var(--line);border-radius:11px;text-decoration:none;font-size:13px;font-weight:700;text-align:center;background:#12182b}
 .bookbtn:hover,.bookbtn:focus-visible{border-color:var(--pink);color:var(--pink)}
+.bookdisc{margin:10px 0 0;color:var(--muted);font-size:11.5px;line-height:1.5}
 .wantbox{margin:12px 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
 .wantbtn{all:unset;display:flex;align-items:center;width:100%;box-sizing:border-box;min-height:42px;cursor:pointer;font-size:15px;font-weight:700}
 .wantbtn::after{content:"+";margin-left:auto;color:var(--muted);font-weight:400}

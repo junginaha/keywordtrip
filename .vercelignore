@@ -1,0 +1,4 @@
+# Internal docs and build tooling must never be served publicly
+*.md
+scripts/
+.github/

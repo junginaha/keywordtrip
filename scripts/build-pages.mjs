@@ -5,6 +5,17 @@ import path from "node:path";
 
 const root = process.cwd();
 const HOST = "https://keywordtrip.com";
+// Shared affiliate config (assets/affiliate.js sets globalThis.KTAffiliate)
+new Function(fs.readFileSync(path.join(root, "assets/affiliate.js"), "utf8"))();
+const AFF = globalThis.KTAffiliate;
+const noBook = x => isBan(x) || x.cc === "KP"; // no booking CTA where Korean nationals may not travel freely
+const bookHtml = (x, name) => noBook(x) ? "" : `<section class="card book" aria-label="${esc(name)} 예약">
+<h2>${esc(name)}, 실제로 떠난다면</h2>
+<div class="bookgrid">${[["flights", "항공권 가격"], ["stay", "숙소 가격"], ["activity", "투어·입장권"]].map(([k, l]) => `<a class="bookbtn" href="${esc(AFF.LINKS[k](x))}" target="_blank" rel="${AFF.REL}" data-p="${k}" data-d="${esc(x.id)}">${l}</a>`).join("")}</div>
+<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p>
+</section>
+<script>document.querySelectorAll(".bookbtn").forEach(a=>a.addEventListener("click",()=>{try{navigator.sendBeacon("/api/outbound",new Blob([JSON.stringify({provider:a.dataset.p,destination:a.dataset.d})],{type:"application/json"}))}catch(e){}}))</script>
+`;
 const { DEST, INFO, CUR } = new Function(fs.readFileSync(path.join(root, "assets/data.js"), "utf8") + ";return {DEST,INFO,CUR};")();
 // content revision date (not bumped by the daily FX refresh, so lastmod stays honest)
 const TODAY = INFO.rev || new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
@@ -191,7 +202,7 @@ ${money ? `<p>${esc(money)}</p>` : ""}
 <h2>키워드트립 팁</h2>
 <ul>${tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
 </section>
-` : ""}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
+` : ""}${bookHtml(x, name)}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
 <p class="sub">규정과 가격은 바뀔 수 있으니 출발·예약 전 최신 정보를 다시 확인하세요.</p>
 <section class="faq">
 <h2>${esc(name)} 여행 자주 묻는 질문</h2>
