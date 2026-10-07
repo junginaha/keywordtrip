@@ -86,7 +86,7 @@ jobs:
         env:
           INDEXNOW_KEY: 4c7e19b6a2d84f75b913ce6048a21fd3
         run: |
-          mapfile -t URLS < <(python -c 'import json; print("\n".join(json.load(open("indexnow-urls.json"))))')
+          mapfile -t URLS < <(python -c 'import json; [print(u) for u in json.load(open("indexnow-urls.json"))]')
           if [ "${#URLS[@]}" -eq 0 ]; then
             echo "No changed public URLs to submit."
             exit 0
