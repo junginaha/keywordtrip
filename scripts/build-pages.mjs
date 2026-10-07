@@ -133,7 +133,8 @@ function page(x) {
   const ld = { "@context": "https://schema.org", "@graph": [
     { "@type": "WebPage", "@id": u + "#webpage", url: u, name: title, description: desc, inLanguage: "ko-KR", dateModified: TODAY,
       mainEntity: { "@id": u + "#destination" }, breadcrumb: { "@id": u + "#breadcrumb" }, isPartOf: { "@id": HOST + "/#website" } },
-    { "@type": "TouristDestination", "@id": u + "#destination", name: `${name} (${x.en})`, alternateName: x.en, description: `${x.kw.join(", ")}. ${lead}`, touristType: x.kw, url: u,
+    { "@type": "TouristDestination", "@id": u + "#destination", name: `${name} (${x.en})`, alternateName: x.en, description: lead, keywords: x.kw.join(", "), url: u,
+      ...(!x.country && x.c ? { containedInPlace: { "@type": "Country", name: x.c } } : {}),
       ...(x.country && x.cap ? { containsPlace: { "@type": "City", name: x.cap } } : {}) },
     { "@type": "BreadcrumbList", "@id": u + "#breadcrumb", itemListElement: [
       { "@type": "ListItem", position: 1, name: "키워드트립", item: HOST + "/" },
@@ -159,8 +160,12 @@ function page(x) {
 <meta property="og:url" content="${u}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${HOST}/icons/icon-512.png">
+<meta property="og:image" content="${HOST}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${HOST}/og.png">
 <meta name="theme-color" content="#0C1020">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
 ${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
@@ -243,7 +248,12 @@ function directory() {
 <meta property="og:url" content="${HOST}/trips">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${HOST}/icons/icon-512.png">
+<meta property="og:image" content="${HOST}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${HOST}/og.png">
 <meta name="theme-color" content="#0C1020">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
 </head>
@@ -340,8 +350,12 @@ function topicPage(c, t) {
 <meta property="og:url" content="${u}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${HOST}/icons/icon-512.png">
+<meta property="og:image" content="${HOST}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${HOST}/og.png">
 <meta name="theme-color" content="#0C1020">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
 ${t.key === "exchange-rate" ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
@@ -424,7 +438,7 @@ const llms = `# 키워드트립 (KeywordTrip)
 ## 핵심 페이지
 - [전체 여행지 목록](${HOST}/trips): 모든 목적지의 입국 조건과 여행 적기 비교
 - [서비스·출처·업데이트 기준](${HOST}/about)
-${guides.map(g => `- [${g}](${HOST}/${g})`).join("\n")}
+${guides.map(g => { const t = (fs.readFileSync(path.join(root, g + ".html"), "utf8").match(/<title>([^<|]+)/) || [, g])[1].trim(); return `- [${t}](${HOST}/${g})`; }).join("\n")}
 
 ## 핵심 여행지 질문별 안내
 ${CORE.map(c => `- ${c.name}: ${TOPICS.map(t => `[${t.label}](${HOST}/trips/${c.id}/${t.key})`).join(" · ")}`).join("\n")}

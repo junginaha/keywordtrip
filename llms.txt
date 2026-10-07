@@ -10,10 +10,10 @@
 ## 핵심 페이지
 - [전체 여행지 목록](https://keywordtrip.com/trips): 모든 목적지의 입국 조건과 여행 적기 비교
 - [서비스·출처·업데이트 기준](https://keywordtrip.com/about)
-- [guides/10-month-overseas-travel](https://keywordtrip.com/guides/10-month-overseas-travel)
-- [guides/11-month-overseas-travel](https://keywordtrip.com/guides/11-month-overseas-travel)
-- [guides/12-month-overseas-travel](https://keywordtrip.com/guides/12-month-overseas-travel)
-- [guides/2026-korean-travel-trends](https://keywordtrip.com/guides/2026-korean-travel-trends)
+- [10월 해외여행 추천 14곳](https://keywordtrip.com/guides/10-month-overseas-travel)
+- [11월 해외여행 추천 7곳](https://keywordtrip.com/guides/11-month-overseas-travel)
+- [12월 해외여행 추천 4곳](https://keywordtrip.com/guides/12-month-overseas-travel)
+- [2026 해외여행 인기 여행지](https://keywordtrip.com/guides/2026-korean-travel-trends)
 
 ## 핵심 여행지 질문별 안내
 - 일본: [환율](https://keywordtrip.com/trips/jp/exchange-rate) · [날씨](https://keywordtrip.com/trips/jp/weather) · [입국](https://keywordtrip.com/trips/jp/entry) · [교통](https://keywordtrip.com/trips/jp/transportation) · [숙소](https://keywordtrip.com/trips/jp/hotels) · [eSIM](https://keywordtrip.com/trips/jp/esim) · [물가](https://keywordtrip.com/trips/jp/prices) · [안전](https://keywordtrip.com/trips/jp/safety) · [여행 준비](https://keywordtrip.com/trips/jp/packing)
