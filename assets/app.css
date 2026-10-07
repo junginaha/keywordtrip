@@ -213,7 +213,7 @@ body{overscroll-behavior-y:none}
 .about{margin:-8px 0 20px}
 .about summary{cursor:pointer;list-style:none;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .about summary::after{content:"+";color:var(--pink);font-weight:700}
-.about[open] summary::after,.more-guides[open] summary::after,.wantbtn[aria-expanded=true]::after{content:"−"}
+.about[open] summary::after,.more-guides[open] summary::after{content:"−"}
 .about-body{margin-top:14px;padding:18px;border:1.5px solid var(--pink);border-radius:16px;font-size:15px}
 .about-body p{margin:0 0 10px}
 .about-body .lead{font-family:var(--display);font-size:20px;line-height:1.35}
@@ -237,15 +237,25 @@ body{overscroll-behavior-y:none}
 .bookbtn:focus-visible,.bookbtn:hover{border-color:var(--pink);color:var(--pink)}
 .wantbox{margin:12px 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
 .wantbtn{all:unset;display:flex;align-items:center;width:100%;box-sizing:border-box;min-height:42px;cursor:pointer;font-size:15px;font-weight:700}
-.wantbtn::after{content:"+";margin-left:auto;color:var(--muted);font-weight:400}
 .wantpanel{padding:8px 0 4px}
-.wantq{margin:10px 0 7px;color:var(--muted)}
+.wantq{margin:6px 0 10px;color:var(--ink);font-weight:600;line-height:1.5}
 .wantopts{display:flex;gap:7px;flex-wrap:wrap}
 .wantopts button{font:inherit;font-size:13px;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:0 0;color:var(--muted);cursor:pointer}
 .wantopts button.on{border-color:var(--pink);color:var(--ink);background:rgba(255,31,175,.08)}
 .wantsave{margin-top:12px;width:100%;min-height:42px;border:0;border-radius:10px;background:var(--pink);color:var(--night);font:inherit;font-weight:800;cursor:pointer}
 .wantsave:disabled{opacity:.35;cursor:default}
 .wantdone{margin:10px 0 0;color:var(--muted)}
+.wantbtn[aria-pressed=true]{color:var(--pink)}
+.subform{display:grid;gap:10px;margin-top:4px}
+.subin{font:inherit;font-size:16px;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:#11172a;color:var(--ink);box-sizing:border-box;width:100%}
+.subin:focus{outline:2px solid var(--pink);outline-offset:1px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.subck{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer}
+.subck input{width:18px;height:18px;margin:0;accent-color:var(--pink);flex:none}
+.submore{all:unset;margin-left:auto;color:var(--ink);text-decoration:underline;cursor:pointer;flex:none}
+.subterms{margin:-4px 0 0 26px;font-size:12px;line-height:1.6;color:var(--muted)}
+.subterms a{color:var(--pink)}
+.suberr{margin:0;color:var(--orange);font-size:13px}
 
 @media (prefers-reduced-motion:reduce){
 *{transition:none!important;animation:none!important}}
@@ -322,7 +332,7 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .hook{font-size:15px;line-height:1.55;color:var(--text2)}
 .chip,.vline{font-size:14px}
 .chip{padding:7px 14px}
-.about summary,.bookbox .booklead,.count,.fxsrc,.info .src,.legend,.more-guides summary,.note,.regh,.src,.wantdone,.wantq{font-size:13px!important}
+.about summary,.bookbox .booklead,.count,.fxsrc,.info .src,.legend,.more-guides summary,.note,.regh,.src,.wantdone{font-size:13px!important}
 .regh{letter-spacing:.02em}
 .info h4{font-size:13px;letter-spacing:.01em}
 .fbrief div,.info p{font-size:16px;line-height:1.75}

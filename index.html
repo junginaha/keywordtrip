@@ -152,7 +152,7 @@
 </details>
     </section>
   </main>
-  <footer><a href="/trips">전체 여행지 목록</a> · <a href="/about">서비스·출처·업데이트 기준</a><br>정보 기준일 2026년 10월 3일. 규정은 예고 없이 바뀌니 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">외교부 해외안전여행</a>에서 최신 공지를 확인하세요.<br><span class="fsrc">입국 정보: IATA Timatic 기반 공개 정리와 외교부 여행경보 공지. 환율: ECB 기준환율·ExchangeRate-API 교차 확인. 적기·계절은 일반 기후 기준.</span></footer>
+  <footer><a href="/trips">전체 여행지 목록</a> · <a href="/about">서비스·출처·업데이트 기준</a> · <a href="/privacy">개인정보처리방침</a><br>정보 기준일 2026년 10월 3일. 규정은 예고 없이 바뀌니 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">외교부 해외안전여행</a>에서 최신 공지를 확인하세요.<br><span class="fsrc">입국 정보: IATA Timatic 기반 공개 정리와 외교부 여행경보 공지. 환율: ECB 기준환율·ExchangeRate-API 교차 확인. 적기·계절은 일반 기후 기준.</span></footer>
 </div>
 
 <form class="dock" id="dock" role="search">
@@ -196,17 +196,22 @@
     <p class="legend"><span style="color:var(--cbg)">●</span> 적기　○ 이번 달</p></div>
     <div class="info" id="info"></div>
     <section class="wantbox" id="wantbox" hidden>
-      <button class="wantbtn" id="wantBtn" type="button" aria-expanded="false">♡ 가고 싶어요</button>
+      <button class="wantbtn" id="wantBtn" type="button" aria-pressed="false">♡ 가고 싶어요</button>
       <div class="wantpanel" id="wantPanel" hidden>
-        <p class="wantq">언제쯤 가세요?</p>
-        <div class="wantopts" id="whenOpts"></div>
-        <p class="wantq">누구와 가세요?</p>
-        <div class="wantopts" id="partyOpts">
-          <button type="button" data-party="solo">혼자</button>
-          <button type="button" data-party="together">함께</button>
+        <div id="askStep">
+          <p class="wantq" id="askQ"></p>
+          <div class="wantopts"><button type="button" class="on" id="askYes">알려주세요</button><button type="button" id="askNo">괜찮아요</button></div>
         </div>
-        <button class="wantsave" id="wantSave" type="button" disabled>담기</button>
-        <p class="wantdone" id="wantDone" hidden>내 여행에 담았어요.</p>
+        <form class="subform" id="subForm" hidden novalidate>
+          <input class="subin" id="subContact" name="contact" type="text" autocomplete="on" autocapitalize="off" spellcheck="false" placeholder="휴대폰 번호 또는 이메일" aria-label="휴대폰 번호 또는 이메일">
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="subck"><input type="checkbox" id="subReq"><span>(필수) 알림 발송을 위한 연락처 수집·이용 동의</span><button type="button" class="submore" id="subMore" aria-expanded="false">보기</button></label>
+          <p class="subterms" id="subTerms" hidden>수집 항목: 휴대폰 번호 또는 이메일, 찜한 여행지<br>목적: 찜한 여행지의 입국·환율·특가 등 변경 정보 안내(문자, 카카오 알림톡 또는 이메일)<br>보유 기간: 수신 거부 시 즉시 파기<br>동의를 거부할 수 있으며, 거부하면 알림을 받을 수 없습니다. <a href="/privacy">개인정보처리방침</a></p>
+          <label class="subck"><input type="checkbox" id="subAd"><span>(선택) 특가·이벤트 소식도 받기</span></label>
+          <button class="wantsave" id="subBtn" type="submit" disabled>알림 받기</button>
+          <p class="suberr" id="subErr" role="alert" hidden></p>
+        </form>
+        <p class="wantdone" id="wantDone" hidden></p>
       </div>
     </section>
     <section class="bookbox" id="bookbox" aria-labelledby="bookTitle">

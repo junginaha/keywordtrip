@@ -217,56 +217,56 @@ function renderInfo(x){
 
 
 const CURATED_IDS=new Set(DEST.filter(d=>!d.country).map(d=>d.id));
-let wantState={when:"",party:""};
-function monthLabel(offset){
-  const d=new Date(); d.setMonth(d.getMonth()+offset);
-  return (d.getMonth()+1)+"월";
-}
+/* ♡ 가고 싶어요 → 알림 구독 (연락처는 서버 저장, 브라우저엔 서명된 구독 id만) */
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let subReady=null;
+function subIsReady(){if(subReady===null)subReady=fetch("/api/subscribe").then(r=>r.json()).then(j=>!!j.ready).catch(()=>false);return subReady}
+const ASK_AGAIN=7*864e5;
+function contactOk(v){v=v.trim();if(v.includes("@"))return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v);let d=v.replace(/[^\d+]/g,"");if(d.startsWith("+82"))d="0"+d.slice(3);return /^01[016789]\d{7,8}$/.test(d.replace(/\D/g,""))}
+function postSub(body){return fetch("/api/subscribe",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body),keepalive:true})}
 function renderWant(x){
-  const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), done=$("#wantDone"), save=$("#wantSave");
-  const eligible=CURATED_IDS.has(x.id);
-  box.hidden=!eligible;
-  if(!eligible) return;
-  wantState={when:"",party:""};
-  const saved=(()=>{
-    try{return JSON.parse(localStorage.getItem("kt_want_"+x.id)||"null")}catch(e){return null}
-  })();
-  btn.textContent=saved?"♥ 가고 싶어요":"♡ 가고 싶어요";
-  btn.setAttribute("aria-expanded","false");
-  panel.hidden=true; done.hidden=true; save.disabled=true;
-  $("#whenOpts").innerHTML=[
-    [monthLabel(0),"this_month"],
-    [monthLabel(1),"next_month"],
-    ["날짜 미정","someday"]
-  ].map(([label,val])=>`<button type="button" data-when="${val}">${label}</button>`).join("");
-  $("#whenOpts").querySelectorAll("button").forEach(b=>b.onclick=()=>{
-    wantState.when=b.dataset.when;
-    $("#whenOpts").querySelectorAll("button").forEach(v=>v.classList.toggle("on",v===b));
-    save.disabled=!(wantState.when&&wantState.party);
-  });
-  $("#partyOpts").querySelectorAll("button").forEach(b=>{
-    b.classList.remove("on");
-    b.onclick=()=>{
-      wantState.party=b.dataset.party;
-      $("#partyOpts").querySelectorAll("button").forEach(v=>v.classList.toggle("on",v===b));
-      save.disabled=!(wantState.when&&wantState.party);
-    };
-  });
-  btn.onclick=()=>{
-    const open=panel.hidden;
-    panel.hidden=!open;
-    btn.setAttribute("aria-expanded",String(open));
+  const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), ask=$("#askStep"), form=$("#subForm"), done=$("#wantDone");
+  box.hidden=!CURATED_IDS.has(x.id);
+  if(box.hidden) return;
+  const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
+  const show=el=>{panel.hidden=!el;[ask,form,done].forEach(e=>e.hidden=e!==el)};
+  setBtn(!!LS.get("kt_want_"+x.id)); show(null);
+  $("#askQ").textContent=`${x.city} 여행에 꼭 필요한 정보가 바뀌면 알려드릴까요?`;
+  btn.onclick=async()=>{
+    if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
+    LS.set("kt_want_"+x.id,{at:Date.now()}); setBtn(true);
+    try{fetch("/api/interest",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({destination:x.id}),keepalive:true}).catch(()=>{})}catch(e){}
+    const sub=LS.get("kt_sub");
+    if(sub&&sub.sid){
+      postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
+      done.textContent=`${x.city} 소식도 함께 알려드릴게요.`; show(done); return;
+    }
+    const no=LS.get("kt_sub_no");
+    if(no&&Date.now()-no<ASK_AGAIN) return;
+    if(await subIsReady()) show(ask);
   };
-  save.onclick=()=>saveWant(x);
-}
-async function saveWant(x){
-  if(!(wantState.when&&wantState.party)) return;
-  const payload={destination:x.id,city:x.city,when:wantState.when,party:wantState.party,at:new Date().toISOString()};
-  try{localStorage.setItem("kt_want_"+x.id,JSON.stringify(payload))}catch(e){}
-  $("#wantBtn").textContent="♥ 가고 싶어요";
-  $("#wantDone").hidden=false;
-  $("#wantSave").disabled=true;
-  try{await fetch("/api/interest",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),keepalive:true})}catch(e){}
+  $("#askNo").onclick=()=>{LS.set("kt_sub_no",Date.now());show(null)};
+  $("#askYes").onclick=()=>{show(form);$("#subContact").focus()};
+  const inp=$("#subContact"), req=$("#subReq"), ad=$("#subAd"), sbtn=$("#subBtn"), err=$("#subErr"), more=$("#subMore"), terms=$("#subTerms");
+  inp.value=""; req.checked=false; ad.checked=false; err.hidden=true; terms.hidden=true; more.setAttribute("aria-expanded","false");
+  const sync=()=>{sbtn.disabled=!(req.checked&&contactOk(inp.value))};
+  sync(); inp.oninput=()=>{err.hidden=true;sync()}; req.onchange=sync;
+  more.onclick=e=>{e.preventDefault();terms.hidden=!terms.hidden;more.setAttribute("aria-expanded",String(!terms.hidden))};
+  form.onsubmit=async e=>{
+    e.preventDefault(); if(sbtn.disabled) return;
+    sbtn.disabled=true; err.hidden=true;
+    try{
+      const r=await postSub({contact:inp.value,destination:x.id,consent:true,marketing:ad.checked,hp:form.elements.website.value});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(j.error||"x");
+      if(j.sid) LS.set("kt_sub",{sid:j.sid,type:j.type});
+      LS.del("kt_sub_no");
+      done.textContent=`신청했어요. ${x.city} 여행에 꼭 필요한 정보가 바뀌면 알려드릴게요.`; show(done);
+    }catch(ex){
+      err.textContent=ex.message==="bad_contact"?"휴대폰 번호나 이메일을 다시 확인해 주세요.":"잠시 후 다시 시도해 주세요.";
+      err.hidden=false; sync();
+    }
+  };
 }
 const BASE_META={
   title:document.title,
