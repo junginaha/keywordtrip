@@ -25,7 +25,6 @@ function season(x,m){
 }
 function isBest(x){return !!x.best&&x.best.includes(monthIn(x.tz))}
 function nextBest(x,m){for(let i=1;i<=12;i++){const n=(m-1+i)%12+1;if(x.best.includes(n))return n}return x.best[0]}
-function bestRange(x){return x.best.map(m=>m+"월").join(", ")}
 
 /* curation info */
 function visaOf(x){const cc=x.cc;const base=INFO.sch.includes(cc)?INFO.schTxt:(INFO.visa[cc]||"");const n=INFO.note[cc];const xv=INFO.xvisa[x.id];return [base,n,xv].filter(Boolean).join(" ")||"출발 전 목적지 정부·이민기관의 공식 안내에서 입국 조건을 확인하세요."}
@@ -55,7 +54,6 @@ function curLabel(code,n){const nm=CUR[code]||code;return n.toLocaleString("ko-K
 function wonText(v){return v.toLocaleString("ko-KR",{minimumFractionDigits:v>=10000?0:2,maximumFractionDigits:v>=10000?0:2})+"원"}
 function quote(code){const per=krwPer(code);if(!per)return "";const u=unitFor(code);return `${curLabel(code,u)} = ${wonText(per*u)}`}
 function rateLine(x){return x.cur&&x.cur!=="KRW"?quote(x.cur):""}
-function fmtLocal(v){return v.toLocaleString("ko-KR",{maximumFractionDigits:v>=100?0:v>=1?2:4})}
 function fxSrcText(code){const k=(INFO.fx.s&&INFO.fx.s[code])||"erapi";const c=INFO.fx.chk&&INFO.fx.chk[code];return FX_SRC[k]+(c?` (${FX_SRC[c].split(" ")[0]}와 교차 확인)`:"")}
 function fxTimeText(){return fmt("Asia/Seoul",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(INFO.fx.t))}
 /* list */
