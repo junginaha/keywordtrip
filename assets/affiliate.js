@@ -17,14 +17,12 @@
   // English place name gives the most reliable Trip.com search match.
   function q(x) { return x.country ? x.en : (x.en || x.city); }
 
-  // Klook: paste the tracking params from a link generated in the Klook affiliate portal
-  // (e.g. { aid: "12345", aff_adid: "67890" }). Empty = activity button stays on Trip.com.
-  var KLOOK = {};
+  // Klook: tracked redirect generated in the Klook affiliate portal.
+  // k_site = the Klook page the traveler lands on (destination search results).
+  var KLOOK = { aid: "137536", aff_adid: "1484668" };
   function klook(x) {
-    var u = new URL("https://www.klook.com/ko/search/result/");
-    u.searchParams.set("query", q(x));
-    Object.keys(KLOOK).forEach(function (k) { u.searchParams.set(k, KLOOK[k]); });
-    return u.toString();
+    var target = "https://www.klook.com/ko/search/result/?query=" + encodeURIComponent(q(x));
+    return "https://affiliate.klook.com/redirect?aid=" + KLOOK.aid + "&aff_adid=" + KLOOK.aff_adid + "&k_site=" + encodeURIComponent(target);
   }
   var KLOOK_ON = !!KLOOK.aid;
 
