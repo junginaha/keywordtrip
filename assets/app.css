@@ -415,3 +415,9 @@ footer{font-size:13px;line-height:1.7}
 /* chips wrap instead of scrolling off the right edge */
 .chips{flex-wrap:wrap;overflow:visible}
 .chip{min-height:36px}
+
+.ans-fold{margin-top:12px;border-top:1px solid var(--line)}
+.ans-fold>summary{list-style:none;display:flex;justify-content:space-between;cursor:pointer;padding:10px 0 0;font-size:14px;font-weight:700;color:var(--muted)}
+.ans-fold>summary::-webkit-details-marker{display:none}
+.ans-fold>summary::after{content:"+";color:var(--pink)}.ans-fold[open]>summary::after{content:"−"}
+.ans-fold .ans-k{margin-top:10px}

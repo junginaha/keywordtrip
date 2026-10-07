@@ -173,7 +173,7 @@ ${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
 <p class="kw">${x.kw.map(k => `<span>${esc(k)}</span>`).join("")}</p>
 <p class="hook">${esc(lead)}</p>
 </header>
-${keywordBar(x)}${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
+${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
 <div><dt>입국 (한국 여권)</dt><dd><i class="dot" style="--vc:${CLS[vc].hex}"></i>${esc(status)}</dd></div>
 <div><dt>여행 적기</dt><dd>${esc(best)}</dd></div>
 <div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${fxSpan(x)} · <span data-fx-when>${fxDate}</span> 기준</small>` : ""}</dd></div>
@@ -203,11 +203,13 @@ ${money ? `<p>${esc(money)}</p>` : ""}
 </section>
 ` : ""}${bookHtml(x, name)}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
 <p class="sub">규정과 가격은 바뀔 수 있으니 출발·예약 전 최신 정보를 다시 확인하세요.</p>
-<section class="faq">
+<details class="more"><summary>더 알아보기</summary>
+${keywordBar(x)}<section class="faq">
 <h2>${esc(name)} 여행 자주 묻는 질문</h2>
 ${faqs.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("\n")}
 </section>
-${same.length ? `<section class="rel"><h2>${esc(x.country ? `${name}의 다른 여행지` : `${x.c} 더 보기`)}</h2><div class="grid">${same.map(link).join("")}</div></section>\n` : ""}${near.length ? `<section class="rel"><h2>${esc(x.reg)}의 다른 여행지</h2><div class="grid">${near.map(link).join("")}</div></section>\n` : ""}<p class="trust">입국 정보: ${esc(INFO.visaSrc)}. 적기는 일반 기후·성수기 기준, 환율은 시장 중간값 참고치입니다. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
+${same.length ? `<section class="rel"><h2>${esc(x.country ? `${name}의 다른 여행지` : `${x.c} 더 보기`)}</h2><div class="grid">${same.map(link).join("")}</div></section>\n` : ""}${near.length ? `<section class="rel"><h2>${esc(x.reg)}의 다른 여행지</h2><div class="grid">${near.map(link).join("")}</div></section>\n` : ""}</details>
+<p class="trust">입국 정보: ${esc(INFO.visaSrc)}. 적기는 일반 기후·성수기 기준, 환율은 시장 중간값 참고치입니다. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips">전체 여행지 ${DEST.length}곳</a> · KeywordTrip</p>
 </main>
 </body>
@@ -350,12 +352,15 @@ ${t.key === "exchange-rate" ? `<script src="/assets/trip-fx.js" defer></script>\
 <p class="eyebrow">${home.f ? home.f + " " : ""}${esc(name)} 여행</p>
 <h1>${esc(name)} ${esc(t.h)}</h1>
 </header>
-${keywordBar(home, t.key)}<section class="answer"><h2>${esc(qa[0].q)}</h2><p>${esc(d.a)}</p></section>
-${body}<section class="faq">
+<section class="answer"><h2>${esc(qa[0].q)}</h2><p>${esc(d.a)}</p></section>
+${body}${ctaHtml}<details class="more"><summary>더 알아보기</summary>
+${keywordBar(home, t.key)}<section class="faq">
 <h2>${esc(name)} ${esc(t.label)} 자주 묻는 질문</h2>
 ${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</summary><p>${esc(o.a)}</p></details>`).join("\n")}
 </section>
-${ctaHtml}<section class="rel"><h2>${esc(name)} 여행지</h2><div class="grid"><a href="/trips/${c.id}"><b>${esc(name)} 한눈에</b><small>${esc(vShort(home))}</small></a>${cities.map(x => `<a href="/trips/${x.id}"><b>${esc(x.city)}</b><small>적기 ${esc(bestSpan(x.best))}</small></a>`).join("")}</div></section>
+<section class="rel"><h2>${esc(name)} 여행지</h2><div class="grid"><a href="/trips/${c.id}"><b>${esc(name)} 한눈에</b><small>${esc(vShort(home))}</small></a>${cities.map(x => `<a href="/trips/${x.id}"><b>${esc(x.city)}</b><small>적기 ${esc(bestSpan(x.best))}</small></a>`).join("")}</div></section>
+</details>
+<script>(function(){function o(){var h=location.hash.slice(1),e=h&&document.getElementById(h);if(!e)return;for(var n=e;n;n=n.parentElement)if(n.tagName==="DETAILS")n.open=true;e.scrollIntoView()}o();addEventListener("hashchange",o)})()</script>
 <p class="trust">가격·요금은 2026년 기준 대략값이며 바뀔 수 있습니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips/${c.id}">${esc(name)} 여행</a> · KeywordTrip</p>
 </main>

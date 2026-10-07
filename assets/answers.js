@@ -76,9 +76,9 @@
     const ctaHtml = kind ? cta(kind, target) || cta(kind, cc) : "";
     const label = QA.topics.find(t => t[0] === d.topic)[1];
     return `<li class="ans"><p class="ans-t">${esc(c[1])} · ${esc(label)}</p><p class="ans-q">${esc(top.q)}</p><p class="ans-a">${esc(liveAnswer(top))}</p>
-<div class="ans-k">${chips(cc, d.topic)}</div>
 <div class="ans-x"><a class="ans-more" href="${esc(top.u)}">자세히 보기 →</a>${ctaHtml}</div>${ctaHtml && KTAffiliate.DISCLOSURE ? `<p class="ans-disc">${esc(KTAffiliate.DISCLOSURE)}</p>` : ""}
-${rel.length ? `<ul class="ans-rel">${rel.map(o => `<li><a href="${esc(o.u)}">${esc(o.q)}</a></li>`).join("")}</ul>` : ""}</li>`;
+<details class="ans-fold"><summary>더 알아보기</summary><div class="ans-k">${chips(cc, d.topic)}</div>
+${rel.length ? `<ul class="ans-rel">${rel.map(o => `<li><a href="${esc(o.u)}">${esc(o.q)}</a></li>`).join("")}</ul>` : ""}</details></li>`;
   };
 
   document.addEventListener("click", e => {

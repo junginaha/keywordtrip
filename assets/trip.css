@@ -75,3 +75,12 @@ a{color:inherit}
 .bookbtn{overflow-wrap:anywhere;line-height:1.35}
 .w,.card,.faq,.rel,.answer{min-width:0;overflow-wrap:anywhere}
 html,body{overflow-x:hidden}
+
+/* secondary content (topic guides, FAQ, related places) — collapsed, still in HTML for search/AI crawlers */
+.more{margin-top:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.more>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:16px 0;font-weight:700;font-size:16px;color:var(--muted)}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::after{content:"+";font-size:20px;color:var(--pink)}
+.more[open]>summary::after{content:"−"}
+.more[open]{padding-bottom:20px}
+.more .kwbar{margin-top:0}.more .faq{margin-top:24px}
