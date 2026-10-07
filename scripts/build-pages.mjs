@@ -118,15 +118,19 @@ function page(x) {
   const name = placeName(x), [vc] = vt(x), status = vShort(x), u = url(x);
   const kw = x.kw.join("·"), best = bestSpan(x.best);
   const lead = x.hook || `${x.kw.join(", ")}로 기억되는 곳.`;
-  const title = `${name} 여행 | ${kw} · 여행 적기·비자·환율 | 키워드트립`;
-  const desc = `${name} 여행 적기는 ${best}. 한국 여권 기준 ${status}${x.cur && x.cur !== "KRW" ? `, 통화는 ${CUR[x.cur] || x.cur}` : ""}. ${x.kw.join("·")} 키워드로 고르는 ${name}의 입국·환율·시차·현지 팁을 한눈에.`;
+  const SPLIT = { us: "미국", gb: "영국", ae: "아랍에미리트", ru: "러시아", "ru-as": "러시아", eg: "이집트", "tr-eu": "튀르키예", "tr-as": "튀르키예", cy: "키프로스", "id-jw": "인도네시아", kr: "한국" };
+  const visaWord = x.country ? (SPLIT[x.id] || name) : (x.c || name);
+  const title = x.country
+    ? (x.cc === "KR" ? `${name} 여행 적기·현지 정보 | ${kw} | 키워드트립` : visaWord === name ? `${name} 무비자 기간·비자(한국인)·${name} 환율·여행 적기 | 키워드트립` : `${name} 여행 | ${visaWord} 무비자 기간·비자·환율·여행 적기 | 키워드트립`)
+    : `${name} 여행 적기·환율·${visaWord} 무비자 기간 | ${kw} | 키워드트립`;
+  const desc = `한국인 ${visaWord} ${status}. ${name} 여행 적기는 ${best}${rateLine(x) ? `, 환율은 ${rateLine(x)}` : ""}. 한국 여권 기준${x.cur && x.cur !== "KRW" ? `, 통화는 ${CUR[x.cur] || x.cur}` : ""}. ${x.kw.join("·")} 키워드로 고르는 ${name}의 입국·환율·시차·현지 팁을 한눈에.`;
   const visa = visaOf(x), money = moneyOf(x), tips = tipsOf(x), rate = rateLine(x), tzl = tzLine(x);
   const warn = vc === "orange" || isWarn(x);
   const faqs = [
     ...(FAQ[x.id] || []),
     [`${name} 여행 적기는 언제인가요?`, `일반 기후 기준 추천 시기는 ${mText(x.best)}입니다.${x.wet ? ` ${mText(x.wet)}은 우기라 비와 습도를 고려하세요.` : ""} 실제 일정은 출발 직전 날씨와 현지 상황을 함께 확인하세요.`],
-    [`한국인은 ${name}에 비자 없이 갈 수 있나요?`, `${status}. ${visa}`],
-    ...(x.cur && x.cur !== "KRW" ? [[`${name}에서는 어떤 돈을 쓰나요?`, `통화는 ${curName(x)}입니다.${rate ? ` ${fxDate} 기준 ${rate}.` : ""}${money ? " " + money : ""}`]] : []),
+    [`${visaWord} 무비자 기간은? 한국인 비자 필요한가요?`, `한국 여권 기준 ${status}. ${visa}`],
+    ...(x.cur && x.cur !== "KRW" ? [[`${name} 환율은 얼마인가요? 어떤 돈을 쓰나요?`, `통화는 ${curName(x)}입니다.${rate ? ` ${fxDate} 기준 ${rate}.` : ""}${money ? " " + money : ""}`]] : []),
     [`${josa(name, "과", "와")} 서울의 시차는 얼마인가요?`, `${tzl}.`],
   ];
   const { same, near } = related(x);
@@ -160,12 +164,12 @@ function page(x) {
 <meta property="og:url" content="${u}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${HOST}/og.png">
+<meta property="og:image" content="${ogFor(x)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
+<meta property="og:image:alt" content="${esc(`${name} — ${status} · 여행 적기 ${best}`)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="${HOST}/og.png">
+<meta name="twitter:image" content="${ogFor(x)}">
 <meta name="theme-color" content="#0C1020">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
 ${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
@@ -191,13 +195,13 @@ ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국�
 <p>일반 기후 기준 추천 시기는 <b>${esc(best)}</b>입니다.${x.wet ? ` ${esc(bestSpan(x.wet))}은 우기라 비와 습도를 고려하세요.` : ""}</p>
 </section>
 <section class="card">
-<h2>한국인 입국 조건</h2>
+<h2>${esc(visaWord)} 비자·무비자 기간 (한국인)</h2>
 <p class="badge" style="--vc:${CLS[vc].hex}">${esc(status)}</p>
 <p>${esc(visa)}</p>
 <p class="offl"><span>공식 확인처</span>${officialOf(x).map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</p>
 </section>
 ${x.cur && x.cur !== "KRW" ? `<section class="card">
-<h2>돈과 결제</h2>
+<h2>${esc(name)} 환율·결제</h2>
 <p><b>${esc(curName(x))}</b>${rate ? ` · <b>${fxSpan(x)}</b>` : ""}</p>
 ${rate ? `<p class="fxnote">${fxWhen(x)}. 은행 매매기준율과 같은 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>` : ""}
 ${money ? `<p>${esc(money)}</p>` : ""}
@@ -206,7 +210,7 @@ ${money ? `<p>${esc(money)}</p>` : ""}
 <h2>키워드트립 팁</h2>
 <ul>${tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
 </section>
-` : ""}${bookHtml(x, name)}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
+` : ""}${bookHtml(x, name)}${x.cc !== "KR" ? `<section class="card alert-sub" id="alert" data-kt-alert data-d="${x.id}" data-name="${esc(name)}"${x.cur && x.cur !== "KRW" && INFO.fx.r[x.cur] ? ` data-cur="${x.cur}" data-unit="${esc(curLabel(x.cur, unitFor(x.cur)))}" data-rate="${(unitFor(x.cur) / INFO.fx.r[x.cur]).toFixed(2)}"` : ""} hidden></section>\n` : ""}${checklistIds().includes(x.id) ? `<p class="sub"><a href="/trips/${x.id}/checklist">${esc(name)} 여행 준비 체크리스트 (PDF 저장) →</a></p>\n` : ""}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
 <p class="sub">규정과 가격은 바뀔 수 있으니 출발·예약 전 최신 정보를 다시 확인하세요.</p>
 <details class="more"><summary>더 알아보기</summary>
 ${keywordBar(x)}<section class="faq">
@@ -214,9 +218,10 @@ ${keywordBar(x)}<section class="faq">
 ${faqs.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("\n")}
 </section>
 ${same.length ? `<section class="rel"><h2>${esc(x.country ? `${name}의 다른 여행지` : `${x.c} 더 보기`)}</h2><div class="grid">${same.map(link).join("")}</div></section>\n` : ""}${near.length ? `<section class="rel"><h2>${esc(x.reg)}의 다른 여행지</h2><div class="grid">${near.map(link).join("")}</div></section>\n` : ""}</details>
-<p class="trust">입국 정보: ${esc(INFO.visaSrc)}. 적기는 일반 기후·성수기 기준, 환율은 시장 중간값 참고치입니다. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
+${x.cc !== "KR" ? `<section class="rel" data-kt-qa data-d="${x.id}" data-name="${esc(name)}" hidden></section>\n` : ""}<p class="trust">입국 정보: ${esc(INFO.visaSrc)}. 적기는 일반 기후·성수기 기준, 환율은 시장 중간값 참고치입니다. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips">전체 여행지 ${DEST.length}곳</a> · KeywordTrip</p>
 </main>
+<script src="/assets/site-config.js" defer></script><script src="/assets/alerts.js" defer></script>
 </body>
 </html>
 `;
@@ -350,12 +355,12 @@ function topicPage(c, t) {
 <meta property="og:url" content="${u}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${HOST}/og.png">
+<meta property="og:image" content="${ogFor(home)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
+<meta property="og:image:alt" content="${esc(`${name} ${t.h}`)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="${HOST}/og.png">
+<meta name="twitter:image" content="${ogFor(home)}">
 <meta name="theme-color" content="#0C1020">
 <script type="application/ld+json">${JSON.stringify(ld)}</script>
 ${t.key === "exchange-rate" ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
@@ -367,7 +372,7 @@ ${t.key === "exchange-rate" ? `<script src="/assets/trip-fx.js" defer></script>\
 <h1>${esc(name)} ${esc(t.h)}</h1>
 </header>
 <section class="answer"><h2>${esc(qa[0].q)}</h2><p>${esc(d.a)}</p></section>
-${body}${ctaHtml}<details class="more"><summary>더 알아보기</summary>
+${body}${ctaHtml}${["entry", "exchange-rate", "weather"].includes(t.key) ? `<section class="card alert-sub" data-kt-alert data-d="${c.id}" data-name="${esc(name)}"${home.cur && INFO.fx.r[home.cur] ? ` data-cur="${home.cur}" data-unit="${esc(curLabel(home.cur, unitFor(home.cur)))}" data-rate="${(unitFor(home.cur) / INFO.fx.r[home.cur]).toFixed(2)}"` : ""} hidden></section>\n` : ""}<details class="more"><summary>더 알아보기</summary>
 ${keywordBar(home, t.key)}<section class="faq">
 <h2>${esc(name)} ${esc(t.label)} 자주 묻는 질문</h2>
 ${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</summary><p>${esc(o.a)}</p></details>`).join("\n")}
@@ -378,6 +383,83 @@ ${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</
 <p class="trust">가격·요금은 2026년 기준 대략값이며 바뀔 수 있습니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips/${c.id}">${esc(name)} 여행</a> · KeywordTrip</p>
 </main>
+<script src="/assets/site-config.js" defer></script><script src="/assets/alerts.js" defer></script>
+</body>
+</html>
+`;
+}
+
+const ogFor = x => fs.existsSync(path.join(root, `og/${x.id}.jpg`)) ? `${HOST}/og/${x.id}.jpg` : `${HOST}/og.png`;
+/* ---- travel prep checklists (printable, PDF via browser print) ---- */
+const PLUG = { JP: ["A·B", 100], TW: ["A·B", 110], TH: ["A·B·C·O", 220], VN: ["A·C", 220], ID: ["C·F", 230], KR: ["C·F", 220], TR: ["C·F", 230], FR: ["C·E", 230], ES: ["C·F", 230], PT: ["C·F", 230], IT: ["C·F·L", 230], IS: ["C·F", 230], US: ["A·B", 120], MX: ["A·B", 127], AU: ["I", 230], ZA: ["M·N·C", 230], CN: ["A·C·I", 220], HK: ["G", 220], MO: ["G", 220], SG: ["G", 230], PH: ["A·B·C", 220], MY: ["G", 240], GU: ["A·B", 110], MP: ["A·B", 110], MN: ["C·E", 230], AE: ["G", 230], GB: ["G", 230], CZ: ["E", 230], AT: ["C·F", 230], HU: ["C·F", 230], CH: ["J·C", 230], GR: ["C·F", 230], HR: ["C·F", 230], CA: ["A·B", 120], NZ: ["I", 230] };
+function plugLine(cc) {
+  const p = PLUG[cc]; if (!p) return "출발 전 콘센트 형태와 전압을 확인하고 멀티 어댑터를 챙기세요.";
+  const t = p[0].split("·");
+  if (cc === "CH") return "230V, J형 콘센트: 얇은 2핀(C형) 충전기는 꽂히지만 굵은 한국 F형 플러그는 어댑터가 필요합니다.";
+  const fit = t.some(v => "CEF".includes(v));
+  return `${p[1]}V, ${p[0]}형 콘센트: ${fit ? "한국 플러그(C·F형)를 대부분 그대로 쓸 수 있어요" : `한국 플러그가 맞지 않아 ${t[0]}형 어댑터가 필요해요`}.${p[1] < 200 ? " 휴대폰·노트북 충전기는 대부분 프리볼트라 어댑터만 있으면 됩니다." : ""}`;
+}
+const checklistIds = () => [...curated.map(d => d.id), ...CORE.map(c => c.id)];
+function checklistPage(x) {
+  const name = x.city, c = coreOf(x), u = `${HOST}/trips/${x.id}/checklist`, visaWord = x.country ? name : x.c;
+  const off = officialOf(x).filter(([l]) => !/외교부/.test(l));
+  const groups = [
+    ["출발 2~4주 전", [
+      `여권 유효기간 확인: 입국일 기준 6개월 이상 남은 여권이 안전합니다.`,
+      `입국 조건: ${vShort(x)}. ${visaOf(x)}`,
+      ...off.map(([l]) => `${l} 미리 작성·신청`),
+      `여행자보험 가입(해외 의료비 보장 확인)`,
+      `항공권·숙소 예약 확인서 저장(오프라인으로도)`,
+      ...(c && c.id !== "jp" && c.id !== "us" ? [] : []),
+    ]],
+    ["출발 1주 전", [
+      x.cur && x.cur !== "KRW" ? `환전·트래블카드 준비: 통화는 ${curName(x)}${rateLine(x) ? `, 참고 환율 ${rateLine(x)}(${fxDate} 기준)` : ""}.${moneyOf(x) ? " " + moneyOf(x) : ""}` : "",
+      c ? c.t.esim.a : `데이터: eSIM·현지 유심·로밍 중 선택(기기 eSIM 지원 여부 확인)`,
+      `지도 앱에 숙소·주요 장소 저장, 오프라인 지도 내려받기`,
+      c && c.grab ? `차량 호출 앱 Grab 설치·결제 카드 등록` : "",
+      `해외안전여행(외교부) 앱 설치, 영사콜센터 +82-2-3210-0404(24시간) 저장`,
+    ]],
+    ["짐 챙기기", [
+      `콘센트·전압: ${plugLine(x.cc)}`,
+      `날씨: 일반 기후 기준 추천 시기는 ${bestSpan(x.best)}${x.wet ? `, 우기는 ${bestSpan(x.wet)}` : ""}. 출발 직전 일기예보로 옷차림 확인`,
+      c ? c.t.packing.qa[0][1] : `상비약, 보조배터리(기내 반입만 가능), 여권 사본`,
+      `보조배터리는 위탁 수하물 불가, 기내 반입만 가능`,
+    ]],
+    ["도착 후", [
+      c ? c.t.transportation.a : `공항에서 숙소까지 이동 방법과 요금을 미리 확인`,
+      `시차: ${tzLine(x)}`,
+      ...tipsOf(x).slice(0, 2),
+    ]],
+  ].map(([h, items]) => [h, items.filter(Boolean)]);
+  const ld = { "@context": "https://schema.org", "@type": "HowTo", name: `${name} 여행 준비 체크리스트`, inLanguage: "ko-KR", url: u, step: groups.flatMap(([h, items]) => items.map(t => ({ "@type": "HowToStep", name: h, text: t }))) };
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>${esc(name)} 여행 준비물·체크리스트 (비자·환율·콘센트) | 키워드트립</title>
+<meta name="description" content="${esc(`${name} 여행 준비물 체크리스트: ${visaWord} 입국 조건(${vShort(x)}), 환전, eSIM, 콘센트(${(PLUG[x.cc] || ["확인 필요"])[0]}), 공항 이동까지 출발 전 순서대로 확인하세요. PDF로 저장할 수 있습니다.`)}">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="${u}">
+<link rel="stylesheet" href="/assets/trip.css">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta property="og:type" content="article"><meta property="og:site_name" content="KeywordTrip"><meta property="og:url" content="${u}"><meta property="og:title" content="${esc(name)} 여행 준비 체크리스트"><meta property="og:image" content="${ogFor(x)}">
+<meta name="theme-color" content="#0C1020">
+<script type="application/ld+json">${JSON.stringify(ld)}</script>
+</head>
+<body>
+<main class="w">
+<nav class="crumb" aria-label="현재 위치"><a href="/">키워드트립</a><span>›</span><a href="/trips/${x.id}">${esc(name)}</a><span>›</span><span>준비 체크리스트</span></nav>
+<header class="hero slim"><p class="eyebrow">${x.f ? x.f + " " : ""}${esc(name)} 여행</p><h1>${esc(name)} 여행 준비 체크리스트</h1></header>
+${keywordBar(x, "packing")}<section class="answer"><h2>출발 전, 이것만 순서대로 확인하세요</h2><p>체크한 항목은 이 기기에만 저장됩니다. 아래 버튼으로 PDF로 저장하거나 인쇄할 수 있어요.</p></section>
+${groups.map(([h, items], gi) => `<section class="card"><h2>${esc(h)}</h2><ul class="ck">${items.map((t, i) => `<li><label><input type="checkbox" data-ck="${x.id}-${gi}-${i}"> <span>${esc(t)}</span></label></li>`).join("")}</ul></section>`).join("\n")}
+<div class="bookgrid auto noprint"><button class="bookbtn" type="button" onclick="window.print()">PDF로 저장·인쇄</button><a class="bookbtn" href="/trips/${x.id}">${esc(name)} 여행 정보</a></div>
+<section class="card alert-sub" data-kt-alert data-d="${x.id}" data-name="${esc(name)}"${x.cur && x.cur !== "KRW" && INFO.fx.r[x.cur] ? ` data-cur="${x.cur}" data-unit="${esc(curLabel(x.cur, unitFor(x.cur)))}" data-rate="${(unitFor(x.cur) / INFO.fx.r[x.cur]).toFixed(2)}"` : ""} hidden></section>
+<p class="trust">입국 정보: ${esc(INFO.visaSrc)}. 규정은 바뀔 수 있으니 출발 직전 공식 안내로 다시 확인하세요. <a href="/about">출처·업데이트 기준 →</a></p>
+<p class="fine">마지막 수정 ${TODAY} · KeywordTrip</p>
+</main>
+<script>document.querySelectorAll("[data-ck]").forEach(c=>{try{c.checked=localStorage.getItem("ck:"+c.dataset.ck)==="1"}catch(e){}c.addEventListener("change",()=>{try{localStorage.setItem("ck:"+c.dataset.ck,c.checked?"1":"0")}catch(e){}})})</script>
+<script src="/assets/site-config.js" defer></script><script src="/assets/alerts.js" defer></script>
 </body>
 </html>
 `;
@@ -397,6 +479,10 @@ if (a > 0) {
   idx = idx.slice(0, a) + navStart + `\n          <a href="/trips"><b>전체 여행지 ${DEST.length}곳</b></a>` + curated.map(d => `<a href="/trips/${d.id}">${esc(d.city)}</a>`).join("") + "\n        " + idx.slice(b);
   fs.writeFileSync(path.join(root, idxPath), idx);
 }
+
+/* ---- write checklists ---- */
+const ckUrls = [];
+for (const id of checklistIds()) { const x = byId.get(id); if (!x) continue; write(`trips/${id}/checklist.html`, checklistPage(x)); ckUrls.push(`trips/${id}/checklist`); }
 
 /* ---- write core topic pages + search Q&A index ---- */
 const coreUrls = [], qaIndex = [];
@@ -419,9 +505,11 @@ const sm = [
   entry("", "daily", "1.0"), entry("trips", "weekly", "0.9"),
   ...curated.map(d => entry("trips/" + d.id, "weekly", "0.8")),
   ...coreUrls.map(u => entry(u, "weekly", "0.7")),
+  ...ckUrls.map(u => entry(u, "monthly", "0.6")),
   ...countries.filter(d => !DUP[d.id]).map(d => entry("trips/" + d.id, "weekly", "0.6")),
   ...guides.map(g => entry(g, "monthly", "0.6")),
   entry("about", "monthly", "0.4"),
+  entry("privacy", "yearly", "0.2"),
 ];
 write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sm.join("\n")}\n</urlset>\n`);
 

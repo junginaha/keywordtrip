@@ -206,6 +206,7 @@ function renderInfo(x){
   h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p><p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
   h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 · ${fxSrcText(x.cur)}. 은행 매매기준율과 같은 개념의 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
   if(tips.length) h+=`<section><h4 class="h-tip">키워드트립 팁</h4><ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul></section>`;
+  if(x.cc!=="KR") h+=`<p class="src"><a href="/trips/${x.id}#alert" style="color:var(--pink)">${x.city} 입국 규정·환율 바뀌면 알림 받기 →</a></p>`;
   $("#info").innerHTML=h;
   if(rl){
     const r=INFO.fx.r[x.cur], K=$("#cvK"), Lc=$("#cvL");

@@ -123,3 +123,17 @@ body,html{overflow-x:hidden}
 .more[open]{padding-bottom:20px}
 .more .kwbar{margin-top:0}
 .more .faq{margin-top:24px}
+/* alert subscription + visitor Q&A (reuses card/bookbtn styles) */
+.alert-sub[hidden],[data-kt-qa][hidden]{display:none}
+.al-form{display:grid;gap:10px;margin-top:12px;position:relative}
+.al-row{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--body);line-height:1.5}
+.al-row input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--pink)}
+.al-in{width:100%;min-height:48px;padding:12px 14px;border-radius:12px;border:1.5px solid #33405F;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.al-in:focus{outline:none;border-color:var(--pink)}
+.al-num{width:6.5em;min-height:36px;margin:0 4px;padding:4px 8px;border-radius:8px;border:1.5px solid #33405F;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.al-terms{font-size:13px;color:var(--muted)}.al-terms summary{cursor:pointer;margin-left:30px}.al-terms p{margin:6px 0 0 30px!important;font-size:13px!important;color:var(--muted)!important;line-height:1.6}
+.al-terms a{color:var(--cyan)}
+.al-msg{min-height:1.4em;margin:0!important;font-size:14px!important;color:var(--cyan)!important}
+button.bookbtn{font:inherit;font-weight:800;font-size:14px;background:transparent;color:var(--ink);cursor:pointer}
+button.bookbtn:disabled{opacity:.5}
+@media print{.crumb,.kwbar,.book,.alert-sub,[data-kt-qa],.cta,.sub,.rel,.trust,.fine,.noprint{display:none!important}body{background:#fff;color:#000}.card,.answer{border:1px solid #999;background:#fff}.card p,.answer p,.ck li{color:#000!important}.hero h1{color:#000}}
