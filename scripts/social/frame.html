@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C1020;--ink:#F2F3F8;--muted:#A3A9C2;--pink:#FF1FAF;--green:#39FF14;--cyan:#2DE2FF;--yellow:#FFE600;--line:#252C45;
+  --display:"Black Han Sans","Noto Sans CJK KR","Noto Sans KR",sans-serif;--body:"Noto Sans KR","Noto Sans CJK KR",sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1920px;background:var(--bg);color:var(--ink);font-family:var(--body);word-break:keep-all;overflow:hidden}
+.f{position:relative;width:1080px;height:1920px;padding:150px 90px 0;display:flex;flex-direction:column}
+.f::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 700px at 85% 8%,rgba(255,31,175,.22),transparent 60%),radial-gradient(800px 600px at 0% 100%,rgba(45,226,255,.14),transparent 60%);pointer-events:none}
+.brand{position:relative;display:flex;align-items:center;gap:18px;font-family:var(--display);font-size:46px}
+.brand i{width:20px;height:20px;border-radius:50%;background:var(--green);box-shadow:0 0 24px var(--green)}
+.brand small{font-family:var(--body);font-size:30px;color:var(--muted);font-weight:500;margin-left:auto}
+.tag{position:relative;margin-top:200px;font-size:40px;font-weight:700;color:var(--pink);letter-spacing:.02em}
+/* sticky-note hook */
+.note{position:relative;margin:300px auto 0;width:880px;min-height:620px;padding:110px 80px;background:#F6B8C8;color:#3A2430;border-radius:6px;transform:rotate(-3deg);
+  box-shadow:0 40px 80px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--display);font-size:104px;line-height:1.18;
+  background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1.5px);background-size:9px 9px}
+.note::before,.note::after{content:"";position:absolute;width:240px;height:84px;background:rgba(245,228,180,.92);box-shadow:0 4px 10px rgba(0,0,0,.15)}
+.note::before{top:-34px;right:40px;transform:rotate(28deg)}
+.note::after{bottom:-30px;left:30px;transform:rotate(-30deg)}
+.note b{color:var(--pink);font-weight:400}
+.sub{position:relative;text-align:center;margin-top:120px;font-size:42px;color:var(--muted)}
+/* answer */
+.q{position:relative;margin-top:60px;font-size:62px;font-weight:900;line-height:1.35}
+.a{position:relative;margin-top:70px;padding:56px 60px;border-left:12px solid var(--pink);background:rgba(17,23,42,.92);border-radius:0 36px 36px 0;font-size:58px;line-height:1.62;font-weight:500}
+.a em{font-style:normal;color:var(--green);font-weight:900}
+.page{position:relative;margin-top:44px;font-size:34px;color:var(--muted)}
+/* big number */
+.big{position:relative;margin-top:150px;font-family:var(--display);font-size:150px;line-height:1.1;color:var(--green);text-shadow:0 0 50px rgba(57,255,20,.45)}
+.big small{display:block;font-size:84px;color:var(--ink);text-shadow:none;margin-bottom:24px}
+.meta{position:relative;margin-top:60px;font-size:36px;color:var(--muted);line-height:1.5}
+.grid{position:relative;margin-top:80px;display:grid;gap:28px}
+.grid div{display:flex;justify-content:space-between;align-items:baseline;padding:40px 48px;border:2px solid var(--line);border-radius:30px;background:rgba(17,23,42,.9);font-size:50px}
+.grid b{font-weight:900}.grid span{font-family:var(--display);font-size:62px;color:var(--cyan)}
+/* list */
+.list{position:relative;margin-top:56px;display:grid;gap:20px}
+.list div{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:6px 10px;padding:26px 44px;border:2px solid var(--line);border-radius:30px;background:rgba(17,23,42,.9)}
+.list i{font-style:normal;font-family:var(--display);font-size:64px;color:var(--pink)}
+.list b{font-size:56px;font-weight:900}.list small{grid-column:2;font-size:36px;color:var(--muted);margin-top:4px}
+/* chips + cta */
+.h2{position:relative;margin-top:130px;font-family:var(--display);font-size:92px;line-height:1.2}
+.chips{position:relative;margin-top:70px;display:flex;flex-wrap:wrap;gap:22px}
+.chips span{padding:26px 42px;border-radius:999px;border:3px solid #33405F;background:rgba(17,23,42,.9);font-size:50px;font-weight:700}
+.chips span.on{background:var(--pink);border-color:var(--pink);color:var(--bg)}
+.search{position:relative;margin-top:120px;display:flex;align-items:center;gap:30px;padding:0 10px 30px;border-bottom:8px solid var(--green);box-shadow:0 30px 40px -30px rgba(57,255,20,.6)}
+.search svg{width:84px;height:84px;stroke:var(--green);stroke-width:2.6;fill:none}
+.search span{font-family:var(--display);font-size:72px}
+.url{position:relative;margin-top:110px;font-family:var(--display);font-size:96px;color:var(--pink);text-shadow:0 0 40px rgba(255,31,175,.5)}
+.bio{position:relative;margin-top:30px;font-size:44px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hi=s=>esc(s).replace(/(\d[\d,.~·]*\s?(?:엔|원|동|바트|달러|유로|분|시간|일|월|km|%|싱가포르달러|홍콩달러|대만달러|페소|V)?)/g,"<em>$1</em>");
+const brand=`<div class="brand"><i></i>키워드트립<small>keywordtrip.com</small></div>`;
+const R={
+  hook:d=>`<div class="f">${brand}<p class="tag">${esc(d.tag||"여행 질문")}</p><div class="note">${esc(d.text).replace(/\?$/,'<b>?</b>')}</div><p class="sub">${esc(d.sub||"10초 답 →")}</p></div>`,
+  answer:d=>`<div class="f">${brand}<p class="tag">${esc(d.tag)}</p><p class="q">${esc(d.q)}</p><p class="a">${hi(d.a)}</p>${d.page?`<p class="page">${esc(d.page)}</p>`:""}</div>`,
+  big:d=>`<div class="f">${brand}<p class="tag">${esc(d.tag)}</p><p class="big"><small>${esc(d.lead)}</small>${esc(d.value)}</p><p class="meta">${esc(d.meta)}</p></div>`,
+  grid:d=>`<div class="f">${brand}<p class="tag">${esc(d.tag)}</p><p class="q">${esc(d.title)}</p><div class="grid">${d.rows.map(r=>`<div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")}</div><p class="meta">${esc(d.meta||"")}</p></div>`,
+  list:d=>`<div class="f">${brand}<p class="tag">${esc(d.tag)}</p><p class="q">${esc(d.title)}</p><div class="list">${d.rows.map((r,i)=>`<div><i>${i+1}</i><b>${esc(r[0])}</b><small>${esc(r[1])}</small></div>`).join("")}</div></div>`,
+  cta:d=>`<div class="f">${brand}<p class="h2">${esc(d.title||"더 궁금한 건\n검색 한 번으로").replace(/\n/g,"<br>")}</p>${d.chips?`<div class="chips">${d.chips.map((c,i)=>`<span class="${i===0?"on":""}">${esc(c)}</span>`).join("")}</div>`:""}<div class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg><span>${esc(d.query)}</span></div><p class="url">keywordtrip.com</p><p class="bio">프로필 링크에서 바로 검색</p></div>`,
+};
+const d=JSON.parse(decodeURIComponent(location.hash.slice(1)));
+document.getElementById("root").innerHTML=R[d.type](d);
+</script>
+</body>
+</html>

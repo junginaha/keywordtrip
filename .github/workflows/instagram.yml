@@ -1,0 +1,71 @@
+name: Instagram reel
+on:
+  schedule:
+    - cron: "40 9 * * *"   # 18:40 KST daily (after the 12:17 FX refresh)
+  workflow_dispatch:
+    inputs:
+      format:
+        description: "fx | qa | best (blank = weekday schedule)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram
+  cancel-in-progress: false
+
+jobs:
+  reel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fonts, ffmpeg, Chromium
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk ffmpeg >/dev/null
+          npm i --no-save playwright@1 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Make today's reel
+        env:
+          FORMAT: ${{ github.event.inputs.format }}
+        run: node scripts/social/make.mjs
+      - name: Commit reel (served at keywordtrip.com/social/)
+        run: |
+          git config user.name "keywordtrip-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add social
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(social): reel $(TZ=Asia/Seoul date +%F)"
+          git pull --rebase -q origin main && git push -q
+      - name: Publish to Instagram
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: node scripts/social/publish.mjs
+      - name: Record publish result
+        run: |
+          git add social
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(social): published $(TZ=Asia/Seoul date +%F)"
+          git pull --rebase -q origin main && git push -q
+
+  refresh-token:
+    # Instagram long-lived tokens last 60 days; refresh weekly. Needs GH_PAT (repo secrets write) to store the new token.
+    if: github.event_name == 'schedule' && github.event.schedule == '40 9 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh token on Mondays
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          [ "$(TZ=Asia/Seoul date +%u)" = "1" ] || exit 0
+          [ -n "$IG_ACCESS_TOKEN" ] || { echo "no token"; exit 0; }
+          NEW=$(curl -fsS "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=$IG_ACCESS_TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin).get('access_token',''))")
+          [ -n "$NEW" ] || { echo "::warning::token refresh failed — renew IG_ACCESS_TOKEN"; exit 0; }
+          if [ -n "$GH_TOKEN" ]; then gh secret set IG_ACCESS_TOKEN --repo "$GITHUB_REPOSITORY" --body "$NEW" && echo "token refreshed"; else echo "::warning::GH_PAT not set — token refreshed upstream but not stored"; fi

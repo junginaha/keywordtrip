@@ -2,3 +2,4 @@
 *.md
 scripts/
 .github/
+social/state.json
