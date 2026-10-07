@@ -418,8 +418,4 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .flink{all:unset;cursor:pointer;color:var(--pink);font-size:13px;margin-left:8px;text-decoration:underline;text-underline-offset:3px}
 @media (max-width:360px){.fchip,.fsel{padding:0 11px;font-size:13.5px}.fbar{padding-left:18px;padding-right:18px}}
 .fchip[data-v=""][aria-pressed=true]{background:0 0;color:var(--ink);border-color:#3a4566;font-weight:500}
-/* 헤더: 제목 | 시계·여행최적화 버튼, 아래 줄에 태그라인 전체 폭 */
-header.top{row-gap:6px;align-items:center}
-header.top .brand{display:contents}
-header.top .brand-line{grid-column:1/-1;grid-row:2;margin-top:0}
-header.top .topr{grid-column:2;grid-row:1;gap:6px}
+@media (max-width:352px){.findbtn .fbt{display:none}.findbtn{padding:0 8px}}
