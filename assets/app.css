@@ -424,3 +424,4 @@ footer{font-size:13px;line-height:1.7}
 .ans-fold>summary::-webkit-details-marker{display:none}
 .ans-fold>summary::after{content:"+";color:var(--pink)}.ans-fold[open]>summary::after{content:"−"}
 .ans-fold .ans-k{margin-top:10px}
+.about-body p,.legend-l li{word-break:keep-all;text-wrap:pretty}
