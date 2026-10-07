@@ -13,8 +13,7 @@ const noBook = x => isBan(x) || x.cc === "KP"; // no booking CTA where Korean na
 const bookHtml = (x, name) => noBook(x) ? "" : `<section class="card book" aria-label="${esc(name)} 예약">
 <h2>${esc(name)}, 실제로 떠난다면</h2>
 <div class="bookgrid">${[["flights", "항공권 가격"], ["stay", "숙소 가격"], ["activity", "투어·입장권"]].map(([k, l]) => `<a class="bookbtn" href="${esc(AFF.LINKS[k](x))}" target="_blank" rel="${AFF.REL}" data-p="${k}" data-d="${esc(x.id)}">${l}</a>`).join("")}</div>
-<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p>
-</section>
+${AFF.DISCLOSURE ? `<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p>\n` : ""}</section>
 <script>document.querySelectorAll(".bookbtn").forEach(a=>a.addEventListener("click",()=>{try{navigator.sendBeacon("/api/outbound",new Blob([JSON.stringify({provider:a.dataset.p,destination:a.dataset.d})],{type:"application/json"}))}catch(e){}}))</script>
 `;
 const { DEST, INFO, CUR } = new Function(fs.readFileSync(path.join(root, "assets/data.js"), "utf8") + ";return {DEST,INFO,CUR};")();
@@ -312,7 +311,7 @@ function topicPage(c, t) {
   if (t.key === "hotels") cta = cities.map(x => `<div class="cm"><h3>${esc(x.city)}</h3><p class="areas">${(d.areas?.[x.id] || []).map(a => `<span>${esc(a)}</span>`).join("")}</p><div class="bookgrid auto">${hotelCta(x.id, `${x.en} hotel`, `${x.city} 호텔 보기`)}</div></div>`).join("");
   else if (t.key === "transportation") cta = `<div class="bookgrid auto">${cities.map(x => flightCta(x.id, x.city)).join("")}</div>`;
   else if (["weather", "entry", "esim", "prices", "packing", "exchange-rate"].includes(t.key)) cta = `<div class="bookgrid auto">${flightCta(cities[0]?.id || c.id, cities[0]?.city || name)}${hotelCta(cities[0]?.id || c.id, `${(cities[0] || home).en} hotel`, `${(cities[0] || home).city} 호텔 보기`)}</div>`;
-  const ctaHtml = cta && !noBook(home) ? `<section class="card book" aria-label="예약"><h2>${t.key === "hotels" ? "지역을 정했다면" : t.key === "transportation" ? "항공편 확인" : "떠날 준비가 됐다면"}</h2>${cta}<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p></section>\n${beacon}\n` : "";
+  const ctaHtml = cta && !noBook(home) ? `<section class="card book" aria-label="예약"><h2>${t.key === "hotels" ? "지역을 정했다면" : t.key === "transportation" ? "항공편 확인" : "떠날 준비가 됐다면"}</h2>${cta}${AFF.DISCLOSURE ? `<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p>` : ""}</section>\n${beacon}\n` : "";
   const ld = { "@context": "https://schema.org", "@graph": [
     { "@type": "WebPage", "@id": u + "#webpage", url: u, name: title, description: desc, inLanguage: "ko-KR", dateModified: TODAY, about: { "@type": "Country", name: `${name} (${home.en})` }, breadcrumb: { "@id": u + "#breadcrumb" }, isPartOf: { "@id": HOST + "/#website" } },
     { "@type": "BreadcrumbList", "@id": u + "#breadcrumb", itemListElement: [

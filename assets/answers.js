@@ -57,7 +57,7 @@
     const [cc, cityId] = d.place, c = country(cc); if (!c) return "";
     const target = cityId || cc, ci = QA.cities[target] || QA.cities[cc];
     if (!d.topic) {
-      const fl = d.flight ? `<div class="ans-x">${cta("flight", target)}</div><p class="ans-disc">${esc(window.KTAffiliate ? KTAffiliate.DISCLOSURE : "")}</p>` : "";
+      const fl = d.flight ? `<div class="ans-x">${cta("flight", target)}</div>${window.KTAffiliate && KTAffiliate.DISCLOSURE ? `<p class="ans-disc">${esc(KTAffiliate.DISCLOSURE)}</p>` : ""}` : "";
       return `<li class="ans"><p class="ans-t">${esc(ci ? ci.n : c[1])} 여행</p><p class="ans-q">무엇이 궁금하세요?</p><div class="ans-k">${chips(cc)}</div><div class="ans-x"><a class="ans-more" href="/trips/${esc(target)}">${esc(ci ? ci.n : c[1])} 한눈에 보기 →</a></div>${fl}</li>`;
     }
     const pool = QA.qa.filter(o => o.c === cc && o.t === d.topic);
@@ -77,7 +77,7 @@
     const label = QA.topics.find(t => t[0] === d.topic)[1];
     return `<li class="ans"><p class="ans-t">${esc(c[1])} · ${esc(label)}</p><p class="ans-q">${esc(top.q)}</p><p class="ans-a">${esc(liveAnswer(top))}</p>
 <div class="ans-k">${chips(cc, d.topic)}</div>
-<div class="ans-x"><a class="ans-more" href="${esc(top.u)}">자세히 보기 →</a>${ctaHtml}</div>${ctaHtml ? `<p class="ans-disc">${esc(KTAffiliate.DISCLOSURE)}</p>` : ""}
+<div class="ans-x"><a class="ans-more" href="${esc(top.u)}">자세히 보기 →</a>${ctaHtml}</div>${ctaHtml && KTAffiliate.DISCLOSURE ? `<p class="ans-disc">${esc(KTAffiliate.DISCLOSURE)}</p>` : ""}
 ${rel.length ? `<ul class="ans-rel">${rel.map(o => `<li><a href="${esc(o.u)}">${esc(o.q)}</a></li>`).join("")}</ul>` : ""}</li>`;
   };
 

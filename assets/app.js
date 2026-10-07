@@ -301,7 +301,6 @@ function renderBooking(x){
   const noBook=isBan(x)||x.cc==="KP";
   const box=$("#bookbox"); if(box) box.hidden=noBook;
   if(noBook) return;
-  const disc=document.querySelector("#bookbox .bookdisc"); if(disc) disc.textContent=window.KTAffiliate.DISCLOSURE;
   const links=[
     ["flightA","flights",PARTNER_LINKS.flights(x)],
     ["stayA","stay",PARTNER_LINKS.stay(x)],

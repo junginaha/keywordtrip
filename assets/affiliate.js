@@ -34,8 +34,8 @@
 
   // Rel for every commission link (Google requires rel="sponsored" on paid links).
   var REL = "sponsored nofollow noopener";
-  // User-facing disclosure required by the KFTC endorsement guideline.
-  var DISCLOSURE = "예약 버튼은 " + (KLOOK_ON ? "트립닷컴·클룩" : "트립닷컴") + " 제휴 링크입니다. 이 링크로 예약하시면 키워드트립이 소정의 수수료를 받으며, 예약 가격은 같습니다.";
+  // No per-button disclosure line (owner decision 2026-10-07); general affiliate notice lives on /about.
+  var DISCLOSURE = "";
 
   g.KTAffiliate = { LINKS: LINKS, REL: REL, DISCLOSURE: DISCLOSURE, trip: trip, KLOOK_ON: KLOOK_ON };
 })(typeof globalThis !== "undefined" ? globalThis : window);
