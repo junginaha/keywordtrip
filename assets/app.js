@@ -74,6 +74,7 @@ function renderChips(){
 function chipOk(x){
   if(bestOnly&&!isBest(x)) return false;
   if(clsF&&classOf(x)!==clsF) return false;
+  if(window.KTF&&!KTF.ok(x)) return false;
   return true;
 }
 let searchNote="";
@@ -87,12 +88,15 @@ function mixByCountry(list){
 function renderList(){
   const base=DEST.filter(chipOk);
   let items=base, ranked=false; searchNote="";
+  const fin=!!(window.KTF&&KTF.active);
   if(query){const r=KTSearch(query,base);items=r.items;ranked=r.ranked;searchNote=r.note}
+  else if(fin){const t=KTF.text;let pool=base;if(t){const r=KTSearch(t,base);if(r.items.length)pool=r.items}const sc=new Map(pool.map((x,i)=>[x.id,KTF.score(x)-i*0.001]));items=[...pool].sort((a,b)=>sc.get(b.id)-sc.get(a.id));ranked=true}
   const ans=query&&window.KTAnswer?KTAnswer(query):"";
   $("#empty").hidden=items.length>0||!!ans;
-  const active=!!query||bestOnly||!!clsF;
+  const active=!!query||bestOnly||!!clsF||fin;
   $("#poster").hidden=active;
-  $("#count").innerHTML=active?`<b>${items.length}곳</b>${searchNote?` <span class="snote">${searchNote}</span>`:""}`:"";
+  $("#count").innerHTML=active?`<b>${items.length}곳</b>${searchNote?` <span class="snote">${searchNote}</span>`:""}${fin?` <span class="fsum">${KTF.summary().join(" · ")}</span> <button type="button" class="flink" id="fEdit">변경</button><button type="button" class="flink" id="fClear">해제</button>`:""}`:"";
+  if(fin){$("#fEdit").onclick=()=>KTF.open();$("#fClear").onclick=()=>KTF.clear()}
   const REG=["아시아","중동","유럽","아프리카","북미","중남미","오세아니아","남극"];
   const cur0=mixByCountry(items.filter(x=>!x.country)), cs=items.filter(x=>x.country).sort((a,b)=>(REG.indexOf(a.reg)-REG.indexOf(b.reg))||a.city.localeCompare(b.city,"ko"));
   const row=x=>{const c=classOf(x);return `
@@ -105,17 +109,17 @@ function renderList(){
   </li>`};
   let html="";
   if(ranked){
-    html=ans+(items.length?`<li class="divider pinkd"><h2>검색 결과</h2><span>${items.length}곳</span></li>`+items.map(row).join(""):"");
+    html=ans+(items.length?`<li class="divider pinkd"><h2>${query?"검색 결과":"맞춤 여행지"}</h2></li>`+items.map(row).join(""):"");
     if(io) io.disconnect();
     $("#list").innerHTML=html; watchTimes(); lastListTick=0;
     $("#list").querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>openSheet(b.dataset.id,b));
     return;
   }
   html+=ans;
-  if(cur0.length) html+=`<li class="divider pinkd"><h2>키워드트립 추천 도시</h2><span>${cur0.length}곳</span></li>`+cur0.map(row).join("");
+  if(cur0.length) html+=`<li class="divider pinkd"><h2>키워드트립 추천 도시</h2></li>`+cur0.map(row).join("");
   let last="";
-  if(cs.length) html+=`<li class="divider"><h2>모든 국가·지역</h2><span>${cs.length}곳</span></li>`;
-  for(const x of cs){ if(x.reg!==last){last=x.reg;html+=`<li class="regh"><span>${x.reg}</span><span>${cs.filter(i=>i.reg===x.reg).length}</span></li>`} html+=row(x) }
+  if(cs.length) html+=`<li class="divider"><h2>모든 국가·지역</h2></li>`;
+  for(const x of cs){ if(x.reg!==last){last=x.reg;html+=`<li class="regh"><span>${x.reg}</span></li>`} html+=row(x) }
   if(io) io.disconnect();
   $("#list").innerHTML=html; watchTimes(); lastListTick=0;
   $("#list").querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>openSheet(b.dataset.id,b));
@@ -228,7 +232,8 @@ function renderWant(x){
   const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), ask=$("#askStep"), form=$("#subForm"), done=$("#wantDone");
   box.hidden=!CURATED_IDS.has(x.id);
   if(box.hidden) return;
-  const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
+  const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on));$("#wantFind").hidden=!(on&&window.KTF)};
+  $("#wantFind").onclick=()=>{closeSheet();setTimeout(()=>KTF.open(),280)};
   const show=el=>{panel.hidden=!el;[ask,form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
   $("#askQ").textContent=`${x.city} 여행에 꼭 필요한 정보가 바뀌면 알려드릴까요?`;

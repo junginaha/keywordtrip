@@ -73,7 +73,8 @@
 <div class="wrap">
   <header class="top">
     <h1 class="brand">키워드트립<span class="brand-line"><span class="item"><i class="dot pink"></i>흩어진 여행정보</span><span class="item"><i class="dot cyan"></i>꼭 필요한 선별</span><span class="item"><i class="dot green"></i>여행 큐레이션</span></span></h1>
-    <span class="live"><i></i><span id="seoul">서울</span></span>
+    <div class="topr"><span class="live"><i></i><span id="seoul">서울</span></span>
+    <button type="button" class="findbtn" id="findBtn" aria-haspopup="dialog" aria-controls="finder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>맞춤<b></b></button></div>
   </header>
   <details class="about" id="about">
     <summary>키워드트립 소개</summary>
@@ -175,6 +176,16 @@
   </div>
 </div>
 <div class="scrim" id="scrim"></div>
+<div class="scrim" id="fScrim"></div>
+<section class="sheet fsheet" id="finder" role="dialog" aria-modal="true" aria-labelledby="fTitle" aria-hidden="true">
+  <div class="grab"></div>
+  <div class="inner">
+    <div class="fhead"><h2 id="fTitle">맞춤 찾기</h2><button type="button" class="x" id="fClose" aria-label="닫기">✕</button></div>
+    <div id="fBody"></div>
+    <p class="fnote">예산·비행시간은 서울 출발 기준 대략값입니다.</p>
+  </div>
+  <div class="fbar"><button type="button" class="freset" id="fReset" hidden>초기화</button><button type="button" class="fgo" id="fGo">전체 보기</button></div>
+</section>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle" aria-hidden="true">
   <div class="band" id="band"><div class="grab"></div>
   <div class="inner">
@@ -197,6 +208,7 @@
     <div class="info" id="info"></div>
     <section class="wantbox" id="wantbox" hidden>
       <button class="wantbtn" id="wantBtn" type="button" aria-pressed="false">♡ 가고 싶어요</button>
+      <button class="wantfind" id="wantFind" type="button" hidden>나에게 맞는 여행지 찾기 →</button>
       <div class="wantpanel" id="wantPanel" hidden>
         <div id="askStep">
           <p class="wantq" id="askQ"></p>
@@ -232,6 +244,7 @@
 <script src="/assets/search.js" defer></script>
 <script src="/assets/affiliate.js" defer></script>
 <script src="/assets/answers.js" defer></script>
+<script src="/assets/finder.js" defer></script>
 <script src="/assets/app.js" defer></script>
 </body>
 </html>
