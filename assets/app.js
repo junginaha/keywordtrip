@@ -61,7 +61,7 @@ function fxTimeText(){return fmt("Asia/Seoul",{month:"long",day:"numeric",hour:"
 /* list */
 let region="전체", bestOnly=false, query="";
 const STOP=["여행","가고","싶어","싶다","추천","곳","나라","어디","좋은","알려줘","찾아줘"];
-const SUGGEST=["무비자","달러","유로","오지","섬","해변","맛집","자연","역사","야경","유럽","아시아","중동","아프리카","중남미","오세아니아"];
+const SUGGEST=["해변","맛집","자연","야경","동남아","유럽"];
 const FOOD=["쿠시카츠","똠얌","반미","타코","타파스","에그타르트","젤라토","베이글","포케","흑돼지","브런치","먹다","크루아상","야시장"];
 const SEA=["비치","서핑","본다이","해변","스노클","지중해","파도"];
 const ALIAS={"오지":["오지","절해고도","세상끝마을","배로만","인구50명","극지크루즈","원시","미개척","남극","북극곰","외딴"],"섬":["섬","제도","환초","라군"],"해변":SEA,"바다":SEA,"맛집":FOOD,"음식":FOOD,
@@ -92,7 +92,8 @@ function renderList(){
   const base=DEST.filter(chipOk);
   let items=base, ranked=false; searchNote="";
   if(query){const r=KTSearch(query,base);items=r.items;ranked=r.ranked;searchNote=r.note}
-  $("#empty").hidden=items.length>0;
+  const ans=query&&window.KTAnswer?KTAnswer(query):"";
+  $("#empty").hidden=items.length>0||!!ans;
   const active=!!query||bestOnly||!!clsF;
   $("#poster").hidden=active;
   $("#count").innerHTML=active?`<b>${items.length}곳</b>${searchNote?` <span class="snote">${searchNote}</span>`:""}`:"";
@@ -108,12 +109,13 @@ function renderList(){
   </li>`};
   let html="";
   if(ranked){
-    html=`<li class="divider pinkd"><h2>검색 결과</h2><span>${items.length}곳</span></li>`+items.map(row).join("");
+    html=ans+(items.length?`<li class="divider pinkd"><h2>검색 결과</h2><span>${items.length}곳</span></li>`+items.map(row).join(""):"");
     if(io) io.disconnect();
     $("#list").innerHTML=html; watchTimes(); lastListTick=0;
     $("#list").querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>openSheet(b.dataset.id,b));
     return;
   }
+  html+=ans;
   if(cur0.length) html+=`<li class="divider pinkd"><h2>키워드트립 추천 도시</h2><span>${cur0.length}곳</span></li>`+cur0.map(row).join("");
   let last="";
   if(cs.length) html+=`<li class="divider"><h2>모든 국가·지역</h2><span>${cs.length}곳</span></li>`;
@@ -386,6 +388,8 @@ function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.ad
 })();
 const dock=$("#dock"); if(dock) dock.addEventListener("submit",e=>e.preventDefault());
 
+/* question answers (lazy) */
+if(window.KTQA){KTQA.onReady(()=>{if(query)renderList()});$("#q").addEventListener("focus",()=>KTQA.load(),{once:true});if(new URLSearchParams(location.search).get("q"))KTQA.load()}
 /* init */
 document.querySelectorAll("[data-curated-count]").forEach(e=>e.textContent=DEST.filter(d=>!d.country).length);
 document.querySelectorAll("[data-tcc-count]").forEach(e=>e.textContent=DEST.filter(d=>d.country).length);

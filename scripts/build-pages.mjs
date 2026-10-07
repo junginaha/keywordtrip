@@ -2,6 +2,7 @@
 // from assets/data.js. Run: node scripts/build-pages.mjs
 import fs from "node:fs";
 import path from "node:path";
+import { CORE, TOPICS, AIRPORT, TOPIC_WORDS, FLIGHT_WORDS } from "./data/core.mjs";
 
 const root = process.cwd();
 const HOST = "https://keywordtrip.com";
@@ -173,7 +174,7 @@ ${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
 <p class="kw">${x.kw.map(k => `<span>${esc(k)}</span>`).join("")}</p>
 <p class="hook">${esc(lead)}</p>
 </header>
-${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
+${keywordBar(x)}${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
 <div><dt>입국 (한국 여권)</dt><dd><i class="dot" style="--vc:${CLS[vc].hex}"></i>${esc(status)}</dd></div>
 <div><dt>여행 적기</dt><dd>${esc(best)}</dd></div>
 <div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${fxSpan(x)} · <span data-fx-when>${fxDate}</span> 기준</small>` : ""}</dd></div>
@@ -190,7 +191,6 @@ ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국�
 <p class="badge" style="--vc:${CLS[vc].hex}">${esc(status)}</p>
 <p>${esc(visa)}</p>
 <p class="offl"><span>공식 확인처</span>${officialOf(x).map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</p>
-<p class="checked">최종 확인 ${INFO.rev ? INFO.rev.replace(/-/g, ".") : TODAY} · 출발 직전 공식 안내로 다시 확인하세요.</p>
 </section>
 ${x.cur && x.cur !== "KRW" ? `<section class="card">
 <h2>돈과 결제</h2>
@@ -265,6 +265,106 @@ ${byReg.map(([r, a]) => `<section class="dir"><h2>${r} <small>${a.length}곳</sm
 `;
 }
 
+/* ---- core destinations: keyword topics & question pages ---- */
+const byId = new Map(DEST.map(d => [d.id, d]));
+const CORE_BY = new Map(CORE.map(c => [c.id, c]));
+const coreOf = x => CORE_BY.get(x.id) || (!x.country ? CORE.find(c => c.cities.includes(x.id)) : (x.country && !x.sub && CORE_BY.get(x.cc.toLowerCase()) && x.id === x.cc.toLowerCase() ? CORE_BY.get(x.id) : null));
+const topicUrl = (c, k) => `/trips/${c.id}/${k}`;
+const qid = q => "q-" + [...q].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7).toString(36);
+function keywordBar(x, cur) {
+  const c = coreOf(x); if (!c) return "";
+  const chips = TOPICS.map(t => `<a href="${topicUrl(c, t.key)}"${cur === t.key ? ' aria-current="page"' : ""}>${t.label}</a>`);
+  if (c.grab) chips.splice(4, 0, `<a href="${topicUrl(c, "transportation")}#grab">Grab</a>`);
+  return `<nav class="kwbar" aria-label="${esc(c.name)} 여행 핵심 키워드">${chips.join("")}</nav>\n`;
+}
+const flightCta = (id, label) => AIRPORT[id] ? `<a class="bookbtn" href="${esc(AFF.trip(`/flights/airport-icn-${AIRPORT[id]}/`, `flight-${id}`))}" target="_blank" rel="${AFF.REL}" data-p="flights" data-d="${esc(id)}">서울 → ${esc(label)} 항공편 확인</a>` : "";
+const hotelCta = (id, kw, label) => `<a class="bookbtn" href="${esc(AFF.trip("/global-search/searchlist/search", `stay-${id}`, { keyword: kw }))}" target="_blank" rel="${AFF.REL}" data-p="stay" data-d="${esc(id)}">${esc(label)}</a>`;
+const beacon = `<script>document.querySelectorAll(".bookbtn").forEach(a=>a.addEventListener("click",()=>{try{navigator.sendBeacon("/api/outbound",new Blob([JSON.stringify({provider:a.dataset.p,destination:a.dataset.d})],{type:"application/json"}))}catch(e){}}))</script>`;
+
+// Full Q&A list for one topic (shared by the static page, JSON-LD and the search index)
+function topicQA(c, t) {
+  const home = byId.get(c.id), d = c.t[t.key], name = c.name, cities = c.cities.map(id => byId.get(id)).filter(Boolean);
+  const main = {
+    "exchange-rate": `${name} 환율·환전은 어떻게 하나요?`, weather: `${name} 날씨, 언제 가는 게 좋나요?`, entry: `한국인 ${name} 입국 조건은?`,
+    transportation: `${name} 공항에서 시내까지 어떻게 가나요?`, hotels: `${name} 숙소는 어느 지역이 좋나요?`, esim: `${name} 유심·eSIM은 뭘 쓰나요?`,
+    prices: `${name} 물가는 어느 정도인가요?`, safety: `${name} 여행, 안전한가요?`, packing: `${name} 여행 준비물은? 콘센트는 뭘 쓰나요?`,
+  }[t.key];
+  const out = [{ q: main, a: d.a, main: true }];
+  if (t.key === "exchange-rate" && home.cur !== "KRW") out.push({ q: `${name} 환율은 얼마인가요?`, a: `${fxDate} 기준 ${rateLine(home)}입니다(${fxSrc(home.cur)}). 은행 매매기준율과 같은 중간값이라 실제 환전·카드 결제에는 수수료가 붙습니다.`, fx: true });
+  if (t.key === "entry") out.push({ q: `한국인은 ${name}에 무비자로 갈 수 있나요?`, a: `${vShort(home)}. ${visaOf(home)}` });
+  for (const [q, a] of d.qa) out.push({ q, a, id: /grab/i.test(q) ? "grab" : undefined });
+  if (t.key === "weather") for (const x of cities) out.push({ q: `${x.city} 여행 적기는 언제인가요?`, a: `${x.city}의 일반 기후 기준 추천 시기는 ${mText(x.best)}입니다.${x.wet ? ` ${mText(x.wet)}은 우기입니다.` : ""}`, city: x.id });
+  if (t.key === "hotels" && d.areas) for (const x of cities) if (d.areas[x.id]) out.push({ q: `${x.city} 숙소는 어디가 좋나요?`, a: `${x.city}는 ${d.areas[x.id].join("·")} 쪽이 기본 선택지입니다.`, city: x.id });
+  return out;
+}
+
+function topicPage(c, t) {
+  const home = byId.get(c.id), d = c.t[t.key], name = c.name, cities = c.cities.map(id => byId.get(id)).filter(Boolean);
+  const u = HOST + topicUrl(c, t.key), qa = topicQA(c, t);
+  const title = `${name} ${t.h} | 키워드트립`;
+  const desc = `${qa[0].q} ${d.a}`.slice(0, 155);
+  let body = "";
+  if (t.key === "exchange-rate" && home.cur !== "KRW") body += `<section class="card"><h2>지금 환율</h2><p class="big"><span data-fx="${home.cur}">${esc(rateLine(home))}</span></p><p class="fxnote"><span data-fx-when>${fxDate}</span> 기준 · <span data-fx-src="${home.cur}">${esc(fxSrc(home.cur))}</span>. 실제 환전·카드 결제에는 수수료가 붙습니다.</p>${moneyOf(home) ? `<p>${esc(moneyOf(home))}</p>` : ""}</section>\n`;
+  if (t.key === "weather") body += `<section class="card"><h2>도시별 여행 적기</h2>${cities.map(x => `<div class="cm"><h3><a href="/trips/${x.id}">${esc(x.city)}</a></h3><ol class="months" aria-label="${esc(x.city)} 월별 여행 적기">${months12(x)}</ol></div>`).join("")}<p class="legend"><span class="k on"></span>적기<span class="k wet"></span>우기</p></section>\n`;
+  if (t.key === "entry") body += `<section class="card"><h2>한국 여권 기준</h2><p class="badge" style="--vc:${CLS[vt(home)[0]].hex}">${esc(vShort(home))}</p><p>${esc(visaOf(home))}</p><p class="offl"><span>공식 확인처</span>${officialOf(home).map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</p></section>\n`;
+  // booking moment only where it fits the question
+  let cta = "";
+  if (t.key === "hotels") cta = cities.map(x => `<div class="cm"><h3>${esc(x.city)}</h3><p class="areas">${(d.areas?.[x.id] || []).map(a => `<span>${esc(a)}</span>`).join("")}</p><div class="bookgrid auto">${hotelCta(x.id, `${x.en} hotel`, `${x.city} 호텔 보기`)}</div></div>`).join("");
+  else if (t.key === "transportation") cta = `<div class="bookgrid auto">${cities.map(x => flightCta(x.id, x.city)).join("")}</div>`;
+  else if (["weather", "entry", "esim", "prices", "packing", "exchange-rate"].includes(t.key)) cta = `<div class="bookgrid auto">${flightCta(cities[0]?.id || c.id, cities[0]?.city || name)}${hotelCta(cities[0]?.id || c.id, `${(cities[0] || home).en} hotel`, `${(cities[0] || home).city} 호텔 보기`)}</div>`;
+  const ctaHtml = cta && !noBook(home) ? `<section class="card book" aria-label="예약"><h2>${t.key === "hotels" ? "지역을 정했다면" : t.key === "transportation" ? "항공편 확인" : "떠날 준비가 됐다면"}</h2>${cta}<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p></section>\n${beacon}\n` : "";
+  const ld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "WebPage", "@id": u + "#webpage", url: u, name: title, description: desc, inLanguage: "ko-KR", dateModified: TODAY, about: { "@type": "Country", name: `${name} (${home.en})` }, breadcrumb: { "@id": u + "#breadcrumb" }, isPartOf: { "@id": HOST + "/#website" } },
+    { "@type": "BreadcrumbList", "@id": u + "#breadcrumb", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "키워드트립", item: HOST + "/" },
+      { "@type": "ListItem", position: 2, name: `${name} 여행`, item: HOST + "/trips/" + c.id },
+      { "@type": "ListItem", position: 3, name: `${name} ${t.label}`, item: u }] },
+    { "@type": "FAQPage", mainEntity: qa.map(o => ({ "@type": "Question", name: o.q, acceptedAnswer: { "@type": "Answer", text: o.a } })) },
+  ] };
+  const others = TOPICS.filter(o => o.key !== t.key);
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="${u}">
+<link rel="stylesheet" href="/assets/trip.css">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="KeywordTrip">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:url" content="${u}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:image" content="${HOST}/icons/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0C1020">
+<script type="application/ld+json">${JSON.stringify(ld)}</script>
+${t.key === "exchange-rate" ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
+<body>
+<main class="w">
+<nav class="crumb" aria-label="현재 위치"><a href="/">키워드트립</a><span>›</span><a href="/trips/${c.id}">${esc(name)}</a><span>›</span><span>${esc(t.label)}</span></nav>
+<header class="hero slim">
+<p class="eyebrow">${home.f ? home.f + " " : ""}${esc(name)} 여행</p>
+<h1>${esc(name)} ${esc(t.h)}</h1>
+</header>
+${keywordBar(home, t.key)}<section class="answer"><h2>${esc(qa[0].q)}</h2><p>${esc(d.a)}</p></section>
+${body}<section class="faq">
+<h2>${esc(name)} ${esc(t.label)} 자주 묻는 질문</h2>
+${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</summary><p>${esc(o.a)}</p></details>`).join("\n")}
+</section>
+${ctaHtml}<section class="rel"><h2>${esc(name)} 여행지</h2><div class="grid"><a href="/trips/${c.id}"><b>${esc(name)} 한눈에</b><small>${esc(vShort(home))}</small></a>${cities.map(x => `<a href="/trips/${x.id}"><b>${esc(x.city)}</b><small>적기 ${esc(bestSpan(x.best))}</small></a>`).join("")}</div></section>
+<p class="trust">가격·요금은 2026년 기준 대략값이며 바뀔 수 있습니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
+<p class="fine">마지막 수정 ${TODAY} · <a href="/trips/${c.id}">${esc(name)} 여행</a> · KeywordTrip</p>
+</main>
+</body>
+</html>
+`;
+}
+
 /* ---- write pages ---- */
 for (const x of DEST) write(`trips/${x.id}.html`, page(x));
 write("trips/index.html", directory());
@@ -280,12 +380,27 @@ if (a > 0) {
   fs.writeFileSync(path.join(root, idxPath), idx);
 }
 
+/* ---- write core topic pages + search Q&A index ---- */
+const coreUrls = [], qaIndex = [];
+for (const c of CORE) for (const t of TOPICS) {
+  write(`trips/${c.id}/${t.key}.html`, topicPage(c, t));
+  coreUrls.push(`trips/${c.id}/${t.key}`);
+  for (const o of topicQA(c, t)) qaIndex.push({ c: c.id, t: t.key, q: o.q, a: o.a, u: `/trips/${c.id}/${t.key}${o.main ? "" : "#" + (o.id || qid(o.q))}`, ...(o.city ? { city: o.city } : {}), ...(o.fx ? { fx: byId.get(c.id).cur } : {}), ...(o.main ? { main: 1 } : {}) });
+}
+const places = {};
+for (const c of CORE) { places[c.name] = [c.id]; for (const id of c.cities) { const x = byId.get(id); if (x) places[x.city.replace(/\s/g, "")] = [c.id, id]; } }
+Object.assign(places, { "도쿄": ["jp", "tokyo"], "동경": ["jp", "tokyo"], "홋카이도": ["jp", "sapporo"], "하와이": ["us", "honolulu"], "뉴욕": ["us", "newyork"], "la": ["us", "losangeles"], "엘에이": ["us", "losangeles"], "라스베가스": ["us", "lasvegas"], "호치민": ["vn", "hochiminh"], "사이공": ["vn", "hochiminh"], "냐짱": ["vn", "nhatrang"], "타이페이": ["tw", "taipei"], "푸켓": ["th", "phuket"], "싱가폴": ["sg", "singapore"], "로마": ["it", "rome"], "파리": ["fr", "paris"], "미국": ["us"], "일본": ["jp"], "베트남": ["vn"], "태국": ["th"], "대만": ["tw"], "필리핀": ["ph"], "홍콩": ["hk", "hongkong"], "마카오": ["hk", "macau"], "싱가포르": ["sg", "singapore"], "프랑스": ["fr"], "이탈리아": ["it"] });
+const cityInfo = {};
+for (const c of CORE) for (const id of [c.id, ...c.cities]) { const x = byId.get(id); if (x) cityInfo[id] = { n: x.city, en: x.en, ap: AIRPORT[id] || null, c: c.id }; }
+write("assets/qa.json", JSON.stringify({ v: TODAY, topics: TOPICS.map(t => [t.key, t.label]), words: TOPIC_WORDS, flight: FLIGHT_WORDS, places, cities: cityInfo, core: CORE.map(c => [c.id, c.name, c.grab ? 1 : 0]), qa: qaIndex }));
+
 /* ---- sitemap ---- */
 const guides = fs.existsSync(path.join(root, "guides")) ? fs.readdirSync(path.join(root, "guides")).filter(f => f.endsWith(".html")).map(f => "guides/" + f.slice(0, -5)) : [];
 const entry = (loc, freq, pr) => `  <url><loc>${HOST}/${loc}</loc><lastmod>${TODAY}</lastmod><changefreq>${freq}</changefreq><priority>${pr}</priority></url>`;
 const sm = [
   entry("", "daily", "1.0"), entry("trips", "weekly", "0.9"),
   ...curated.map(d => entry("trips/" + d.id, "weekly", "0.8")),
+  ...coreUrls.map(u => entry(u, "weekly", "0.7")),
   ...countries.filter(d => !DUP[d.id]).map(d => entry("trips/" + d.id, "weekly", "0.6")),
   ...guides.map(g => entry(g, "monthly", "0.6")),
   entry("about", "monthly", "0.4"),
@@ -306,6 +421,9 @@ const llms = `# 키워드트립 (KeywordTrip)
 - [전체 여행지 목록](${HOST}/trips): 모든 목적지의 입국 조건과 여행 적기 비교
 - [서비스·출처·업데이트 기준](${HOST}/about)
 ${guides.map(g => `- [${g}](${HOST}/${g})`).join("\n")}
+
+## 핵심 여행지 질문별 안내
+${CORE.map(c => `- ${c.name}: ${TOPICS.map(t => `[${t.label}](${HOST}/trips/${c.id}/${t.key})`).join(" · ")}`).join("\n")}
 
 ## 추천 도시
 ${curated.map(d => `- [${d.city}](${url(d)}): ${d.c}, ${vShort(d)}, 적기 ${bestSpan(d.best)}`).join("\n")}

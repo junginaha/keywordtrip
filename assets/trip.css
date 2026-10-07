@@ -60,3 +60,18 @@ a{color:inherit}
 .bookbtn{display:flex;align-items:center;justify-content:center;min-height:48px;padding:8px 6px;border:1.5px solid var(--green,#39FF14);border-radius:12px;text-decoration:none;font-weight:800;font-size:14px;text-align:center;color:inherit}
 .bookbtn:hover,.bookbtn:focus-visible{background:var(--green,#39FF14);color:#0C1020}
 .bookdisc{margin:10px 0 0;opacity:.7;font-size:12px;line-height:1.5}
+/* core destination keyword pages */
+.kwbar{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.kwbar a{display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border:1px solid #33405F;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;color:var(--ink);background:var(--card)}
+.kwbar a:hover{border-color:var(--cyan)}
+.kwbar a[aria-current]{background:var(--pink);border-color:var(--pink);color:#0C1020}
+.hero.slim{padding:28px 0 20px}.hero.slim h1{font-size:clamp(28px,8vw,44px)}
+.answer{margin:22px 0 0;padding:18px 20px;border-left:4px solid var(--pink);background:var(--card);border-radius:0 14px 14px 0}
+.answer h2{font-size:17px;margin:0 0 8px;line-height:1.45}.answer p{margin:0;color:var(--body);font-size:16px}
+.big{font-size:22px!important;font-weight:800;color:var(--ink)!important}
+.cm{margin:0 0 14px}.cm h3{font-size:15px;margin:0 0 6px}.cm h3 a{text-decoration:none}
+.areas{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px!important}.areas span{font-size:13px;padding:4px 10px;border-radius:999px;background:#1A2140;color:var(--body)}
+.bookgrid.auto{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.bookbtn{overflow-wrap:anywhere;line-height:1.35}
+.w,.card,.faq,.rel,.answer{min-width:0;overflow-wrap:anywhere}
+html,body{overflow-x:hidden}

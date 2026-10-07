@@ -91,6 +91,12 @@
     </div>
   </details>
 
+  <section class="go" aria-labelledby="goH">
+    <h2 class="go-h" id="goH">어디로 가세요?</h2>
+    <div class="go-c"><a class="go-p" href="/trips/jp" data-cc="jp">일본</a><a class="go-p" href="/trips/vn" data-cc="vn">베트남</a><a class="go-p" href="/trips/th" data-cc="th">태국</a><a class="go-p" href="/trips/tw" data-cc="tw">대만</a><a class="go-p" href="/trips/ph" data-cc="ph">필리핀</a><a class="go-p" href="/trips/sg" data-cc="sg">싱가포르</a><a class="go-p" href="/trips/hk" data-cc="hk">홍콩</a><a class="go-p" href="/trips/us" data-cc="us">미국</a><a class="go-p" href="/trips/fr" data-cc="fr">프랑스</a><a class="go-p" href="/trips/it" data-cc="it">이탈리아</a></div>
+    <nav class="go-k" id="goK" aria-label="여행 핵심 키워드" hidden></nav>
+  </section>
+
   <section class="poster" id="poster" aria-labelledby="pTitle">
     <div class="p-btn" id="pBtn" role="button" tabindex="0">
       <span class="p-top"><span>오늘의 추천 여행</span><time id="pTime"></time></span>
@@ -131,7 +137,7 @@
     </details>
 
     <section class="faq" aria-labelledby="faqh">
-      <h2 id="faqh">자주 묻는 질문</h2>
+      <details class="faq-all"><summary><h2 id="faqh">자주 묻는 질문</h2></summary>
       <details><summary>키워드트립은 왜 330곳인가요?</summary><p>나라의 기준보다 여행자의 경험을 기준으로 골랐기 때문입니다. 여행자 클럽 TCC(Travelers' Century Club)의 330개 국가·지역 분류를 따라, 하와이·갈라파고스·티베트처럼 입국 절차나 지리·문화가 뚜렷이 다른 곳은 각각 하나의 여행지로 셉니다. 330곳 모두가 독립국은 아닙니다. 그 위에 별도로 고른 추천 도시는 이용자 요청을 받아 계속 늘려 가고 있습니다.</p></details>
 <details><summary>형광색은 무엇을 뜻하나요?</summary><p>그린은 무비자, 블루는 출발 전 사전 신청(ETA·ESTA·e비자·도착비자), 옐로우는 비자나 별도 허가 필요, 오렌지는 여행금지·경보, 핑크는 키워드트립 추천과 팁입니다.</p></details>
 <details><summary>지금 여행 가기 좋은 해외 여행지는 어디인가요?</summary><p>'지금 적기' 버튼을 누르면 현지 기준 이번 달이 여행 적기인 도시만 보여 줍니다. 적기는 각 도시의 일반적인 기후와 성수기 기준입니다.</p></details>
@@ -141,7 +147,8 @@
 <details><summary>일본 출국세와 면세 제도는 어떻게 바뀌었나요?</summary><p>2026년 7월 1일 이후 일본 출국에는 국제관광여객세 3,000엔이 적용됩니다. 다만 2026년 6월 30일까지 발권된 일부 대상 항공권 등에는 종전 1,000엔이 적용되는 경과조치가 있습니다. 2026년 11월 1일부터 면세 제도는 출국 시 환급 방식으로 전환될 예정입니다.</p></details>
 <details><summary>달러가 통용되는 나라는 어디인가요?</summary><p>에콰도르, 엘살바도르, 동티모르, 파나마(지폐), 팔라우, 마셜제도, 미크로네시아는 미국 달러를 씁니다. 캄보디아는 달러가 사실상 주 통화이고 거스름돈은 리엘로 받는 경우가 많습니다.</p></details>
     <details><summary>찾는 여행지가 없으면 어떻게 하나요?</summary><p>요청해 주시면 업데이트합니다. 홍콩·도쿄·후쿠오카처럼 추천 도시 목록은 이용자 요청으로 늘어났습니다. 소개 영역의 '여행지 추가 요청하기'나 junginaha@gmail.com으로 보내 주세요.</p></details>
-</section>
+</details>
+    </section>
   </main>
   <footer><a href="/trips">전체 여행지 목록</a> · <a href="/about">서비스·출처·업데이트 기준</a><br>정보 기준일 2026년 10월 3일. 규정은 예고 없이 바뀌니 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">외교부 해외안전여행</a>에서 최신 공지를 확인하세요.<br><span class="fsrc">입국 정보: IATA Timatic 기반 공개 정리와 외교부 여행경보 공지. 환율: ECB 기준환율·ExchangeRate-API 교차 확인. 적기·계절은 일반 기후 기준.</span></footer>
 </div>
@@ -149,7 +156,7 @@
 <form class="dock" id="dock" role="search">
   <label class="sbox">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
-    <input class="search" id="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="나라, 경험, 무비자…" aria-label="여행지 검색">
+    <input class="search" id="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="어디로 여행하시나요?" aria-label="여행지 검색">
   </label>
   <button type="button" class="mic" id="mic" aria-label="음성으로 검색" aria-pressed="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
@@ -218,6 +225,7 @@
 <script src="/assets/data.js" defer></script>
 <script src="/assets/search.js" defer></script>
 <script src="/assets/affiliate.js" defer></script>
+<script src="/assets/answers.js" defer></script>
 <script src="/assets/app.js" defer></script>
 </body>
 </html>

@@ -19,3 +19,9 @@
 - 저장소: Vercel → Storage(Marketplace) → **Upstash for Redis**를 이 프로젝트에 연결하면 환경변수가 자동으로 들어갑니다. 연결 전에는 Vercel 로그에만 남습니다.
 - 보고서: Vercel 환경변수에 `SEARCH_REPORT_KEY`(임의의 긴 문자열)를 넣고 `https://keywordtrip.com/api/search-report?key=그값` 접속. `&month=2026-10`, `&format=json` 지원.
 - '결과 0건 검색어'를 `assets/search.js`의 `ALIAS_ID`·`ALIAS_CC`에 추가하거나 추천 도시로 반영합니다.
+
+## 핵심 여행지 질문 구조 (Simple first, deep when needed)
+- 데이터: `scripts/data/core.mjs` — 핵심 10개국(일본·베트남·태국·대만·필리핀·싱가포르·홍콩·미국·프랑스·이탈리아) × 9개 키워드(환율·날씨·입국·교통·숙소·eSIM·물가·안전·여행 준비)의 짧은 답과 질문.
+- 빌드 결과: `/trips/{국가}/{키워드}` 90개 페이지(FAQPage 구조화 데이터), 국가·도시 페이지 상단 키워드 바, 검색용 `assets/qa.json`(약 270개 질문).
+- 홈: '어디로 가세요?' 국가 선택 → 키워드만 노출. 검색창 질문(예: "다낭 10월 날씨")은 `assets/answers.js`가 짧은 답 카드로 보여 주고, 숙소·항공 질문일 때만 트립닷컴 CTA를 붙입니다.
+- 질문 추가: core.mjs의 해당 국가 `t[키워드].qa`에 [질문, 답]을 넣고 `node scripts/build-pages.mjs`.
