@@ -109,7 +109,7 @@ function renderList(){
   </li>`};
   let html="";
   if(ranked){
-    html=ans+(items.length?`<li class="divider pinkd"><h2>${query?"검색 결과":"맞춤 여행지"}</h2></li>`+items.map(row).join(""):"");
+    html=ans+(items.length?`<li class="divider pinkd"><h2>${query?"검색 결과":"여행최적화 결과"}</h2></li>`+items.map(row).join(""):"");
     if(io) io.disconnect();
     $("#list").innerHTML=html; watchTimes(); lastListTick=0;
     $("#list").querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>openSheet(b.dataset.id,b));

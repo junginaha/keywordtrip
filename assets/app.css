@@ -382,7 +382,7 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .ans-fold[open]>summary::after{content:"−"}
 .ans-fold .ans-k{margin-top:10px}
 .about-body p,.legend-l li{word-break:keep-all;text-wrap:pretty}
-/* 맞춤 찾기 */
+/* 여행최적화 */
 .topr{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .findbtn{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 9px 0 7px;border:1px solid var(--line);border-radius:999px;background:0 0;color:var(--muted);font:500 12px/1 var(--body);cursor:pointer;touch-action:manipulation}
 .findbtn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
@@ -420,3 +420,8 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .wantfind{all:unset;display:block;margin:10px 0 0;cursor:pointer;font-size:14px;font-weight:700;color:var(--pink);text-decoration:underline;text-underline-offset:4px}
 .wantfind[hidden]{display:none}
 .fchip[data-v=""][aria-pressed=true]{background:0 0;color:var(--ink);border-color:#3a4566;font-weight:500}
+/* 헤더: 제목 | 시계·여행최적화 버튼, 아래 줄에 태그라인 전체 폭 */
+header.top{row-gap:6px;align-items:center}
+header.top .brand{display:contents}
+header.top .brand-line{grid-column:1/-1;grid-row:2;margin-top:0}
+header.top .topr{grid-column:2;grid-row:1;gap:6px}
