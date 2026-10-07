@@ -17,16 +17,27 @@
   // English place name gives the most reliable Trip.com search match.
   function q(x) { return x.country ? x.en : (x.en || x.city); }
 
+  // Klook: paste the tracking params from a link generated in the Klook affiliate portal
+  // (e.g. { aid: "12345", aff_adid: "67890" }). Empty = activity button stays on Trip.com.
+  var KLOOK = {};
+  function klook(x) {
+    var u = new URL("https://www.klook.com/ko/search/result/");
+    u.searchParams.set("query", q(x));
+    Object.keys(KLOOK).forEach(function (k) { u.searchParams.set(k, KLOOK[k]); });
+    return u.toString();
+  }
+  var KLOOK_ON = !!KLOOK.aid;
+
   var LINKS = {
     flights: function (x) { return trip("/flights/", "flight-" + x.id); },
     stay: function (x) { return trip("/global-search/searchlist/search", "stay-" + x.id, { keyword: q(x) + " hotel" }); },
-    activity: function (x) { return trip("/global-search/searchlist/search", "activity-" + x.id, { keyword: q(x) }); }
+    activity: function (x) { return KLOOK_ON ? klook(x) : trip("/global-search/searchlist/search", "activity-" + x.id, { keyword: q(x) }); }
   };
 
   // Rel for every commission link (Google requires rel="sponsored" on paid links).
   var REL = "sponsored nofollow noopener";
   // User-facing disclosure required by the KFTC endorsement guideline.
-  var DISCLOSURE = "예약 버튼은 트립닷컴 제휴 링크입니다. 이 링크로 예약하시면 키워드트립이 소정의 수수료를 받으며, 예약 가격은 같습니다.";
+  var DISCLOSURE = "예약 버튼은 " + (KLOOK_ON ? "트립닷컴·클룩" : "트립닷컴") + " 제휴 링크입니다. 이 링크로 예약하시면 키워드트립이 소정의 수수료를 받으며, 예약 가격은 같습니다.";
 
-  g.KTAffiliate = { LINKS: LINKS, REL: REL, DISCLOSURE: DISCLOSURE, trip: trip };
+  g.KTAffiliate = { LINKS: LINKS, REL: REL, DISCLOSURE: DISCLOSURE, trip: trip, KLOOK_ON: KLOOK_ON };
 })(typeof globalThis !== "undefined" ? globalThis : window);
