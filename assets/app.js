@@ -232,8 +232,7 @@ function renderWant(x){
   const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), ask=$("#askStep"), form=$("#subForm"), done=$("#wantDone");
   box.hidden=!CURATED_IDS.has(x.id);
   if(box.hidden) return;
-  const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on));$("#wantFind").hidden=!(on&&window.KTF)};
-  $("#wantFind").onclick=()=>{closeSheet();setTimeout(()=>KTF.open(),280)};
+  const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
   const show=el=>{panel.hidden=!el;[ask,form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
   $("#askQ").textContent=`${x.city} 여행에 꼭 필요한 정보가 바뀌면 알려드릴까요?`;

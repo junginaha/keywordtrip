@@ -417,8 +417,6 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .fsum{color:var(--ink)}
 .flink{all:unset;cursor:pointer;color:var(--pink);font-size:13px;margin-left:8px;text-decoration:underline;text-underline-offset:3px}
 @media (max-width:360px){.fchip,.fsel{padding:0 11px;font-size:13.5px}.fbar{padding-left:18px;padding-right:18px}}
-.wantfind{all:unset;display:block;margin:10px 0 0;cursor:pointer;font-size:14px;font-weight:700;color:var(--pink);text-decoration:underline;text-underline-offset:4px}
-.wantfind[hidden]{display:none}
 .fchip[data-v=""][aria-pressed=true]{background:0 0;color:var(--ink);border-color:#3a4566;font-weight:500}
 /* 헤더: 제목 | 시계·여행최적화 버튼, 아래 줄에 태그라인 전체 폭 */
 header.top{row-gap:6px;align-items:center}
