@@ -57,17 +57,8 @@ function rateLine(x){return x.cur&&x.cur!=="KRW"?quote(x.cur):""}
 function fxSrcText(code){const k=(INFO.fx.s&&INFO.fx.s[code])||"erapi";const c=INFO.fx.chk&&INFO.fx.chk[code];return FX_SRC[k]+(c?` (${FX_SRC[c].split(" ")[0]}와 교차 확인)`:"")}
 function fxTimeText(){return fmt("Asia/Seoul",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(INFO.fx.t))}
 /* list */
-let region="전체", bestOnly=false, query="";
-const STOP=["여행","가고","싶어","싶다","추천","곳","나라","어디","좋은","알려줘","찾아줘"];
+let bestOnly=false, query="";
 const SUGGEST=["해변","맛집","자연","야경","동남아","유럽"];
-const FOOD=["쿠시카츠","똠얌","반미","타코","타파스","에그타르트","젤라토","베이글","포케","흑돼지","브런치","먹다","크루아상","야시장"];
-const SEA=["비치","서핑","본다이","해변","스노클","지중해","파도"];
-const ALIAS={"오지":["오지","절해고도","세상끝마을","배로만","인구50명","극지크루즈","원시","미개척","남극","북극곰","외딴"],"섬":["섬","제도","환초","라군"],"해변":SEA,"바다":SEA,"맛집":FOOD,"음식":FOOD,
-  "자연":["오로라","빙하","오름","라이스테라스","테이블마운틴","올레길","펭귄","이끼"],
-  "역사":["천년고도","유적","모스크","사원","가우디","바자르"],
-  "야경":["네온","루프탑","스카이라인","야시장","등불"],
-  "휴양":["비치","서핑","스노클","알로하","온천","라이스테라스"],
-  "가까운":["일본","대만","한국","베트남"]};
 let clsF="";
 function renderChips(){
   const words=query.split(/\s+/);
@@ -86,6 +77,13 @@ function chipOk(x){
   return true;
 }
 let searchNote="";
+/* 추천 도시는 나라별로 번갈아 노출 (같은 나라가 몰리지 않게, 나라 순서는 데이터의 인기 순 유지) */
+function mixByCountry(list){
+  const g=new Map(); for(const x of list){if(!g.has(x.c))g.set(x.c,[]);g.get(x.c).push(x)}
+  const q=[...g.values()], out=[];
+  while(q.some(a=>a.length)) for(const a of q) if(a.length) out.push(a.shift());
+  return out;
+}
 function renderList(){
   const base=DEST.filter(chipOk);
   let items=base, ranked=false; searchNote="";
@@ -96,7 +94,7 @@ function renderList(){
   $("#poster").hidden=active;
   $("#count").innerHTML=active?`<b>${items.length}곳</b>${searchNote?` <span class="snote">${searchNote}</span>`:""}`:"";
   const REG=["아시아","중동","유럽","아프리카","북미","중남미","오세아니아","남극"];
-  const cur0=items.filter(x=>!x.country), cs=items.filter(x=>x.country).sort((a,b)=>(REG.indexOf(a.reg)-REG.indexOf(b.reg))||a.city.localeCompare(b.city,"ko"));
+  const cur0=mixByCountry(items.filter(x=>!x.country)), cs=items.filter(x=>x.country).sort((a,b)=>(REG.indexOf(a.reg)-REG.indexOf(b.reg))||a.city.localeCompare(b.city,"ko"));
   const row=x=>{const c=classOf(x);return `
   <li class="dest" id="d-${x.id}">
     <button data-id="${x.id}" aria-label="${x.city} 정보 열기, ${vShort(x)}">

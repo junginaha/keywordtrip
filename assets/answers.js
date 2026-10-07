@@ -85,24 +85,4 @@ ${rel.length ? `<ul class="ans-rel">${rel.map(o => `<li><a href="${esc(o.u)}">${
     const a = e.target.closest && e.target.closest(".ans-cta"); if (!a) return;
     try { navigator.sendBeacon("/api/outbound", new Blob([JSON.stringify({ provider: a.dataset.p, destination: a.dataset.d })], { type: "application/json" })); } catch (_) {}
   });
-  /* destination picker on the home screen */
-  document.addEventListener("DOMContentLoaded", () => {
-    const box = document.getElementById("goK"); if (!box) return;
-    const names = {}; document.querySelectorAll(".go-p").forEach(a => names[a.dataset.cc] = a.textContent);
-    const TOP = [["exchange-rate", "환율"], ["weather", "날씨"], ["entry", "입국"], ["transportation", "교통"], ["hotels", "숙소"], ["esim", "eSIM"], ["prices", "물가"], ["safety", "안전"], ["packing", "여행 준비"]];
-    const GRAB = new Set(["vn", "th", "ph", "sg"]);
-    document.querySelectorAll(".go-p").forEach(a => a.addEventListener("click", e => {
-      e.preventDefault();
-      const cc = a.dataset.cc, on = a.getAttribute("aria-pressed") === "true";
-      document.querySelectorAll(".go-p").forEach(b => b.setAttribute("aria-pressed", "false"));
-      if (on) { box.hidden = true; return; }
-      a.setAttribute("aria-pressed", "true");
-      const items = TOP.map(([k, l]) => `<a href="/trips/${cc}/${k}">${l}</a>`);
-      if (GRAB.has(cc)) items.splice(4, 0, `<a href="/trips/${cc}/transportation#grab">Grab</a>`);
-      box.innerHTML = items.join("") + `<a class="all" href="/trips/${cc}">${names[cc]} 한눈에 →</a>`;
-      box.setAttribute("aria-label", `${names[cc]} 여행 핵심 키워드`);
-      box.hidden = false;
-    }));
-    document.querySelectorAll(".go-p").forEach(a => a.setAttribute("aria-pressed", "false"));
-  });
 })();
