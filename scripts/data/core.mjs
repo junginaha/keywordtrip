@@ -70,7 +70,7 @@ export const CORE = [
     },
   },
   {
-    id: "vn", name: "베트남", cities: ["danang", "nhatrang", "phuquoc", "hanoi", "hochiminh"], flight: "dad", grab: true,
+    id: "vn", name: "베트남", cities: ["danang", "nhatrang", "phuquoc", "hanoi", "hochiminh", "sapa"], flight: "dad", grab: true,
     t: {
       "exchange-rate": {
         a: "한국에서 달러로 바꿔 현지 금은방·환전소에서 동으로 바꾸거나, 트래블카드로 현지 ATM에서 동을 인출하는 방법이 일반적입니다.",
@@ -82,6 +82,7 @@ export const CORE = [
       weather: {
         a: "남북으로 길어 지역마다 우기가 다릅니다. 다낭·나트랑 등 중부는 9~12월, 호치민·푸꾸옥 등 남부는 5~10월이 우기이고, 하노이 등 북부는 겨울(12~2월)이 쌀쌀합니다.",
         qa: [
+          ["사파 날씨는 언제가 좋나요?", "사파는 해발 약 1,600m 산간이라 한여름에도 선선합니다. 계단식 논이 황금빛으로 익는 9월 중순~10월 초와 맑은 날이 많은 3~5월이 적기입니다. 6~8월은 비가 잦고, 12~2월은 영하 가까이 떨어져 서리가 내리기도 합니다."],
           ["다낭 10월 날씨 어떤가요?", "다낭은 9~12월이 우기로 10~11월에 비가 가장 많고 태풍이 올 수 있습니다. 해변 휴양이 목적이라면 2~8월이 안정적입니다."],
           ["베트남 우기에 가도 괜찮나요?", "남부 우기는 하루 한두 차례 소나기 형태가 많아 여행이 가능합니다. 다만 중부 우기(10~11월)는 폭우·태풍으로 섬투어·항공편이 취소될 수 있으니 일정에 여유를 두세요."],
         ],
@@ -94,12 +95,13 @@ export const CORE = [
         a: "다낭공항은 시내까지 10~15분(Grab 약 6만~12만 동), 하노이 노이바이공항은 86번 버스(약 50분, 45,000동)나 Grab(25만~40만 동), 호치민 떤선녓공항은 1군까지 Grab으로 30~60분(약 10만~25만 동) 걸립니다.",
         qa: [
           ["베트남에서 Grab 쓰나요?", "네, Grab이 가장 많이 쓰이는 차량·오토바이 호출 앱입니다. 전기택시 Xanh SM도 많이 보이고, 요금이 앱에 미리 표시돼 바가지 걱정이 적습니다."],
+          ["하노이에서 사파 어떻게 가나요?", "가장 흔한 방법은 하노이–라오까이 고속도로를 타는 슬리핑버스·리무진 밴으로 약 5~6시간입니다. 야간열차는 하노이역에서 라오까이역까지 밤새 간 뒤 차로 약 1시간 더 올라갑니다. 사파 공항은 계획만 있고 아직 운항하지 않습니다."],
           ["하노이 공항에서 시내까지 얼마인가요?", "86번 공항버스가 약 45,000동(약 50분)으로 가장 저렴하고, Grab은 25만~40만 동, 공항 택시는 35만~45만 동 정도입니다. 교통 상황에 따라 30~60분 걸립니다."],
         ],
       },
       hotels: {
         a: "다낭은 미케비치(바다·리조트)와 한강 주변 시내(맛집·야경), 하노이는 호안끼엠·구시가(걸어서 관광), 호치민은 1군(관광·맛집), 나트랑은 쩐푸 해변도로, 푸꾸옥은 즈엉동(야시장)과 남부 해변 리조트가 기본입니다.",
-        areas: { danang: ["미케비치", "한강·시내"], nhatrang: ["쩐푸 해변도로", "깜란 리조트"], phuquoc: ["즈엉동", "남부 해변"], hanoi: ["호안끼엠", "서호"], hochiminh: ["1군", "3군"] },
+        areas: { danang: ["미케비치", "한강·시내"], nhatrang: ["쩐푸 해변도로", "깜란 리조트"], phuquoc: ["즈엉동", "남부 해변"], hanoi: ["호안끼엠", "서호"], hochiminh: ["1군", "3군"], sapa: ["시내(호수·광장)", "므엉호아 계곡 마을"] },
         qa: [["다낭 숙소는 어디가 좋나요?", "바다와 리조트가 목적이면 미케비치, 맛집·야경·시장 위주면 한강 주변 시내가 편합니다. 호이안을 여러 번 오갈 거라면 두 곳 사이 남쪽 해변도 선택지입니다."]],
       },
       esim: {
@@ -461,7 +463,7 @@ export const CORE = [
 // Incheon → main airport codes for Trip.com route pages (kr.trip.com/flights/airport-icn-xxx/)
 export const AIRPORT = {
   jp: "nrt", tokyo: "nrt", osaka: "kix", kyoto: "kix", fukuoka: "fuk", sapporo: "cts", okinawa: "oka",
-  vn: "dad", danang: "dad", nhatrang: "cxr", phuquoc: "pqc", hanoi: "han", hochiminh: "sgn",
+  vn: "dad", danang: "dad", nhatrang: "cxr", phuquoc: "pqc", hanoi: "han", hochiminh: "sgn", sapa: "han",
   th: "bkk", bangkok: "bkk", chiangmai: "cnx", phuket: "hkt", tw: "tpe", taipei: "tpe",
   ph: "ceb", cebu: "ceb", boracay: "klo", sg: "sin", singapore: "sin", hk: "hkg", hongkong: "hkg", macau: "mfm",
   us: "lax", newyork: "jfk", losangeles: "lax", lasvegas: "las", sanfrancisco: "sfo", honolulu: "hnl",

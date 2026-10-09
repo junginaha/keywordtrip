@@ -1,6 +1,6 @@
 # 키워드트립 (KeywordTrip)
 
-> 한국 여권 소지자를 위한 한국어 여행 큐레이션. 추천 도시 56곳과 TCC 기준 330개 국가·지역의 입국 조건(무비자·사전 신청·비자), 여행 적기, 통화·환율, 서울과의 시차, 현지 팁을 정리합니다.
+> 한국 여권 소지자를 위한 한국어 여행 큐레이션. 추천 도시 57곳과 TCC 기준 330개 국가·지역의 입국 조건(무비자·사전 신청·비자), 여행 적기, 통화·환율, 서울과의 시차, 현지 팁을 정리합니다.
 
 - 입국 정보 기준: 외교부 해외안전여행·각국 정부 공식 발표와 IATA Timatic 기반 공개 정리를 대조, 2026년 10월 7일 확인
 - 여행 적기: 일반 기후·성수기 기준 (우기 표시 포함)
@@ -38,6 +38,7 @@
 - [나트랑](https://keywordtrip.com/trips/nhatrang): 베트남, 무비자 45일, 적기 2월~8월
 - [푸꾸옥](https://keywordtrip.com/trips/phuquoc): 베트남, 무비자 45일, 적기 11월~4월
 - [하노이](https://keywordtrip.com/trips/hanoi): 베트남, 무비자 45일, 적기 3월·4월, 10월~12월
+- [사파](https://keywordtrip.com/trips/sapa): 베트남, 무비자 45일, 적기 3월~5월, 9월~11월
 - [호치민](https://keywordtrip.com/trips/hochiminh): 베트남, 무비자 45일, 적기 12월~4월
 - [방콕](https://keywordtrip.com/trips/bangkok): 태국, 무비자 90일, 적기 11월~2월
 - [치앙마이](https://keywordtrip.com/trips/chiangmai): 태국, 무비자 90일, 적기 11월~2월

@@ -8,7 +8,7 @@
   const ALIAS_ID = {
     "하와이": ["us-hi", "honolulu"], "호놀룰루": ["honolulu"], "와이키키": ["honolulu"], "la": ["losangeles"], "엘에이": ["losangeles"], "로스엔젤레스": ["losangeles"],
     "ny": ["newyork"], "nyc": ["newyork"], "샌프란": ["sanfrancisco"], "라스베가스": ["lasvegas"], "베가스": ["lasvegas"], "사이공": ["hochiminh"], "호치민시": ["hochiminh"],
-    "냐짱": ["nhatrang"], "나짱": ["nhatrang"], "푸코쿠": ["phuquoc"], "코키": ["kotakinabalu"], "kl": ["kualalumpur"], "쿠알라": ["kualalumpur"], "오키나와": ["okinawa", "jp-ry"],
+    "냐짱": ["nhatrang"], "사파": ["sapa"], "사빠": ["sapa"], "sapa": ["sapa"], "판시판": ["sapa"], "나짱": ["nhatrang"], "푸코쿠": ["phuquoc"], "코키": ["kotakinabalu"], "kl": ["kualalumpur"], "쿠알라": ["kualalumpur"], "오키나와": ["okinawa", "jp-ry"],
     "비엔나": ["vienna"], "융프라우": ["interlaken"], "홋카이도": ["sapporo"], "북해도": ["sapporo"], "타이페이": ["taipei"], "푸켓": ["phuket"], "북경": ["beijing"], "상해": ["shanghai"],
     "청도": ["qingdao"], "몽골": ["ulaanbaatar", "mn"], "아이슬란드": ["reykjavik", "is"], "오로라": ["reykjavik", "is", "fi", "no", "ca", "us-ak", "gl"], "제주도": ["jeju", "kr-jj"],
     "갈라파고스": ["ec-ga"], "티베트": ["cn-xz"], "남극": ["aq-ar", "aq-cl", "aq-gb", "aq-au", "aq-nz", "aq-fr", "aq-no"], "산토리니": ["santorini"], "몰디브": ["mv"],

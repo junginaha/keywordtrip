@@ -19,10 +19,12 @@
   const PRIORITY = ["transportation", "entry", "exchange-rate", "hotels", "esim", "weather", "safety", "packing", "prices"];
   const SOFT = new Set(["얼마", "언제", "비용", "가격", "준비", "지역", "돈"]);
 
+  const NOT_PLACE = ["사파리"]; /* 지명이 들어 있지만 다른 단어인 경우 */
   function detect(q) {
     const s = compact(q);
+    const sp = NOT_PLACE.reduce((t, w) => t.split(w).join(""), s);
     let place = null, len = 0;
-    for (const [k, v] of Object.entries(QA.places)) { const kk = compact(k); if (kk.length >= 2 && s.includes(kk) && kk.length > len) { place = v; len = kk.length; } }
+    for (const [k, v] of Object.entries(QA.places)) { const kk = compact(k); if (kk.length >= 2 && sp.includes(kk) && kk.length > len) { place = v; len = kk.length; } }
     let topic = null, best = 0;
     for (const t of PRIORITY) {
       let sc = 0; for (const w of QA.words[t]) if (s.includes(compact(w))) sc += SOFT.has(w) ? 0.5 : 1;
