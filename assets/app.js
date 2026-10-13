@@ -229,7 +229,7 @@ function contactOk(v){v=v.trim();if(v.includes("@"))return /^[^\s@]+@[^\s@]+\.[a
 function postSub(body){return fetch("/api/subscribe",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body),keepalive:true})}
 function renderWant(x){
   const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), form=$("#subForm"), done=$("#wantDone");
-  // All 387 destinations (330 countries/regions + curated cities); hidden where booking is hidden too.
+  // All destinations (330 countries/regions + curated cities); hidden where booking is hidden too.
   box.hidden=isBan(x)||x.cc==="KP";
   if(box.hidden) return;
   const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
