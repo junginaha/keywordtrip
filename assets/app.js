@@ -250,8 +250,8 @@ function renderWant(x){
     if(no&&Date.now()-no<ASK_AGAIN) return;
     // 저장소가 준비되면 연락처로 받기, 아니면 최신 정보 페이지로 안내 (어느 쪽이든 카드는 항상 뜸)
     const ready=await subIsReady();
-    form.querySelectorAll(".subin,.subck,#subBtn").forEach(e=>e.hidden=!ready); $("#subGo").hidden=ready;
-    show(form); if(ready) inp.focus({preventScroll:true});
+    form.querySelectorAll(".subin,.subck,#subBtn").forEach(e=>e.hidden=!ready); $("#subGo").hidden=true;
+    show(form); if(ready) inp.focus({preventScroll:true}); else {const msg=$("#subErr");msg.textContent="알림 신청을 준비 중입니다. 잠시 후 다시 이용해 주세요.";msg.hidden=false;}
   };
   $("#askNo").onclick=()=>{LS.set("kt_sub_no",Date.now());show(null)};
   const inp=$("#subContact"), req=$("#subReq"), ad=$("#subAd"), sbtn=$("#subBtn"), err=$("#subErr"), more=$("#subMore"), terms=$("#subTerms");
