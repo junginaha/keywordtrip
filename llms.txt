@@ -1,6 +1,6 @@
 # 키워드트립 (KeywordTrip)
 
-> 한국 여권 소지자를 위한 한국어 여행 큐레이션. 추천 도시 57곳과 TCC 기준 330개 국가·지역의 입국 조건(무비자·사전 신청·비자), 여행 적기, 통화·환율, 서울과의 시차, 현지 팁을 정리합니다.
+> 한국 여권 소지자를 위한 한국어 여행 큐레이션. 추천 도시 58곳과 TCC 기준 330개 국가·지역의 입국 조건(무비자·사전 신청·비자), 여행 적기, 통화·환율, 서울과의 시차, 현지 팁을 정리합니다.
 
 - 입국 정보 기준: 외교부 해외안전여행·각국 정부 공식 발표와 IATA Timatic 기반 공개 정리를 대조, 2026년 10월 7일 확인
 - 여행 적기: 일반 기후·성수기 기준 (우기 표시 포함)
@@ -64,6 +64,7 @@
 - [런던](https://keywordtrip.com/trips/london): 영국, ETA 6개월, 적기 5월~9월
 - [로마](https://keywordtrip.com/trips/rome): 이탈리아, 무비자 90일, 적기 4월·5월, 9월·10월
 - [바르셀로나](https://keywordtrip.com/trips/barcelona): 스페인, 무비자 90일, 적기 5월·6월, 9월·10월
+- [산티아고 순례길](https://keywordtrip.com/trips/camino): 스페인, 무비자 90일, 적기 5월·6월, 9월·10월
 - [프라하](https://keywordtrip.com/trips/prague): 체코, 무비자 90일, 적기 4월~6월, 9월·10월
 - [빈](https://keywordtrip.com/trips/vienna): 오스트리아, 무비자 90일, 적기 4월~6월, 9월·10월, 12월
 - [부다페스트](https://keywordtrip.com/trips/budapest): 헝가리, 무비자 90일, 적기 4월~6월, 9월·10월
