@@ -401,4 +401,7 @@ fetch("/api/fx",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
   INFO.fx=j; renderFx(); if(cur) renderInfo(cur);
 }).catch(()=>{});
 setInterval(tick,1000);
-const d0=new URLSearchParams(location.search).get("d")||location.hash.slice(1); if(DEST.some(d=>d.id===d0)) openSheet(d0,null);
+const d0=new URLSearchParams(location.search).get("d")||location.hash.slice(1); if(DEST.some(d=>d.id===d0)){openSheet(d0,null);
+  // ?want=1 (from static /trips pages): open the ♡ card right away.
+  if(new URLSearchParams(location.search).get("want")==="1"){const u=new URL(location.href);u.searchParams.delete("want");history.replaceState(null,"",u.pathname+u.search);
+    setTimeout(()=>{const b=$("#wantBtn");if(b&&!$("#wantbox").hidden){if(b.getAttribute("aria-pressed")==="true")b.click();b.click();b.scrollIntoView({block:"center",behavior:"smooth"})}},350)}}

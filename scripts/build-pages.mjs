@@ -206,7 +206,7 @@ ${money ? `<p>${esc(money)}</p>` : ""}
 <h2>키워드트립 팁</h2>
 <ul>${tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
 </section>
-` : ""}${bookHtml(x, name)}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
+` : ""}${bookHtml(x, name)}${noBook(x) ? "" : `<a class="wantcta" href="/?d=${x.id}&amp;want=1" rel="nofollow">♡ 가고 싶어요 · ${esc(name)} 정보 알림 받기</a>`}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
 <p class="sub">규정과 가격은 바뀔 수 있으니 출발·예약 전 최신 정보를 다시 확인하세요.</p>
 <details class="more"><summary>더 알아보기</summary>
 ${keywordBar(x)}<section class="faq">
