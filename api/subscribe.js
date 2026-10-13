@@ -1,4 +1,4 @@
-// Travel-alert subscription: "OO 여행에 꼭 필요한 정보가 바뀌면 알려드릴까요?"
+// Travel-alert subscription: "꼭 필요한 OO 여행 정보가 나오면 알려드릴까요?"
 // GET  → { ready } (front end only asks when storage is configured)
 // POST { contact, destination, consent:true, marketing, hp } → new/renewed subscriber, returns { sid }
 // POST { sid, destination } → adds another saved destination to an existing subscriber

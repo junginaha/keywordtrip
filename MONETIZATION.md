@@ -195,3 +195,9 @@ Prioritize new city/search landing pages from verified Korean travel demand and 
 
 ## 2026-10-05 — AI reference applied
 Destination suitability FAQs now describe visitor intent and tradeoffs. Visible FAQ answers and JSON-LD use the same text. Missing entry data no longer defaults to visa-free; visa-free no longer implies no entry procedure. FX timestamps identify reference data, including the stored fallback. Provider clicks remain distinct from verified completed bookings and earned commission. Review source URL, affected field and actual edit date when correcting travel data; editorial dates are not claims of a full immigration audit. Keep curation separate from affiliate terms, and preserve the existing provider configuration until approved links are verified.
+
+## 2026-10-13 — 가고 싶어요 구독 전체 적용
+- ♡ 가고 싶어요 → "꼭 필요한 OO 여행 정보가 나오면 알려드릴까요?" 한 단계 카드(연락처 + 필수 동의 + 선택 특가 동의)로 단순화.
+- 추천 도시 57곳 → 전체 387곳(330개 국가·지역 포함)으로 확대. 여행금지국·북한 제외.
+- 소유자 전용 리스트: /api/admin-subscribers (ADMIN_KEY 환경변수 필요) — 관심 여행지 순위, 연락처 목록, CSV.
+- 특가·광고 메시지는 marketing=Y에게만, 21~08시 발송 금지(정보통신망법 제50조).

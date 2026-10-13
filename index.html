@@ -209,16 +209,13 @@
     <section class="wantbox" id="wantbox" hidden>
       <button class="wantbtn" id="wantBtn" type="button" aria-pressed="false">♡ 가고 싶어요</button>
       <div class="wantpanel" id="wantPanel" hidden>
-        <div id="askStep">
-          <p class="wantq" id="askQ"></p>
-          <div class="wantopts"><button type="button" class="on" id="askYes">알려주세요</button><button type="button" id="askNo">괜찮아요</button></div>
-        </div>
         <form class="subform" id="subForm" hidden novalidate>
+          <div class="subhead"><p class="wantq" id="askQ"></p><button type="button" class="subx" id="askNo" aria-label="닫기">×</button></div>
           <input class="subin" id="subContact" name="contact" type="text" autocomplete="on" autocapitalize="off" spellcheck="false" placeholder="휴대폰 번호 또는 이메일" aria-label="휴대폰 번호 또는 이메일">
           <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="subck"><input type="checkbox" id="subReq"><span>(필수) 알림 발송을 위한 연락처 수집·이용 동의</span><button type="button" class="submore" id="subMore" aria-expanded="false">보기</button></label>
+          <label class="subck"><input type="checkbox" id="subReq"><span>(필수) 알림용 연락처 수집·이용 동의</span><button type="button" class="submore" id="subMore" aria-expanded="false">보기</button></label>
           <p class="subterms" id="subTerms" hidden>수집 항목: 휴대폰 번호 또는 이메일, 찜한 여행지<br>목적: 찜한 여행지의 입국·환율·특가 등 변경 정보 안내(문자, 카카오 알림톡 또는 이메일)<br>보유 기간: 수신 거부 시 즉시 파기<br>동의를 거부할 수 있으며, 거부하면 알림을 받을 수 없습니다. <a href="/privacy">개인정보처리방침</a></p>
-          <label class="subck"><input type="checkbox" id="subAd"><span>(선택) 특가·이벤트 소식도 받기</span></label>
+          <label class="subck"><input type="checkbox" id="subAd"><span>(선택) 특가 소식도 받기</span></label>
           <button class="wantsave" id="subBtn" type="submit" disabled>알림 받기</button>
           <p class="suberr" id="subErr" role="alert" hidden></p>
         </form>

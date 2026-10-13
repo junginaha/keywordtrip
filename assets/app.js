@@ -220,7 +220,6 @@ function renderInfo(x){
 }
 
 
-const CURATED_IDS=new Set(DEST.filter(d=>!d.country).map(d=>d.id));
 /* ♡ 가고 싶어요 → 알림 구독 (연락처는 서버 저장, 브라우저엔 서명된 구독 id만) */
 const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 let subReady=null;
@@ -229,13 +228,14 @@ const ASK_AGAIN=7*864e5;
 function contactOk(v){v=v.trim();if(v.includes("@"))return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v);let d=v.replace(/[^\d+]/g,"");if(d.startsWith("+82"))d="0"+d.slice(3);return /^01[016789]\d{7,8}$/.test(d.replace(/\D/g,""))}
 function postSub(body){return fetch("/api/subscribe",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body),keepalive:true})}
 function renderWant(x){
-  const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), ask=$("#askStep"), form=$("#subForm"), done=$("#wantDone");
-  box.hidden=!CURATED_IDS.has(x.id);
+  const box=$("#wantbox"), btn=$("#wantBtn"), panel=$("#wantPanel"), form=$("#subForm"), done=$("#wantDone");
+  // All 387 destinations (330 countries/regions + curated cities); hidden where booking is hidden too.
+  box.hidden=isBan(x)||x.cc==="KP";
   if(box.hidden) return;
   const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
-  const show=el=>{panel.hidden=!el;[ask,form,done].forEach(e=>e.hidden=e!==el)};
+  const show=el=>{panel.hidden=!el;[form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
-  $("#askQ").textContent=`${x.city} 여행에 꼭 필요한 정보가 바뀌면 알려드릴까요?`;
+  $("#askQ").textContent=`꼭 필요한 ${x.city} 여행 정보가 나오면 알려드릴까요?`;
   btn.onclick=async()=>{
     if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
     LS.set("kt_want_"+x.id,{at:Date.now()}); setBtn(true);
@@ -247,10 +247,9 @@ function renderWant(x){
     }
     const no=LS.get("kt_sub_no");
     if(no&&Date.now()-no<ASK_AGAIN) return;
-    if(await subIsReady()) show(ask);
+    if(await subIsReady()){show(form);inp.focus({preventScroll:true})}
   };
   $("#askNo").onclick=()=>{LS.set("kt_sub_no",Date.now());show(null)};
-  $("#askYes").onclick=()=>{show(form);$("#subContact").focus()};
   const inp=$("#subContact"), req=$("#subReq"), ad=$("#subAd"), sbtn=$("#subBtn"), err=$("#subErr"), more=$("#subMore"), terms=$("#subTerms");
   inp.value=""; req.checked=false; ad.checked=false; err.hidden=true; terms.hidden=true; more.setAttribute("aria-expanded","false");
   const sync=()=>{sbtn.disabled=!(req.checked&&contactOk(inp.value))};
@@ -265,7 +264,7 @@ function renderWant(x){
       if(!r.ok) throw new Error(j.error||"x");
       if(j.sid) LS.set("kt_sub",{sid:j.sid,type:j.type});
       LS.del("kt_sub_no");
-      done.textContent=`신청했어요. ${x.city} 여행에 꼭 필요한 정보가 바뀌면 알려드릴게요.`; show(done);
+      done.textContent=`신청했어요. 꼭 필요한 ${x.city} 여행 정보가 나오면 알려드릴게요.`; show(done);
     }catch(ex){
       err.textContent=ex.message==="bad_contact"?"휴대폰 번호나 이메일을 다시 확인해 주세요.":"잠시 후 다시 시도해 주세요.";
       err.hidden=false; sync();
