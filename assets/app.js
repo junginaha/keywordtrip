@@ -265,8 +265,8 @@ function renderWant(x){
     try{
       const r=await postSub({contact:inp.value,destination:x.id,consent:true,marketing:ad.checked,hp:form.elements.website.value});
       const j=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(j.error||"x");
-      if(j.sid) LS.set("kt_sub",{sid:j.sid,type:j.type});
+      if(!r.ok || !j.sid || j.ok!==true) throw new Error(j.error||"save_unconfirmed");
+      LS.set("kt_sub",{sid:j.sid,type:j.type});
       LS.del("kt_sub_no");
       done.textContent=`신청했어요. 꼭 필요한 ${x.city} 여행 정보가 나오면 알려드릴게요.`; show(done);
     }catch(ex){
