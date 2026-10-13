@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          for p in /api/subscribe /api/interest; do echo "== $p"; curl -s -m 20 -w "\nHTTP %{http_code}\n" "https://keywordtrip.com$p" | head -c 400; echo; done
-          curl -s -m 20 https://keywordtrip.com/ | grep -o 'id="subForm"[^>]*' | head -1
-          curl -s -m 20 https://keywordtrip.com/assets/app.js | grep -c "subIsReady"
+          a=$(curl -s -m 20 -w " HTTP%{http_code}" https://keywordtrip.com/api/subscribe | tr -d '\n' | head -c 200)
+          b=$(curl -s -m 20 -w " HTTP%{http_code}" https://keywordtrip.com/api/interest | tr -d '\n' | head -c 200)
+          echo "::notice::subscribe=$a"
+          echo "::notice::interest=$b"
