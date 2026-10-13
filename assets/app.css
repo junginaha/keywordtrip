@@ -418,3 +418,5 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 @media (max-width:360px){.fchip,.fsel{padding:0 11px;font-size:13.5px}.fbar{padding-left:18px;padding-right:18px}}
 .fchip[data-v=""][aria-pressed=true]{background:0 0;color:var(--ink);border-color:#3a4566;font-weight:500}
 @media (max-width:352px){.findbtn .fbt{display:none}.findbtn{padding:0 8px}}
+.wantgo{display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box}
+.wantgo[hidden],.subform .subck[hidden],.subform .subin[hidden],.subform .wantsave[hidden]{display:none}

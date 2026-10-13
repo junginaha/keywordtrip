@@ -235,7 +235,8 @@ function renderWant(x){
   const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
   const show=el=>{panel.hidden=!el;[form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
-  $("#askQ").textContent=`꼭 필요한 ${x.city} 여행 정보가 나오면 알려드릴까요?`;
+  $("#askQ").textContent=`최신 ${x.city} 여행 정보를 보시겠어요?`;
+  $("#subGo").href="/trips/"+encodeURIComponent(x.id);
   btn.onclick=async()=>{
     if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
     LS.set("kt_want_"+x.id,{at:Date.now()}); setBtn(true);
@@ -247,7 +248,10 @@ function renderWant(x){
     }
     const no=LS.get("kt_sub_no");
     if(no&&Date.now()-no<ASK_AGAIN) return;
-    if(await subIsReady()){show(form);inp.focus({preventScroll:true})}
+    // 저장소가 준비되면 연락처로 받기, 아니면 최신 정보 페이지로 안내 (어느 쪽이든 카드는 항상 뜸)
+    const ready=await subIsReady();
+    form.querySelectorAll(".subin,.subck,#subBtn").forEach(e=>e.hidden=!ready); $("#subGo").hidden=ready;
+    show(form); if(ready) inp.focus({preventScroll:true});
   };
   $("#askNo").onclick=()=>{LS.set("kt_sub_no",Date.now());show(null)};
   const inp=$("#subContact"), req=$("#subReq"), ad=$("#subAd"), sbtn=$("#subBtn"), err=$("#subErr"), more=$("#subMore"), terms=$("#subTerms");
