@@ -1,0 +1,10 @@
+name: diag-sub
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for p in /api/subscribe /api/interest; do echo "== $p"; curl -s -m 20 -w "\nHTTP %{http_code}\n" "https://keywordtrip.com$p" | head -c 400; echo; done
+          curl -s -m 20 https://keywordtrip.com/ | grep -o 'id="subForm"[^>]*' | head -1
+          curl -s -m 20 https://keywordtrip.com/assets/app.js | grep -c "subIsReady"
