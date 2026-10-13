@@ -3,11 +3,12 @@
 // POST { contact, destination, consent:true, marketing, hp } → new/renewed subscriber, returns { sid }
 // POST { sid, destination } → adds another saved destination to an existing subscriber
 import { config, sb, tokenFor, idFrom, parseContact, cleanDest, readBody, CONSENT_VERSION } from "./_sub.js";
+import { redis } from "./_store.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   const cfg = config();
-  if (req.method === "GET") return res.status(200).json({ ready: !!cfg });
+  if (req.method === "GET") return res.status(200).json({ ready: !!cfg, kv: !!redis() });
   if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return res.status(405).end(); }
   if (!cfg) return res.status(503).json({ error: "not_ready" });
 
