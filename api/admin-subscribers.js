@@ -2,7 +2,7 @@
 // GET  → password form. POST key=<ADMIN_KEY> → per-destination counts + contact list. POST key&format=csv → CSV download.
 // Env: ADMIN_KEY (long random string) + the Supabase vars in _sub.js. Without ADMIN_KEY the page is disabled.
 import crypto from "node:crypto";
-import { config, sb } from "./_sub.js";
+import { config, listSubscribers } from "./_sub.js";
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const shell = body => `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>구독자 리스트 | 키워드트립</title><style>
@@ -38,17 +38,15 @@ export default async function handler(req, res) {
   const form = readForm(req);
   if (!keyOk(form.key)) { await new Promise(r => setTimeout(r, 800)); return res.status(401).send(login("키가 맞지 않아요.")); }
   const cfg = config();
-  if (!cfg) return res.status(503).send(shell("<p>Supabase 환경변수가 없어 구독 저장이 꺼져 있어요.</p>"));
+  if (!cfg) return res.status(503).send(shell("<p>저장소(Upstash Redis 또는 Supabase)가 연결되지 않아 구독 저장이 꺼져 있어요.</p>"));
 
-  let rows;
+  let list;
   try {
-    rows = await sb(cfg, "kt_subscribers?select=contact,contact_type,marketing,consent_at,kt_subscriber_destinations(destination,created_at)&order=consent_at.desc&limit=10000");
+    list = await listSubscribers(cfg);
   } catch (e) {
     console.error("admin-subscribers", String(e).slice(0, 300));
     return res.status(500).send(shell("<p>불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>"));
   }
-  rows = rows || [];
-  const list = rows.map(r => ({ ...r, dests: (r.kt_subscriber_destinations || []).map(d => d.destination) }));
 
   if (form.format === "csv") {
     const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
