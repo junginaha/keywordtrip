@@ -227,7 +227,7 @@ const REG = ["아시아", "중동", "유럽", "아프리카", "북미", "중남�
 function directory() {
   const row = d => `<li><a href="/trips/${d.id}"><i class="dot" style="--vc:${CLS[vt(d)[0]].hex}"></i><b>${esc(d.city)}</b><small>${esc(vShort(d))} · 적기 ${esc(bestSpan(d.best))}</small></a></li>`;
   const byReg = REG.map(r => [r, countries.filter(d => d.reg === r).sort((a, b) => a.city.localeCompare(b.city, "ko"))]).filter(([, a]) => a.length);
-  const title = `해외 여행지 전체 목록 ${countries.length}곳 | 비자·여행 적기 한눈에 | 키워드트립`;
+  const title = `해외 여행지 전체 목록 ${DEST.length}곳 | 비자·여행 적기 한눈에 | 키워드트립`;
   const desc = `키워드트립 추천 도시 ${curated.length}곳과 TCC 기준 ${countries.length}개 국가·지역의 한국인 입국 조건(무비자·사전 신청·비자)과 여행 적기를 한 페이지에서 비교하세요.`;
   const ld = { "@context": "https://schema.org", "@graph": [
     { "@type": "CollectionPage", "@id": HOST + "/trips#webpage", url: HOST + "/trips", name: title, description: desc, inLanguage: "ko-KR", dateModified: TODAY, isPartOf: { "@id": HOST + "/#website" } },
@@ -414,6 +414,11 @@ write("assets/qa.json", JSON.stringify({ v: TODAY, topics: TOPICS.map(t => [t.ke
 
 /* ---- sitemap ---- */
 const guides = fs.existsSync(path.join(root, "guides")) ? fs.readdirSync(path.join(root, "guides")).filter(f => f.endsWith(".html")).map(f => "guides/" + f.slice(0, -5)) : [];
+// Keep hand-authored page metadata in sync with the destination dataset.
+for (const file of [...guides.map(g => g + ".html"), "index.html", "about.html", "privacy.html"]) {
+  const html = fs.readFileSync(path.join(root, file), "utf8");
+  write(file, html.replace(/(<meta property="og:image:alt" content="키워드트립 — 여행지 )\d+(곳의 입국·환율·여행 적기를 한눈에">)/g, (_, before, after) => before + DEST.length + after));
+}
 const entry = (loc, freq, pr) => `  <url><loc>${HOST}/${loc}</loc><lastmod>${TODAY}</lastmod><changefreq>${freq}</changefreq><priority>${pr}</priority></url>`;
 const sm = [
   entry("", "daily", "1.0"), entry("trips", "weekly", "0.9"),

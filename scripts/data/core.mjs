@@ -1,3 +1,5 @@
+import "../../assets/affiliate.js";
+
 // Core destinations: keyword topics and question data.
 // Answers are short and direct. Visa, exchange rate, best months and official links are injected
 // at build time from assets/data.js so they never drift from the main data.
@@ -461,14 +463,7 @@ export const CORE = [
 ];
 
 // Incheon → main airport codes for Trip.com route pages (kr.trip.com/flights/airport-icn-xxx/)
-export const AIRPORT = {
-  jp: "nrt", tokyo: "nrt", osaka: "kix", kyoto: "kix", fukuoka: "fuk", sapporo: "cts", okinawa: "oka",
-  vn: "dad", danang: "dad", nhatrang: "cxr", phuquoc: "pqc", hanoi: "han", hochiminh: "sgn", sapa: "han",
-  th: "bkk", bangkok: "bkk", chiangmai: "cnx", phuket: "hkt", tw: "tpe", taipei: "tpe",
-  ph: "ceb", cebu: "ceb", boracay: "klo", sg: "sin", singapore: "sin", hk: "hkg", hongkong: "hkg", macau: "mfm",
-  us: "lax", newyork: "jfk", losangeles: "lax", lasvegas: "las", sanfrancisco: "sfo", honolulu: "hnl",
-  fr: "cdg", paris: "cdg", it: "fco", rome: "fco",
-};
+export const AIRPORT = globalThis.KTAffiliate.AIRPORT;
 // Words that signal a topic in a search query
 export const TOPIC_WORDS = {
   "exchange-rate": ["환율", "환전", "돈", "카드", "현금", "atm", "트래블카드", "결제", "엔화", "달러", "바트", "동화", "페소", "유로", "화폐"],
