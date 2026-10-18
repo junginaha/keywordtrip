@@ -163,7 +163,7 @@ function page(x) {
 <meta property="og:image" content="${HOST}/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
+<meta property="og:image:alt" content="키워드트립 — 여행지 ${DEST.length}곳의 입국·환율·여행 적기를 한눈에">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${HOST}/og.png">
 <meta name="theme-color" content="#0C1020">
@@ -251,7 +251,7 @@ function directory() {
 <meta property="og:image" content="${HOST}/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
+<meta property="og:image:alt" content="키워드트립 — 여행지 ${DEST.length}곳의 입국·환율·여행 적기를 한눈에">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${HOST}/og.png">
 <meta name="theme-color" content="#0C1020">
@@ -353,7 +353,7 @@ function topicPage(c, t) {
 <meta property="og:image" content="${HOST}/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="키워드트립 — 여행지 386곳의 입국·환율·여행 적기를 한눈에">
+<meta property="og:image:alt" content="키워드트립 — 여행지 ${DEST.length}곳의 입국·환율·여행 적기를 한눈에">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${HOST}/og.png">
 <meta name="theme-color" content="#0C1020">

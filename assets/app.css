@@ -420,3 +420,4 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 @media (max-width:352px){.findbtn .fbt{display:none}.findbtn{padding:0 8px}}
 .wantgo{display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box}
 .wantgo[hidden],.subform .subck[hidden],.subform .subin[hidden],.subform .wantsave[hidden]{display:none}
+.bookbox .bookdisc{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.5}

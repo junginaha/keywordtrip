@@ -34,8 +34,8 @@
 
   // Rel for every commission link (Google requires rel="sponsored" on paid links).
   var REL = "sponsored nofollow noopener";
-  // No per-button disclosure line (owner decision 2026-10-07); general affiliate notice lives on /about.
-  var DISCLOSURE = "";
+  // Per-button disclosure (owner approved 2026-10-17, supersedes the 2026-10-07 no-line decision).
+  var DISCLOSURE = "이 링크로 예약하면 키워드트립이 제휴 수수료를 받을 수 있습니다. 여행자가 내는 가격은 같습니다.";
 
   g.KTAffiliate = { LINKS: LINKS, REL: REL, DISCLOSURE: DISCLOSURE, trip: trip, KLOOK_ON: KLOOK_ON };
 })(typeof globalThis !== "undefined" ? globalThis : window);
