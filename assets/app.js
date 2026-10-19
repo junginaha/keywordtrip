@@ -240,7 +240,13 @@ function renderWant(x){
   btn.onclick=async()=>{
     if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
     LS.set("kt_want_"+x.id,{at:Date.now()}); setBtn(true);
-    try{fetch("/api/interest",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({destination:x.id}),keepalive:true}).catch(()=>{})}catch(e){}
+    // 같은 브라우저에서 같은 여행지는 하루(KST) 1회만 집계 — 기록은 이 브라우저에만 남고 서버엔 여행지 이름만 감
+    const day=new Date(Date.now()+9*36e5).toISOString().slice(0,10), sent=LS.get("kt_want_day")||{};
+    if(sent[x.id]!==day){
+      for(const k in sent) if(sent[k]!==day) delete sent[k];
+      sent[x.id]=day; LS.set("kt_want_day",sent);
+      try{fetch("/api/interest",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({destination:x.id}),keepalive:true}).catch(()=>{})}catch(e){}
+    }
     const sub=LS.get("kt_sub");
     if(sub&&sub.sid){
       postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});

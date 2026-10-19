@@ -50,10 +50,14 @@ export async function subscriberExists(cfg, id) {
 }
 
 export async function addDest(cfg, id, destination) {
-  if (cfg.kind === "sb") return sb(cfg, "kt_subscriber_destinations?on_conflict=subscriber_id,destination", {
-    method: "POST", prefer: "resolution=ignore-duplicates,return=minimal", body: [{ subscriber_id: id, destination }],
-  });
-  return cfg.db.pipeline([["SADD", `kt:subd:${id}`, destination], ["SADD", `kt:dsub:${destination}`, id]]);
+  if (cfg.kind === "sb") {
+    const rows = await sb(cfg, "kt_subscriber_destinations?on_conflict=subscriber_id,destination", {
+      method: "POST", prefer: "resolution=ignore-duplicates,return=representation", body: [{ subscriber_id: id, destination }],
+    });
+    return !!(rows && rows.length);
+  }
+  const [added] = await cfg.db.pipeline([["SADD", `kt:subd:${id}`, destination], ["SADD", `kt:dsub:${destination}`, id]]);
+  return added === 1; // true only when this destination is new for the subscriber
 }
 
 export async function deleteSubscriber(cfg, id) {

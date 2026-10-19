@@ -2,7 +2,11 @@
 // GET  → { ready } (front end only asks when storage is configured)
 // POST { contact, destination, consent:true, marketing, hp } → new/renewed subscriber, returns { sid }
 // POST { sid, destination } → adds another saved destination to an existing subscriber
+import { bump } from "./_metrics.js";
 import { config, tokenFor, idFrom, parseContact, cleanDest, readBody, upsertSubscriber, subscriberExists, addDest } from "./_sub.js";
+
+// Daily sign-up count per destination (count only, never the contact). A failure here never blocks the sign-up.
+const countSignup = d => bump("sub", d).catch(e => console.error("metrics", String(e).slice(0, 200)));
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -22,7 +26,7 @@ export default async function handler(req, res) {
       const id = idFrom(cfg.secret, body.sid);
       if (!id) return res.status(400).json({ error: "bad_sid" });
       if (!(await subscriberExists(cfg, id))) return res.status(410).json({ error: "gone" });
-      await addDest(cfg, id, destination);
+      if (await addDest(cfg, id, destination)) await countSignup(destination);
       return res.status(200).json({ ok: true });
     }
 
@@ -32,7 +36,7 @@ export default async function handler(req, res) {
     if (!c) return res.status(400).json({ error: "bad_contact" });
 
     const id = await upsertSubscriber(cfg, c, body.marketing === true);
-    await addDest(cfg, id, destination);
+    if (await addDest(cfg, id, destination)) await countSignup(destination);
     return res.status(200).json({ ok: true, sid: tokenFor(cfg.secret, id), type: c.type });
   } catch (e) {
     console.error("subscribe", String(e).slice(0, 300));
