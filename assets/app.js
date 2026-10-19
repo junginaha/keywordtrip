@@ -235,7 +235,7 @@ function renderWant(x){
   const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
   const show=el=>{panel.hidden=!el;[form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
-  $("#askQ").textContent=`${x.city} 관심 여행지 등록`;
+  $("#askQ").textContent="꼭 필요한 새로운 정보를 알려드릴까요?";
   $("#subGo").href="/trips/"+encodeURIComponent(x.id);
   btn.onclick=async()=>{
     if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
@@ -244,7 +244,7 @@ function renderWant(x){
     const sub=LS.get("kt_sub");
     if(sub&&sub.sid){
       postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
-      done.textContent=`${x.city} 관심 여행지를 추가했어요.`; show(done); return;
+      done.textContent=`${x.city} 새로운 정보도 함께 알려드릴게요.`; show(done); return;
     }
     const no=LS.get("kt_sub_no");
     if(no&&Date.now()-no<ASK_AGAIN) return;
@@ -268,7 +268,7 @@ function renderWant(x){
       if(!r.ok || !j.sid || j.ok!==true) throw new Error(j.error||"save_unconfirmed");
       LS.set("kt_sub",{sid:j.sid,type:j.type});
       LS.del("kt_sub_no");
-      done.textContent=`${x.city} 관심 여행지가 등록됐어요.`; show(done);
+      done.textContent=`신청했어요. 꼭 필요한 새로운 ${x.city} 정보가 나오면 알려드릴게요.`; show(done);
     }catch(ex){
       err.textContent=ex.message==="bad_contact"?"휴대폰 번호나 이메일을 다시 확인해 주세요.":"잠시 후 다시 시도해 주세요.";
       err.hidden=false; sync();
