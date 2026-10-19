@@ -1,0 +1,7 @@
+name: diag-sub
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::notice::subscribe=$(curl -s -m 20 https://keywordtrip.com/api/subscribe | head -c 200)"
