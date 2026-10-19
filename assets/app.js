@@ -235,7 +235,7 @@ function renderWant(x){
   const setBtn=on=>{btn.textContent=on?"♥ 가고 싶어요":"♡ 가고 싶어요";btn.setAttribute("aria-pressed",String(on))};
   const show=el=>{panel.hidden=!el;[form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
-  $("#askQ").textContent="꼭 필요한 새로운 정보를 알려드릴까요?";
+  $("#askQ").textContent="꼭 필요한 새로운 정보가 나오면 보내드릴까요?";
   $("#subGo").href="/trips/"+encodeURIComponent(x.id);
   btn.onclick=async()=>{
     if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
