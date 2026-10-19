@@ -19,7 +19,7 @@ form.inline{display:inline}.muted{color:#99a}.kpi{display:flex;gap:12px;flex-wra
 
 function keyOk(given) {
   const want = process.env.ADMIN_KEY;
-  if (!want || want.length < 16 || !given) return false;
+  if (!want || want.length < 12 || !given) return false;
   const a = crypto.createHash("sha256").update(String(given)).digest(), b = crypto.createHash("sha256").update(want).digest();
   return crypto.timingSafeEqual(a, b);
 }
