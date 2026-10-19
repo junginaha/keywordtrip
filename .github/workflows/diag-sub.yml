@@ -1,0 +1,15 @@
+name: diag-sub
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          g=$(curl -s -m 20 https://keywordtrip.com/api/subscribe | head -c 100)
+          echo "::notice::GET=$g"
+          r=$(curl -s -m 20 -X POST -H 'content-type: application/json' -d '{"contact":"kt-selftest@example.com","destination":"sapa","consent":true}' https://keywordtrip.com/api/subscribe)
+          sid=$(echo "$r" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("sid",""))' 2>/dev/null)
+          ok=$(echo "$r" | python3 -c 'import sys,json;j=json.load(sys.stdin);print(j.get("ok"),j.get("type"),j.get("error"))' 2>/dev/null)
+          echo "::notice::POST=$ok sid=$([ -n "$sid" ] && echo yes || echo no)"
+          if [ -n "$sid" ]; then u=$(curl -s -m 20 -o /dev/null -w "%{http_code}" "https://keywordtrip.com/api/unsubscribe?t=$sid"); echo "::notice::UNSUB=$u"; fi
+          a=$(curl -s -m 20 -o /dev/null -w "%{http_code}" https://keywordtrip.com/api/admin-subscribers); echo "::notice::ADMIN=$a"
