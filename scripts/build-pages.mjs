@@ -19,7 +19,7 @@ const prepHtml = (x, name) => {
   if (!L.length) return "";
   return `<section class="card book prep" aria-label="${esc(name)} 출발 전 서류">
 <h2>떠나기 전 서류</h2>
-<p>${yf ? `${esc(name)}은 황열 예방접종 증명서가 필요합니다. 비자·접종은 정부 공식 창구에서 하세요.` : "비자·입국 신청은 정부 공식 창구에서 하세요."}</p>
+<p>${yf ? `${esc(name)} 입국에는 황열 예방접종 증명서가 필요합니다. 비자·접종은 정부 공식 창구에서 하세요.` : "비자·입국 신청은 정부 공식 창구에서 하세요."}</p>
 <div class="bookgrid auto">${L.map(([l, h]) => `<a class="bookbtn" href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}</div>
 <p class="bookdisc">비슷한 이름의 대행 사이트는 수수료를 더 받습니다. 주소를 꼭 확인하세요.</p>
 </section>

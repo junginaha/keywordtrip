@@ -317,7 +317,7 @@ function renderPrep(x){
   const box=$("#prepbox"); if(!box) return;
   const L=prepLinks(x); box.hidden=!L.length; if(!L.length) return;
   const yf=(INFO.yf||[]).includes(x.cc);
-  $("#prepLead").textContent=yf?`${x.city}은 황열 예방접종 증명서가 필요합니다. 비자·접종은 정부 공식 창구에서 하세요.`:"비자·입국 신청은 정부 공식 창구에서 하세요.";
+  $("#prepLead").textContent=yf?`${x.city} 입국에는 황열 예방접종 증명서가 필요합니다. 비자·접종은 정부 공식 창구에서 하세요.`:"비자·입국 신청은 정부 공식 창구에서 하세요.";
   $("#prepGrid").innerHTML=L.map(([l,u])=>`<a class="bookbtn" href="${u}" target="_blank" rel="noopener">${l}</a>`).join("");
 }
 function renderBooking(x){
