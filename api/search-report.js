@@ -7,8 +7,8 @@ const pairs = a => { const o = []; for (let i = 0; i < (a || []).length; i += 2)
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Robots-Tag", "noindex");
-  const key = process.env.SEARCH_REPORT_KEY;
-  if (!key || req.query.key !== key) return res.status(404).end();
+  const keys = [process.env.SEARCH_REPORT_KEY, process.env.ADMIN_KEY].filter(Boolean);
+  if (!keys.length || !keys.includes(req.query.key)) return res.status(404).end();
   const db = redis();
   if (!db) return res.status(503).json({ error: "store_not_configured" });
   const month = /^\d{4}-\d{2}$/.test(req.query.month || "") ? req.query.month : new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 7);

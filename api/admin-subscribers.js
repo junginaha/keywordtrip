@@ -80,7 +80,26 @@ ${st.top.map((r, i) => `<tr><td>${i + 1}</td><td data-id="${esc(r.destination)}"
 </tbody></table></div>`;
 }
 
-const login = msg => shell(`<h1>구독자 리스트</h1>${msg ? `<p>${esc(msg)}</p>` : ""}<form method="post"><input type="password" name="key" placeholder="관리자 키" autocomplete="current-password" required> <button>열기</button></form>`);
+// 검색어 통계 (api/q.js가 쌓는 익명 검색어·결과 수)
+async function readSearch(db) {
+  const month = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 7);
+  const [mon, zeroMon, all, total] = await db.pipeline([
+    ["ZREVRANGE", `kt:q:${month}`, "0", "29", "WITHSCORES"],
+    ["ZREVRANGE", `kt:q0:${month}`, "0", "29", "WITHSCORES"],
+    ["ZREVRANGE", "kt:q:all", "0", "29", "WITHSCORES"],
+    ["GET", "kt:q:total"],
+  ]);
+  const pairs = a => { const o = []; for (let i = 0; i < (a || []).length; i += 2) o.push([a[i], +a[i + 1]]); return o; };
+  return { month, total: +total || 0, mon: pairs(mon), zero: pairs(zeroMon), all: pairs(all) };
+}
+function searchSection(sq) {
+  if (!sq) return "";
+  const tb = (title, rows) => `<div><h3>${title}</h3><div class="wrap"><table><tbody>${rows.map(([q, c], i) => `<tr><td>${i + 1}</td><td><a href="/?q=${encodeURIComponent(q)}" target="_blank" style="color:inherit">${esc(q)}</a></td><td>${c}</td></tr>`).join("") || `<tr><td class="muted">아직 없어요</td></tr>`}</tbody></table></div></div>`;
+  return `<h2>검색어 <span class="muted" style="font-weight:400;font-size:13px">누적 ${sq.total.toLocaleString("ko-KR")}회 · 이번 달 ${esc(sq.month)} · 검색어와 결과 수만 저장</span></h2>
+<div class="charts">${tb("결과 0건 (이번 달) — 추가 후보", sq.zero)}${tb("인기 검색어 (이번 달)", sq.mon)}${tb("인기 검색어 (누적)", sq.all)}</div>`;
+}
+
+const login = msg => shell(`<h1>키워드트립 관리자</h1>${msg ? `<p>${esc(msg)}</p>` : ""}<form method="post"><input type="password" name="key" placeholder="관리자 키" autocomplete="current-password" required> <button>열기</button></form>`);
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -98,6 +117,7 @@ export default async function handler(req, res) {
   let list, stats = null;
   const db = redis();
   if (db && form.format !== "csv") stats = await readStats(db, 14).catch(e => { console.error("admin-stats", String(e).slice(0, 300)); return null; });
+  const search = db && form.format !== "csv" ? await readSearch(db).catch(() => null) : null;
   try {
     list = await listSubscribers(cfg);
   } catch (e) {
@@ -120,11 +140,12 @@ export default async function handler(req, res) {
   const phones = list.filter(r => r.contact_type === "phone").length;
   const mkt = list.filter(r => r.marketing).length;
 
-  const body = `<h1>구독자 리스트</h1>
+  const body = `<h1>키워드트립 관리자</h1>
 <div class="kpi"><div><b>${list.length}</b>전체 구독자</div><div><b>${phones}</b>휴대폰</div><div><b>${list.length - phones}</b>이메일</div><div><b>${mkt}</b>특가 수신 동의</div></div>
 <p><form method="post" class="inline"><input type="hidden" name="key" value="${esc(form.key)}"><input type="hidden" name="format" value="csv"><button>CSV 내려받기</button></form>
 <span class="muted"> 특가·광고 메시지는 '특가 수신 동의 Y'에게만, 밤 9시~아침 8시 발송 금지.</span></p>
 ${metricsSection(stats)}
+${searchSection(search)}
 <h2>관심 여행지 순위 (누적 구독자)</h2><div class="wrap"><table><thead><tr><th>#</th><th>여행지</th><th>구독자</th></tr></thead><tbody>
 ${top.map(([d, n], i) => `<tr><td>${i + 1}</td><td data-id="${esc(d)}">${esc(d)}</td><td>${n}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">아직 없어요</td></tr>`}
 </tbody></table></div>
