@@ -60,7 +60,6 @@
       "alternateName":"키워드트립",
       "url":"https://keywordtrip.com/",
       "logo":{"@type":"ImageObject","url":"https://keywordtrip.com/icons/icon-512.png"},
-      "email":"junginaha@gmail.com",
       "sameAs":["https://www.instagram.com/keywordtrip/"],
       "description":"키워드 기반 여행지 큐레이션과 입국·환율·현지 시각·여행 적기·예약 비교 정보를 제공하는 여행 정보 서비스입니다."
     }
@@ -85,7 +84,7 @@
       <div class="total">
         <p>지금은 <b>국가·지역 <span data-tcc-count>330</span>곳, 추천 도시 <span data-curated-count>58</span>곳, 모두 <span data-total-count>388</span>곳</b>입니다.</p>
         <p class="ask">가고 싶은 곳이 없나요? 요청해 주세요. 업데이트하겠습니다.</p>
-        <a class="askbtn" href="mailto:junginaha@gmail.com?subject=%5B%ED%82%A4%EC%9B%8C%EB%93%9C%ED%8A%B8%EB%A6%BD%5D%20%EC%97%AC%ED%96%89%EC%A7%80%20%EC%B6%94%EA%B0%80%20%EC%9A%94%EC%B2%AD&body=%EC%B6%94%EA%B0%80%ED%96%88%EC%9C%BC%EB%A9%B4%20%ED%95%98%EB%8A%94%20%EC%97%AC%ED%96%89%EC%A7%80%3A%20%0A%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%95%EB%B3%B4(%EC%84%A0%ED%83%9D)%3A%20">여행지 요청하기</a>
+        <a class="askbtn" href="#" data-mail="subject=%5B%ED%82%A4%EC%9B%8C%EB%93%9C%ED%8A%B8%EB%A6%BD%5D%20%EC%97%AC%ED%96%89%EC%A7%80%20%EC%B6%94%EA%B0%80%20%EC%9A%94%EC%B2%AD&body=%EC%B6%94%EA%B0%80%ED%96%88%EC%9C%BC%EB%A9%B4%20%ED%95%98%EB%8A%94%20%EC%97%AC%ED%96%89%EC%A7%80%3A%20%0A%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%95%EB%B3%B4(%EC%84%A0%ED%83%9D)%3A%20">여행지 요청하기</a>
       </div>
       <h3>읽는 법</h3>
       <ul class="legend-l">
@@ -117,7 +116,7 @@
 
   <main>
     <ul class="list" id="list"></ul>
-    <p class="empty" id="empty" hidden>맞는 여행지가 없어요. 나라·도시 이름이나 해변, 맛집, 10월처럼 원하는 경험·시기로 찾아보세요.<br><a href="mailto:junginaha@gmail.com?subject=%5B%ED%82%A4%EC%9B%8C%EB%93%9C%ED%8A%B8%EB%A6%BD%5D%20%EC%97%AC%ED%96%89%EC%A7%80%20%EC%B6%94%EA%B0%80%20%EC%9A%94%EC%B2%AD">찾는 여행지가 없다면 요청해 주세요 →</a></p>
+    <p class="empty" id="empty" hidden>맞는 여행지가 없어요. 나라·도시 이름이나 해변, 맛집, 10월처럼 원하는 경험·시기로 찾아보세요.<br><a href="#" data-mail="subject=%5B%ED%82%A4%EC%9B%8C%EB%93%9C%ED%8A%B8%EB%A6%BD%5D%20%EC%97%AC%ED%96%89%EC%A7%80%20%EC%B6%94%EA%B0%80%20%EC%9A%94%EC%B2%AD">찾는 여행지가 없다면 요청해 주세요 →</a></p>
 
     <details class="fxall" id="fxall"><summary>전체 환율표<small id="fxMeta"></small></summary><div class="fxgrid" id="fxgrid"></div>
       <p class="fxsrc">주요 통화는 <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener">유럽중앙은행(ECB) 기준환율</a>, 그 밖의 통화는 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>를 쓰고, 두 출처를 서로 대조해 2.5% 이상 어긋나면 공신력 높은 쪽으로 교체합니다. 은행 매매기준율과 같은 중간값이라, 실제 환전·카드 결제에는 수수료가 더해집니다. 30분마다 갱신.</p></details>
@@ -243,7 +242,7 @@
       <p class="bookdisc">제휴 링크</p>
       <button class="tripshare" id="shareTripBtn" type="button">이 여행지 친구에게 보내기</button>
     </section>
-    <p class="links"><a id="mapA" target="_blank" rel="noopener">지도</a><a id="wxA" target="_blank" rel="noopener">날씨</a><a href="mailto:junginaha@gmail.com?subject=%5BKeywordTrip%5D%20협업%20제안%20문의">협업 제안 문의</a></p>
+    <p class="links"><a id="mapA" target="_blank" rel="noopener">지도</a><a id="wxA" target="_blank" rel="noopener">날씨</a><a href="#" data-mail="subject=%5BKeywordTrip%5D%20협업%20제안%20문의">협업 제안 문의</a></p>
   </div>
 </section>
 
@@ -253,5 +252,6 @@
 <script src="/assets/answers.js" defer></script>
 <script src="/assets/finder.js" defer></script>
 <script src="/assets/app.js" defer></script>
+<script id="kt-mail">document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[data-mail]");if(!a)return;e.preventDefault();var q=a.getAttribute("data-mail");location.href="mailto:"+["junginaha","gmail.com"].join("@")+(q?"?"+q:"")});</script>
 </body>
 </html>
