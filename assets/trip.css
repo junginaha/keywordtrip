@@ -124,3 +124,4 @@ html,body{overflow-x:hidden}@supports (overflow:clip){html,body{overflow-x:clip}
 .more[open]{padding-bottom:20px}
 .more .kwbar{margin-top:0}
 .more .faq{margin-top:24px}
+.prep .bookbtn{border-color:#33405f;font-weight:600}.prep .bookbtn:focus-visible,.prep .bookbtn:hover{background:transparent;color:var(--ink);border-color:var(--cyan)}

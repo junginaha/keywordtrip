@@ -171,7 +171,7 @@ function openSheet(id,from){
   $("#fNowRow").hidden=!x.best; $("#monthsWrap").hidden=!x.best;
   if(x.best) $("#fNow").textContent=isBest(x)?"지금이 적기":`다음 적기 ${nextBest(x,m)}월`;
   $("#fCur").textContent=`${CUR[x.cur]||""} (${x.cur})`;
-  renderInfo(x); renderWant(x); renderBooking(x); setDestinationMeta(x);
+  renderInfo(x); renderWant(x); renderPrep(x); renderBooking(x); setDestinationMeta(x);
   $("#months").innerHTML=Array.from({length:12},(_,i)=>`<span class="${(x.best||[]).includes(i+1)?"b":""} ${i+1===m?"now":""}" title="${i+1}월">${i+1}</span>`).join("");
   $("#mapA").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.en);
   $("#wxA").href="https://www.google.com/search?q="+encodeURIComponent((x.cap||x.city)+" 날씨");
@@ -304,6 +304,21 @@ async function shareTrip(x){
     else if(navigator.clipboard){await navigator.clipboard.writeText(url);toast("여행 링크를 복사했어요.")}
     else{prompt("여행 링크를 복사하세요.",url)}
   }catch(e){}
+}
+/* 떠나기 전 서류: 비자·전자여행허가가 필요한 곳, 황열 예방접종 증명서가 필요한 곳에만 공식 창구 링크 */
+function prepLinks(x){
+  if(isBan(x)||x.cc==="KP") return [];
+  const c=classOf(x), out=[];
+  if(c==="blue"||c==="yellow") ((INFO.official||{})[x.cc]||[]).forEach(l=>out.push(l));
+  if((INFO.yf||[]).includes(x.cc)&&INFO.yfLink) out.push(INFO.yfLink);
+  return out;
+}
+function renderPrep(x){
+  const box=$("#prepbox"); if(!box) return;
+  const L=prepLinks(x); box.hidden=!L.length; if(!L.length) return;
+  const yf=(INFO.yf||[]).includes(x.cc);
+  $("#prepLead").textContent=yf?`${x.city}은 황열 예방접종 증명서가 필요합니다. 비자·접종은 정부 공식 창구에서 하세요.`:"비자·입국 신청은 정부 공식 창구에서 하세요.";
+  $("#prepGrid").innerHTML=L.map(([l,u])=>`<a class="bookbtn" href="${u}" target="_blank" rel="noopener">${l}</a>`).join("");
 }
 function renderBooking(x){
   // No booking CTA for MOFA travel-ban destinations.

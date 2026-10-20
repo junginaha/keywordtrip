@@ -421,3 +421,5 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .wantgo{display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box}
 .wantgo[hidden],.subform .subck[hidden],.subform .subin[hidden],.subform .wantsave[hidden]{display:none}
 .bookbox .bookdisc{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+.prepbox .prepgrid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.prepbox .bookbtn{font-weight:600}
