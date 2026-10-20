@@ -1,0 +1,17 @@
+name: diag-klook
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1"
+          for u in \
+            "https://affiliate.klook.com/redirect?aid=137536&aff_adid=1484668&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3DTokyo" \
+            "https://www.klook.com/ko/search/result/?query=Tokyo" \
+            "https://www.klook.com/ko/search/?query=Tokyo" \
+            "https://www.klook.com/ko/?aid=137536" ; do
+            r=$(curl -s -L -A "$UA" -m 25 -o /tmp/b -w "%{http_code} %{url_effective} %{num_redirects}" "$u")
+            t=$(grep -o '<title>[^<]*' /tmp/b | head -1 | cut -c1-80)
+            echo "::notice::$r | $t"
+          done
