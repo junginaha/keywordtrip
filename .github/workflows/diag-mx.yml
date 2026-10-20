@@ -1,0 +1,10 @@
+name: diag-mx
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::notice::MX=$(dig +short MX keywordtrip.com | tr '\n' ' ')"
+          echo "::notice::TXT=$(dig +short TXT keywordtrip.com | tr '\n' ' ' | cut -c1-200)"
+          echo "::notice::NS=$(dig +short NS keywordtrip.com | tr '\n' ' ')"
