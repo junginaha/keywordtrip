@@ -12,6 +12,7 @@
 ## 목적지 페이지 빌드
 - 목적지 데이터의 원본은 `assets/data.js`(DEST·INFO)입니다.
 - 데이터를 바꾼 뒤 `node scripts/build-pages.mjs`를 실행하면 `trips/*.html`(전 목적지 정적 페이지), `trips/index.html`(전체 목록), `sitemap.xml`, `llms.txt`, `llms-full.txt`, 홈의 추천 여행지 링크가 함께 갱신됩니다.
+- 시즌·연휴 가이드(1월·2월·겨울·2027 설 연휴·시차 없는 여행지)는 `node scripts/build-guides.mjs`가 같은 데이터로 `guides/`에 만듭니다. build-pages보다 먼저 실행하세요.
 - 이어서 `node scripts/seo-check.mjs`로 점검 후 커밋하세요. 맞춤 FAQ는 `scripts/data/trip-faq.json`에 추가합니다.
 
 ## 검색어 집계
