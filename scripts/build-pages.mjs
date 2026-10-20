@@ -21,12 +21,10 @@ const prepHtml = (x, name) => {
 <h2>떠나기 전 서류</h2>
 <p>${yf ? `${esc(name)} 입국에는 황열 예방접종 증명서가 필요합니다. 비자·접종은 정부 공식 창구에서 하세요.` : "비자·입국 신청은 정부 공식 창구에서 하세요."}</p>
 <div class="bookgrid auto">${L.map(([l, h]) => `<a class="bookbtn" href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}</div>
-<p class="bookdisc">비슷한 이름의 대행 사이트는 수수료를 더 받습니다. 주소를 꼭 확인하세요.</p>
 </section>
 `;
 };
 const bookHtml = (x, name) => noBook(x) ? "" : `<section class="card book" aria-label="${esc(name)} 예약">
-<h2>${esc(name)}, 실제로 떠난다면</h2>
 <div class="bookgrid">${[["flights", "항공권 가격"], ["stay", "숙소 가격"], ["activity", "투어·입장권"]].map(([k, l]) => `<a class="bookbtn" href="${esc(AFF.LINKS[k](x))}" target="_blank" rel="${AFF.REL}" data-p="${k}" data-d="${esc(x.id)}">${l}</a>`).join("")}</div>
 ${AFF.DISCLOSURE ? `<p class="bookdisc">${esc(AFF.DISCLOSURE)}</p>\n` : ""}</section>
 <script>document.querySelectorAll(".bookbtn").forEach(a=>a.addEventListener("click",()=>{try{navigator.sendBeacon("/api/outbound",new Blob([JSON.stringify({provider:a.dataset.p,destination:a.dataset.d})],{type:"application/json"}))}catch(e){}}))</script>

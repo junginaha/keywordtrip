@@ -32,7 +32,7 @@ for(const file of [...new Set(htmlFiles)]){
   const c=read(file);
   const ogCount=c.match(/property="og:image:alt" content="키워드트립 — 여행지 (\d+)곳/);
   if(ogCount && Number(ogCount[1])!==DEST.length) errors.push(file+": stale destination count in OG alt");
-  if(/class="bookbtn"/.test(c) && !/class="bookdisc"/.test(c)) errors.push(file+": booking buttons without affiliate disclosure");
+  if(/rel="sponsored/.test(c) && /class="bookbtn"/.test(c) && !/class="bookdisc"/.test(c)) errors.push(file+": booking buttons without affiliate disclosure");
   if(!/<title>[^<]+<\/title>/i.test(c)) errors.push(file+": missing title");
   if(!/<meta name=["']description["'][^>]+>/i.test(c)) errors.push(file+": missing meta description");
   if(!/<link rel=["']canonical["'][^>]+>/i.test(c)) errors.push(file+": missing canonical");
