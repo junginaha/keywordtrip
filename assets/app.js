@@ -155,10 +155,20 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* sheet */
 let cur=null,lastFocus=null,ctl=null;
+/* 낮·밤: 시계 대신 실제 태양 고도로 판정 (고위도 백야·극야, 계절별 일출·일몰 반영). 좌표는 시간대 기준 도시. */
+function sunUp(lat,lon,d=new Date()){
+  const r=Math.PI/180, n=d.getTime()/864e5-10957.5;
+  const L=(280.460+0.9856474*n)%360, g=((357.528+0.9856003*n)%360)*r;
+  const lam=(L+1.915*Math.sin(g)+0.020*Math.sin(2*g))*r, eps=(23.439-0.0000004*n)*r;
+  const ra=Math.atan2(Math.cos(eps)*Math.sin(lam),Math.cos(lam)), dec=Math.asin(Math.sin(eps)*Math.sin(lam));
+  const gmst=((18.697374558+24.06570982441908*n)%24+24)%24, ha=(gmst*15+lon)*r-ra;
+  return Math.asin(Math.sin(lat*r)*Math.sin(dec)+Math.cos(lat*r)*Math.cos(dec)*Math.cos(ha))/r>-0.833;
+}
+function isDaylight(x,h){const ll=(INFO.tzll||{})[x.tz];return ll?sunUp(ll[0],ll[1]):(h>=6&&h<19)}
 function paintClock(x){
   $("#shClock").textContent=fmt(x.tz,{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
   const h=hourIn(x.tz);
-  $("#shDate").textContent=fmt(x.tz,{month:"long",day:"numeric",weekday:"long"}).format(new Date())+(h>=6&&h<19?", 낮":", 밤");
+  $("#shDate").textContent=fmt(x.tz,{month:"long",day:"numeric",weekday:"long"}).format(new Date())+(isDaylight(x,h)?", 낮":", 밤");
 }
 function openSheet(id,from){
   const x=DEST.find(d=>d.id===id); cur=x; lastFocus=from;
