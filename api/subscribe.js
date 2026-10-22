@@ -34,8 +34,13 @@ export default async function handler(req, res) {
     if (body.consent !== true) return res.status(400).json({ error: "consent_required" });
     const c = parseContact(body.contact);
     if (!c) return res.status(400).json({ error: "bad_contact" });
+    const way = body.way === "email" ? "email" : body.way === "phone" ? "phone" : c.type;
+    if (way !== c.type) return res.status(400).json({ error: "bad_contact" });
+    const name = String(body.name || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 30);
+    if (!name) return res.status(400).json({ error: "name_required" });
+    const message = String(body.message || "").replace(/[\u0000-\u0009\u000b-\u001f<>]/g, "").trim().slice(0, 300);
 
-    const id = await upsertSubscriber(cfg, c, body.marketing === true);
+    const id = await upsertSubscriber(cfg, c, body.marketing === true, { name, message, destination });
     if (await addDest(cfg, id, destination)) await countSignup(destination);
     return res.status(200).json({ ok: true, sid: tokenFor(cfg.secret, id), type: c.type });
   } catch (e) {

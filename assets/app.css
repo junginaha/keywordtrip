@@ -424,3 +424,11 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 .prepbox .prepgrid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .prepbox .bookbtn{font-weight:600}
 .bookbox .bookdisc,.ans-disc{margin:6px 0 0!important;font-size:10px!important;line-height:1.3;color:var(--muted);opacity:.55}
+.sublab{font-size:13px;color:var(--muted);margin:2px 0 -4px}
+.subsel{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.submsg{position:relative}
+.subta{min-height:84px;padding:10px 44px 10px 12px;resize:vertical;line-height:1.5;display:block}
+.submic{position:absolute;right:6px;bottom:6px;width:34px;height:34px;border:0;border-radius:50%;background:0 0;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.submic[hidden]{display:none}
+.submic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.submic.on{color:var(--pink)}

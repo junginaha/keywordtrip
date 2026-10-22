@@ -270,27 +270,40 @@ function renderWant(x){
     if(!fresh&&no&&Date.now()-no<ASK_AGAIN) return; // 닫은 카드는 상세를 다시 열 때 7일간 자동으로 띄우지 않음(하트를 새로 누르면 다시 뜸)
     const ready=await subIsReady();
     form.querySelectorAll(".subin,.subck,#subBtn").forEach(e=>e.hidden=!ready); $("#subGo").hidden=true;
-    show(form); if(ready&&fresh) inp.focus({preventScroll:true}); else if(!ready){const msg=$("#subErr");msg.textContent="현재 등록할 수 없습니다. 잠시 후 다시 시도해 주세요.";msg.hidden=false;}
+    show(form); if(ready&&fresh) nm.focus({preventScroll:true}); else if(!ready){const msg=$("#subErr");msg.textContent="현재 등록할 수 없습니다. 잠시 후 다시 시도해 주세요.";msg.hidden=false;}
   };
   if(LS.get("kt_want_"+x.id)) afterHeart(false);
   $("#askNo").onclick=()=>{LS.set("kt_sub_no",Date.now());show(null)};
   const inp=$("#subContact"), req=$("#subReq"), ad=$("#subAd"), sbtn=$("#subBtn"), err=$("#subErr"), more=$("#subMore"), terms=$("#subTerms");
-  inp.value=""; req.checked=false; ad.checked=false; err.hidden=true; terms.hidden=true; more.setAttribute("aria-expanded","false");
-  const sync=()=>{sbtn.disabled=!(req.checked&&contactOk(inp.value))};
-  sync(); inp.oninput=()=>{err.hidden=true;sync()}; req.onchange=sync;
+  const nm=$("#subName"), way=$("#subWay"), msg=$("#subMsg"), mic=$("#subMic");
+  inp.value=""; nm.value=""; msg.value=""; req.checked=false; ad.checked=false; err.hidden=true; terms.hidden=true; more.setAttribute("aria-expanded","false");
+  const setWay=()=>{const ph=way.value==="phone";$("#subContactLab").textContent=ph?"답변 받을 전화번호":"답변 받을 이메일";inp.placeholder=ph?"전화번호를 입력해 주세요":"이메일을 입력해 주세요";inp.type=ph?"tel":"email";inp.inputMode=ph?"tel":"email";inp.autocomplete=ph?"tel":"email"};
+  const wayOk=v=>way.value==="phone"?(contactOk(v)&&!v.includes("@")):(contactOk(v)&&v.includes("@"));
+  const sync=()=>{sbtn.disabled=!(req.checked&&nm.value.trim().length>0&&wayOk(inp.value))};
+  setWay(); sync(); inp.oninput=()=>{err.hidden=true;sync()}; nm.oninput=sync; req.onchange=sync; way.onchange=()=>{inp.value="";setWay();sync()};
+  // 남기실 말: 브라우저 음성 인식(음성은 기기에서 글자로만 바뀌고 서버로 보내지 않음)
+  const SRx=window.SpeechRecognition||window.webkitSpeechRecognition;
+  mic.hidden=!SRx;
+  if(SRx) mic.onclick=()=>{
+    if(mic._r){try{mic._r.stop()}catch(e){}return}
+    const r=new SRx(); r.lang="ko-KR"; r.interimResults=false; r.maxAlternatives=1; mic._r=r; mic.classList.add("on");
+    r.onresult=e=>{const t=e.results[0][0].transcript.trim(); if(t) msg.value=(msg.value?msg.value.trim()+" ":"")+t};
+    r.onend=r.onerror=()=>{mic._r=null;mic.classList.remove("on")};
+    try{r.start()}catch(e){mic._r=null;mic.classList.remove("on")}
+  };
   more.onclick=e=>{e.preventDefault();terms.hidden=!terms.hidden;more.setAttribute("aria-expanded",String(!terms.hidden))};
   form.onsubmit=async e=>{
     e.preventDefault(); if(sbtn.disabled) return;
     sbtn.disabled=true; err.hidden=true;
     try{
-      const r=await postSub({contact:inp.value,destination:x.id,consent:true,marketing:ad.checked,hp:form.elements.website.value});
+      const r=await postSub({name:nm.value.trim(),way:way.value,contact:inp.value,message:msg.value.trim(),destination:x.id,consent:true,marketing:ad.checked,hp:form.elements.website.value});
       const j=await r.json().catch(()=>({}));
       if(!r.ok || !j.sid || j.ok!==true) throw new Error(j.error||"save_unconfirmed");
       LS.set("kt_sub",{sid:j.sid,type:j.type});
       LS.del("kt_sub_no");
       done.textContent=`신청했어요. 꼭 필요한 새로운 ${x.city} 정보가 나오면 알려드릴게요.`; show(done);
     }catch(ex){
-      err.textContent=ex.message==="bad_contact"?"휴대폰 번호나 이메일을 다시 확인해 주세요.":"잠시 후 다시 시도해 주세요.";
+      err.textContent=ex.message==="bad_contact"?(way.value==="phone"?"전화번호를 다시 확인해 주세요.":"이메일을 다시 확인해 주세요."):ex.message==="name_required"?"이름을 입력해 주세요.":"잠시 후 다시 시도해 주세요.";
       err.hidden=false; sync();
     }
   };

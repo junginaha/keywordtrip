@@ -127,8 +127,9 @@ export default async function handler(req, res) {
 
   if (form.format === "csv") {
     const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const csv = "﻿" + [["연락처", "유형", "특가수신동의", "동의일시", "관심여행지"].map(q).join(",")]
-      .concat(list.map(r => [r.contact, r.contact_type === "phone" ? "휴대폰" : "이메일", r.marketing ? "Y" : "N", r.consent_at, r.dests.join(" ")].map(q).join(","))).join("\r\n");
+    const notes = r => Object.entries(r.notes || {}).map(([d, m]) => `${d}: ${m}`).join(" / ");
+    const csv = "﻿" + [["이름", "연락처", "유형", "특가수신동의", "동의일시", "관심여행지", "남기신 말"].map(q).join(",")]
+      .concat(list.map(r => [r.name || "", r.contact, r.contact_type === "phone" ? "휴대폰" : "이메일", r.marketing ? "Y" : "N", r.consent_at, r.dests.join(" "), notes(r)].map(q).join(","))).join("\r\n");
     res.setHeader("content-type", "text/csv; charset=utf-8");
     res.setHeader("content-disposition", `attachment; filename="keywordtrip-subscribers-${new Date().toISOString().slice(0, 10)}.csv"`);
     return res.status(200).send(csv);
@@ -149,8 +150,8 @@ ${searchSection(search)}
 <h2>관심 여행지 순위 (누적 구독자)</h2><div class="wrap"><table><thead><tr><th>#</th><th>여행지</th><th>구독자</th></tr></thead><tbody>
 ${top.map(([d, n], i) => `<tr><td>${i + 1}</td><td data-id="${esc(d)}">${esc(d)}</td><td>${n}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">아직 없어요</td></tr>`}
 </tbody></table></div>
-<h2>연락처</h2><div class="wrap"><table><thead><tr><th>연락처</th><th>유형</th><th>특가</th><th>동의일</th><th>관심 여행지</th></tr></thead><tbody>
-${list.map(r => `<tr><td>${esc(r.contact)}</td><td>${r.contact_type === "phone" ? "휴대폰" : "이메일"}</td><td>${r.marketing ? "Y" : "N"}</td><td>${esc(String(r.consent_at || "").slice(0, 10))}</td><td>${r.dests.map(d => `<span data-id="${esc(d)}">${esc(d)}</span>`).join(", ")}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">아직 없어요</td></tr>`}
+<h2>연락처</h2><div class="wrap"><table><thead><tr><th>이름</th><th>연락처</th><th>유형</th><th>특가</th><th>동의일</th><th>관심 여행지</th><th>남기신 말</th></tr></thead><tbody>
+${list.map(r => `<tr><td>${esc(r.name || "")}</td><td>${esc(r.contact)}</td><td>${r.contact_type === "phone" ? "휴대폰" : "이메일"}</td><td>${r.marketing ? "Y" : "N"}</td><td>${esc(String(r.consent_at || "").slice(0, 10))}</td><td>${r.dests.map(d => `<span data-id="${esc(d)}">${esc(d)}</span>`).join(", ")}</td><td>${Object.entries(r.notes || {}).map(([d, m]) => `<span data-id="${esc(d)}">${esc(d)}</span>: ${esc(m)}`).join("<br>")}</td></tr>`).join("") || `<tr><td colspan="7" class="muted">아직 없어요</td></tr>`}
 </tbody></table></div>
 <script src="/assets/data.js"></script>
 <script>try{var m={};DEST.forEach(function(d){m[d.id]=d.city+(d.country?"":" ("+d.c+")")});document.querySelectorAll("[data-id]").forEach(function(e){var n=m[e.dataset.id];if(n)e.textContent=n})}catch(e){}</script>`;

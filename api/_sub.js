@@ -22,7 +22,7 @@ export function config() {
 /* ---- storage operations (Supabase or Redis) ---- */
 const flat = a => { const o = {}; for (let i = 0; i < (a || []).length; i += 2) o[a[i]] = a[i + 1]; return o; };
 
-export async function upsertSubscriber(cfg, c, marketing) {
+export async function upsertSubscriber(cfg, c, marketing, extra = {}) {
   const now = new Date().toISOString();
   if (cfg.kind === "sb") {
     const rows = await sb(cfg, "kt_subscribers?on_conflict=contact", {
@@ -37,7 +37,8 @@ export async function upsertSubscriber(cfg, c, marketing) {
   const id = existing || crypto.randomUUID();
   await cfg.db.pipeline([
     ["SET", `kt:subc:${c.value}`, id],
-    ["HSET", `kt:sub:${id}`, "contact", c.value, "contact_type", c.type, "consent_version", CONSENT_VERSION, "consent_at", now, "marketing", marketing ? "1" : "0", "marketing_at", marketing ? now : ""],
+    ["HSET", `kt:sub:${id}`, "contact", c.value, "contact_type", c.type, "consent_version", CONSENT_VERSION, "consent_at", now, "marketing", marketing ? "1" : "0", "marketing_at", marketing ? now : "", "name", extra.name || ""],
+    ...(extra.message && extra.destination ? [["HSET", `kt:subnote:${id}`, extra.destination, extra.message]] : []),
     ["SADD", "kt:subs", id],
   ]);
   return id;
@@ -64,7 +65,7 @@ export async function deleteSubscriber(cfg, id) {
   if (cfg.kind === "sb") return sb(cfg, `kt_subscribers?id=eq.${id}`, { method: "DELETE", prefer: "return=minimal" });
   const [h, dests] = await cfg.db.pipeline([["HGETALL", `kt:sub:${id}`], ["SMEMBERS", `kt:subd:${id}`]]);
   const contact = flat(h).contact;
-  const cmds = [["DEL", `kt:sub:${id}`], ["DEL", `kt:subd:${id}`], ["SREM", "kt:subs", id], ...(dests || []).map(d => ["SREM", `kt:dsub:${d}`, id])];
+  const cmds = [["DEL", `kt:sub:${id}`], ["DEL", `kt:subd:${id}`], ["DEL", `kt:subnote:${id}`], ["SREM", "kt:subs", id], ...(dests || []).map(d => ["SREM", `kt:dsub:${d}`, id])];
   if (contact) cmds.push(["DEL", `kt:subc:${contact}`]);
   return cfg.db.pipeline(cmds);
 }
@@ -80,8 +81,8 @@ export async function listSubscribers(cfg) {
   const out = [];
   for (let i = 0; i < ids.length; i += 200) {
     const part = ids.slice(i, i + 200);
-    const res = await cfg.db.pipeline(part.flatMap(id => [["HGETALL", `kt:sub:${id}`], ["SMEMBERS", `kt:subd:${id}`]]));
-    part.forEach((id, k) => { const h = flat(res[k * 2]); if (h.contact) out.push({ contact: h.contact, contact_type: h.contact_type, marketing: h.marketing === "1", consent_at: h.consent_at, dests: res[k * 2 + 1] || [] }); });
+    const res = await cfg.db.pipeline(part.flatMap(id => [["HGETALL", `kt:sub:${id}`], ["SMEMBERS", `kt:subd:${id}`], ["HGETALL", `kt:subnote:${id}`]]));
+    part.forEach((id, k) => { const h = flat(res[k * 3]); if (h.contact) out.push({ name: h.name || "", contact: h.contact, contact_type: h.contact_type, marketing: h.marketing === "1", consent_at: h.consent_at, dests: res[k * 3 + 1] || [], notes: flat(res[k * 3 + 2]) }); });
   }
   return out.sort((a, b) => String(b.consent_at).localeCompare(String(a.consent_at)));
 }
