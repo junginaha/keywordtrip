@@ -257,18 +257,22 @@ function renderWant(x){
       sent[x.id]=day; LS.set("kt_want_day",sent);
       try{fetch("/api/interest",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({destination:x.id}),keepalive:true}).catch(()=>{})}catch(e){}
     }
+    afterHeart(true);
+  };
+  // 하트가 켜진 상태면 항상 다음 단계를 보여 줌: 구독자는 확인 문구, 아니면 연락처 카드
+  const afterHeart=async(fresh)=>{
     const sub=LS.get("kt_sub");
     if(sub&&sub.sid){
-      postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
+      if(fresh) postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
       done.textContent=`${x.city} 새로운 정보도 함께 알려드릴게요.`; show(done); return;
     }
     const no=LS.get("kt_sub_no");
-    if(no&&Date.now()-no<ASK_AGAIN) return;
-    // 저장소가 준비되면 연락처로 받기, 아니면 최신 정보 페이지로 안내 (어느 쪽이든 카드는 항상 뜸)
+    if(!fresh&&no&&Date.now()-no<ASK_AGAIN) return; // 닫은 카드는 상세를 다시 열 때 7일간 자동으로 띄우지 않음(하트를 새로 누르면 다시 뜸)
     const ready=await subIsReady();
     form.querySelectorAll(".subin,.subck,#subBtn").forEach(e=>e.hidden=!ready); $("#subGo").hidden=true;
-    show(form); if(ready) inp.focus({preventScroll:true}); else {const msg=$("#subErr");msg.textContent="현재 등록할 수 없습니다. 잠시 후 다시 시도해 주세요.";msg.hidden=false;}
+    show(form); if(ready&&fresh) inp.focus({preventScroll:true}); else if(!ready){const msg=$("#subErr");msg.textContent="현재 등록할 수 없습니다. 잠시 후 다시 시도해 주세요.";msg.hidden=false;}
   };
+  if(LS.get("kt_want_"+x.id)) afterHeart(false);
   $("#askNo").onclick=()=>{LS.set("kt_sub_no",Date.now());show(null)};
   const inp=$("#subContact"), req=$("#subReq"), ad=$("#subAd"), sbtn=$("#subBtn"), err=$("#subErr"), more=$("#subMore"), terms=$("#subTerms");
   inp.value=""; req.checked=false; ad.checked=false; err.hidden=true; terms.hidden=true; more.setAttribute("aria-expanded","false");
