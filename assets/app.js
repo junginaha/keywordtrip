@@ -264,7 +264,8 @@ function renderWant(x){
     const sub=LS.get("kt_sub");
     if(sub&&sub.sid){
       if(fresh) postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
-      done.textContent=`${x.city} 새로운 정보도 함께 알려드릴게요.`; show(done); return;
+      done.innerHTML=`${x.city} 새로운 정보도 함께 알려드릴게요. <button type="button" class="wantre" id="wantRe">다른 연락처로 받기</button>`; show(done);
+      $("#wantRe").onclick=()=>{LS.del("kt_sub");afterHeart(true)}; return;
     }
     const no=LS.get("kt_sub_no");
     if(!fresh&&no&&Date.now()-no<ASK_AGAIN) return; // 닫은 카드는 상세를 다시 열 때 7일간 자동으로 띄우지 않음(하트를 새로 누르면 다시 뜸)
