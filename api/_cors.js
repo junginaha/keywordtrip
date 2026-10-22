@@ -1,8 +1,8 @@
-// CORS for the Apps in Toss mini app (keytrip). The bundle runs on Toss domains,
+// CORS for the Apps in Toss mini app (keywordtrip). The bundle runs on Toss domains,
 // not keywordtrip.com, so only these origins are allowed to call the public API.
 const ALLOWED = new Set([
-  "https://keytrip.apps.tossmini.com",
-  "https://keytrip.private-apps.tossmini.com",
+  "https://keywordtrip.apps.tossmini.com",
+  "https://keywordtrip.private-apps.tossmini.com",
 ]);
 
 // Returns true when the request was a preflight and has been answered.

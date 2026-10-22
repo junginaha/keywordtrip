@@ -2,17 +2,17 @@
  * KeywordTrip — Apps in Toss bridge.
  * Loaded first on every page of the Toss bundle. Keeps the site's design and
  * copy untouched and only adapts behaviour the Toss WebView needs:
- *  - /api/* calls go to keywordtrip.com (the bundle runs on keytrip.apps.tossmini.com)
+ *  - /api/* calls go to keywordtrip.com (the bundle runs on keywordtrip.apps.tossmini.com)
  *  - clean URLs (/trips/bali) resolve to the bundled .html files
  *  - links to keywordtrip.com stay inside the mini app
  *  - official sites and partner links open in the external browser
- *  - share uses a Toss deep link (intoss://keytrip)
+ *  - share uses a Toss deep link (intoss://keywordtrip)
  *  - bottom sheets close on the Toss back button before leaving the page
  */
 import { Device, Share, getTossShareLink, openURL as legacyOpenURL } from "@apps-in-toss/web-framework";
 
 const SITE = "https://keywordtrip.com";
-const APP = "keytrip";
+const APP = "keywordtrip";
 const SITE_HOSTS = new Set(["keywordtrip.com", "www.keywordtrip.com"]);
 
 /* ---------- 1. API calls → keywordtrip.com ---------- */
