@@ -261,12 +261,9 @@ function renderWant(x){
   };
   // 하트가 켜진 상태면 항상 다음 단계를 보여 줌: 구독자는 확인 문구, 아니면 연락처 카드
   const afterHeart=async(fresh)=>{
+    // 이미 신청한 기기도 하트를 누르면 같은 신청 폼을 보여 줌(관심 여행지는 뒤에서 자동 추가)
     const sub=LS.get("kt_sub");
-    if(sub&&sub.sid){
-      if(fresh) postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
-      done.innerHTML=`${x.city} 새로운 정보도 함께 알려드릴게요. <button type="button" class="wantre" id="wantRe">다른 연락처로 받기</button>`; show(done);
-      $("#wantRe").onclick=()=>{LS.del("kt_sub");afterHeart(true)}; return;
-    }
+    if(sub&&sub.sid&&fresh) postSub({sid:sub.sid,destination:x.id}).then(r=>{if(r.status===410||r.status===400)LS.del("kt_sub")}).catch(()=>{});
     const no=LS.get("kt_sub_no");
     if(!fresh&&no&&Date.now()-no<ASK_AGAIN) return; // 닫은 카드는 상세를 다시 열 때 7일간 자동으로 띄우지 않음(하트를 새로 누르면 다시 뜸)
     const ready=await subIsReady();
