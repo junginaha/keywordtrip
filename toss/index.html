@@ -1,22 +1,265 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>키트립 | 내 여행 최적화</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#f7fafb;color:#172b35;font-family:system-ui,-apple-system,sans-serif}main{max-width:580px;margin:auto;padding:24px 18px 64px}h1{font-size:28px;margin:8px 0}p{line-height:1.6}label{display:block;margin-top:18px;font-weight:650}select,button{font:inherit;width:100%;padding:14px;border:1px solid #cbd9df;border-radius:12px;background:white;margin-top:7px}button{background:#076a77;color:white;border:0;font-weight:750;margin-top:22px}article{background:white;padding:18px;border-radius:16px;margin-top:12px;border:1px solid #e3eaee}article h2{margin:4px 0;font-size:20px}.muted{font-size:13px;color:#526a73}.tag{font-size:12px;color:#08707b}</style></head>
-<body><main><p class="tag">KEYTRIP · 여행 큐레이션</p><h1>내 예산으로 어디 갈까?</h1><p>여행 시기와 예산을 선택하면 기존 여행지 데이터에서 최대 세 곳을 추천합니다.</p>
-<label for="month">여행 시기</label><select id="month"><option value="0">언제든</option><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
-<label for="budget">1인 예상 총예산</label><select id="budget"><option value="0">상관없음</option><option value="50">50만 원 이하</option><option value="100">100만 원 이하</option><option value="200">200만 원 이하</option><option value="300">300만 원 이하</option></select>
-<label for="theme">관심 여행</label><select id="theme"><option value="">상관없음</option><option value="바다">바다·휴양</option><option value="맛집">음식·맛집</option><option value="박물관">문화·예술</option><option value="자연">자연·풍경</option></select>
-<button id="go" type="button">여행지 추천받기</button><section id="results" aria-live="polite"></section>
-<p class="muted">예산은 실제 견적이 아닌 대략적인 탐색 기준입니다. 항공권·숙박료, 비자·입국 요건은 예약 전 다시 확인하세요. 이 시범 화면은 로그인·결제·연락처 수집을 하지 않습니다.</p></main>
-<script src="../assets/data.js"></script><script>
-(function(){
- const results=document.getElementById("results");
- const price={JP:75,TW:80,VN:90,TH:110,PH:110,MY:120,HK:120,SG:170,ID:150,CN:90,KR:55};
- const escape=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- document.getElementById("go").addEventListener("click",()=>{
-   if(typeof DEST==="undefined"||!Array.isArray(DEST)){results.textContent="여행지 데이터를 불러오지 못했습니다.";return;}
-   const m=+document.getElementById("month").value,b=+document.getElementById("budget").value,t=document.getElementById("theme").value;
-   const rows=DEST.filter(x=>!x.country&&x.city&&(!m||(Array.isArray(x.best)&&x.best.includes(m)))&&(!b||(price[x.cc]??250)<=b)&&(!t||[x.head,x.hook,...(x.kw||[])].join(" ").includes(t))).slice(0,3);
-   results.innerHTML=rows.length?'<h2>추천 여행지</h2>'+rows.map(x=>'<article><p class="tag">'+escape(x.c)+'</p><h2>'+escape(x.city)+'</h2><p>'+escape(x.hook||x.head)+'</p><p class="muted">예산 참고값: 약 '+(price[x.cc]??250)+'만 원부터 (추정·비실시간)</p></article>').join(""):'<p role="status">조건에 맞는 여행지가 없습니다. 예산이나 시기를 넓혀 보세요.</p>';
- });
-})();
-</script></body></html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>해외여행지 추천·비자·환율·여행 적기 | 키워드트립</title>
+<meta name="description" content="언제, 어디로 떠날지 고민된다면? 여행 시기와 취향으로 해외여행지를 찾고 한국 여권 기준 입국 정보, 환율, 여행 적기와 예약 비교 정보를 확인하세요.">
+<link rel="canonical" href="https://keywordtrip.com/">
+<meta name="naver-site-verification" content="3c7c4c3d3cf937810ad7f33cfd2994f9df41a7dc" />
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta property="og:image" content="https://keywordtrip.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="키워드트립 — 해외여행지 추천과 입국·환율·여행 적기 정보">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://keywordtrip.com/">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="KeywordTrip">
+<meta property="og:title" content="키워드트립 | 해외여행지 추천·입국 정보·예약 비교">
+<meta property="og:description" content="여행 시기와 취향으로 여행지를 고르고, 한국 여권 기준 입국 정보와 환율·여행 적기·예약 비교 정보를 확인하세요.">
+<meta name="theme-color" content="#0C1020">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="해외여행지 추천·비자·환율·여행 적기 | 키워드트립">
+<meta name="twitter:description" content="여행 시기와 취향으로 여행지를 고르고, 한국 여권 기준 입국 정보와 환율·여행 적기·예약 비교 정보를 확인하세요.">
+<meta name="twitter:image" content="https://keywordtrip.com/og.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="키워드트립">
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap"></noscript>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "키워드트립은 왜 330곳인가요?", "acceptedAnswer": {"@type": "Answer", "text": "나라의 기준보다 여행자의 경험을 기준으로 골랐기 때문입니다. 여행자 클럽 TCC(Travelers' Century Club)의 330개 국가·지역 분류를 따라, 하와이·갈라파고스·티베트처럼 입국 절차나 지리·문화가 뚜렷이 다른 곳은 각각 하나의 여행지로 셉니다. 330곳 모두가 독립국은 아닙니다. 그 위에 별도로 고른 추천 도시는 이용자 요청을 받아 계속 늘려 가고 있습니다."}}, {"@type": "Question", "name": "형광색은 무엇을 뜻하나요?", "acceptedAnswer": {"@type": "Answer", "text": "그린은 무비자, 블루는 출발 전 사전 신청(ETA·ESTA·e비자·도착비자), 옐로우는 비자나 별도 허가 필요, 오렌지는 여행금지·경보, 핑크는 키워드트립 추천과 팁입니다."}}, {"@type": "Question", "name": "지금 여행 가기 좋은 해외 여행지는 어디인가요?", "acceptedAnswer": {"@type": "Answer", "text": "'지금 적기' 버튼을 누르면 현지 기준 이번 달이 여행 적기인 도시만 보여 줍니다. 적기는 각 도시의 일반적인 기후와 성수기 기준입니다."}}, {"@type": "Question", "name": "몬테네그로는 어떤 돈을 쓰나요?", "acceptedAnswer": {"@type": "Answer", "text": "몬테네그로는 EU 회원국이 아니지만 유로를 씁니다. 코소보도 같은 방식이고, 안도라·모나코·산마리노·바티칸은 협정으로 유로를 씁니다. 한국인은 몬테네그로에 90일 무비자로 입국할 수 있습니다."}}, {"@type": "Question", "name": "한국인은 태국에 며칠까지 무비자로 머물 수 있나요?", "acceptedAnswer": {"@type": "Answer", "text": "2026년 9월 15일 태국 무비자 개편으로 미국·일본 등은 30일로 줄었지만, 한국은 양자협정에 따라 90일 무비자가 유지됩니다. 입국 전 디지털 입국카드(TDAC) 제출은 필수입니다."}}, {"@type": "Question", "name": "유럽 여행에 ETIAS가 지금 필요한가요?", "acceptedAnswer": {"@type": "Answer", "text": "아직 아닙니다. EU 집행위원회는 현재 ETIAS가 운영 중이 아니며 구체적인 시작일은 시행 수개월 전에 공지한다고 안내합니다. 현재 공식 신청 창구도 없습니다. EES는 2026년 4월 10일 전면 운영되었습니다."}}, {"@type": "Question", "name": "일본 출국세와 면세 제도는 어떻게 바뀌었나요?", "acceptedAnswer": {"@type": "Answer", "text": "2026년 7월 1일 이후 일본 출국에는 국제관광여객세 3,000엔이 적용됩니다. 다만 2026년 6월 30일까지 발권된 일부 대상 항공권 등에는 종전 1,000엔이 적용되는 경과조치가 있습니다. 2026년 11월 1일부터 면세 제도는 출국 시 환급 방식으로 전환될 예정입니다."}}, {"@type": "Question", "name": "달러가 통용되는 나라는 어디인가요?", "acceptedAnswer": {"@type": "Answer", "text": "에콰도르, 엘살바도르, 동티모르, 파나마(지폐), 팔라우, 마셜제도, 미크로네시아는 미국 달러를 씁니다. 캄보디아는 달러가 사실상 주 통화이고 거스름돈은 리엘로 받는 경우가 많습니다."}}, {"@type": "Question", "name": "찾는 여행지가 없으면 어떻게 하나요?", "acceptedAnswer": {"@type": "Answer", "text": "요청해 주시면 업데이트합니다. 홍콩·도쿄·후쿠오카처럼 추천 도시 목록은 이용자 요청으로 늘어났습니다. 소개 영역의 '여행지 요청하기' 버튼으로 보내 주세요."}}]}</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {
+      "@type":"WebSite",
+      "@id":"https://keywordtrip.com/#website",
+      "url":"https://keywordtrip.com/",
+      "name":"KeywordTrip",
+      "alternateName":"키워드트립",
+      "inLanguage":"ko-KR",
+      "publisher":{"@id":"https://keywordtrip.com/#organization"},
+      "potentialAction":{
+        "@type":"SearchAction",
+        "target":{"@type":"EntryPoint","urlTemplate":"https://keywordtrip.com/?q={search_term_string}"},
+        "query-input":"required name=search_term_string"
+      }
+    },
+    {
+      "@type":"Organization",
+      "@id":"https://keywordtrip.com/#organization",
+      "name":"KeywordTrip",
+      "alternateName":"키워드트립",
+      "url":"https://keywordtrip.com/",
+      "logo":{"@type":"ImageObject","url":"https://keywordtrip.com/icons/icon-512.png"},
+      "sameAs":["https://www.instagram.com/keywordtrip/"],
+      "description":"키워드 기반 여행지 큐레이션과 입국·환율·현지 시각·여행 적기·예약 비교 정보를 제공하는 여행 정보 서비스입니다."
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="brand">키워드트립<span class="brand-line"><span class="item"><i class="dot pink"></i>흩어진 여행정보</span><span class="item"><i class="dot cyan"></i>꼭 필요한 선별</span><span class="item"><i class="dot green"></i>여행 큐레이션</span></span></h1>
+    <div class="topr"><span class="live"><i></i><span id="seoul">서울</span></span>
+    <button type="button" class="findbtn" id="findBtn" aria-haspopup="dialog" aria-controls="finder" aria-label="내 여행 최적화"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span class="fbt">내 여행 최적화</span><b></b></button></div>
+  </header>
+  <details class="about" id="about">
+    <summary>키워드트립 소개</summary>
+    <div class="about-body">
+      <p class="lead">어디로 떠날지 고민될 때, 여행 시기와 취향에 맞는 여행지를 찾고 입국·환율·예약 정보를 함께 비교하세요.</p>
+      <p>유엔은 193개, 올림픽은 206개, 국제축구연맹은 211개라 합니다. 키워드트립은 여행자 클럽 TCC의 330곳을 따릅니다.</p>
+      <p>추천 도시는 처음에 열여덟 곳이었습니다. "홍콩은 왜 없어요?"라는 질문에 할 말이 없어 홍콩을 넣었고, 넣는 김에 도쿄·후쿠오카·나트랑도 넣다 보니 <span data-curated-count>58</span>곳이 됐습니다.</p>
+      <div class="total">
+        <p>지금은 <b>국가·지역 <span data-tcc-count>330</span>곳, 추천 도시 <span data-curated-count>58</span>곳, 모두 <span data-total-count>388</span>곳</b>입니다.</p>
+        <p class="ask">가고 싶은 곳이 없나요? 요청해 주세요. 업데이트하겠습니다.</p>
+        <a class="askbtn" href="#" data-mail="subject=%5B%ED%82%A4%EC%9B%8C%EB%93%9C%ED%8A%B8%EB%A6%BD%5D%20%EC%97%AC%ED%96%89%EC%A7%80%20%EC%B6%94%EA%B0%80%20%EC%9A%94%EC%B2%AD&body=%EC%B6%94%EA%B0%80%ED%96%88%EC%9C%BC%EB%A9%B4%20%ED%95%98%EB%8A%94%20%EC%97%AC%ED%96%89%EC%A7%80%3A%20%0A%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%95%EB%B3%B4(%EC%84%A0%ED%83%9D)%3A%20">여행지 요청하기</a>
+      </div>
+      <h3>읽는 법</h3>
+      <ul class="legend-l">
+        <li><i style="--vc:var(--green)"></i><b>그린</b> 무비자로 바로 입국</li>
+        <li><i style="--vc:var(--blue)"></i><b>블루</b> 출발 전 사전 신청(ETA·ESTA·e비자·도착비자)</li>
+        <li><i style="--vc:var(--yellow)"></i><b>옐로우</b> 비자 또는 별도 허가 필요</li>
+        <li><i style="--vc:var(--orange)"></i><b>오렌지</b> 여행금지·여행경보 지역</li>
+        <li><i style="--vc:var(--pink)"></i><b>핑크</b> 키워드트립 추천과 키워드트립 팁</li>
+      </ul>
+      <p class="src">입국 정보는 한국 여권 기준이며, 외교부 해외안전여행과 각국 정부 공식 발표를 IATA Timatic 기반 공개 정리와 대조해 작성합니다. 환율은 ECB 기준환율과 ExchangeRate-API를 교차 확인합니다.</p>
+    </div>
+  </details>
+
+
+  <section class="poster" id="poster" aria-labelledby="pTitle">
+    <div class="p-btn" id="pBtn" role="button" tabindex="0">
+      <span class="p-top"><span>오늘의 추천 여행</span><time id="pTime"></time></span>
+      <span class="p-head" id="pHead"></span>
+      <span class="p-kw" id="pKw"></span>
+      <span class="p-bottom"><span id="pTitle"></span><span class="p-go">자세히 보기</span></span>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="chips" id="chips" role="group" aria-label="추천 키워드"></div>
+    <p class="count" id="count" aria-live="polite"></p>
+  </div>
+
+
+  <main>
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty" hidden>맞는 여행지가 없어요. 나라·도시 이름이나 해변, 맛집, 10월처럼 원하는 경험·시기로 찾아보세요.<br><a href="#" data-mail="subject=%5B%ED%82%A4%EC%9B%8C%EB%93%9C%ED%8A%B8%EB%A6%BD%5D%20%EC%97%AC%ED%96%89%EC%A7%80%20%EC%B6%94%EA%B0%80%20%EC%9A%94%EC%B2%AD">찾는 여행지가 없다면 요청해 주세요 →</a></p>
+
+    <details class="fxall" id="fxall"><summary>전체 환율표<small id="fxMeta"></small></summary><div class="fxgrid" id="fxgrid"></div>
+      <p class="fxsrc">주요 통화는 <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener">유럽중앙은행(ECB) 기준환율</a>, 그 밖의 통화는 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>를 쓰고, 두 출처를 서로 대조해 2.5% 이상 어긋나면 공신력 높은 쪽으로 교체합니다. 은행 매매기준율과 같은 중간값이라, 실제 환전·카드 결제에는 수수료가 더해집니다. 30분마다 갱신.</p></details>
+
+
+
+    <details class="more-guides">
+      <summary>더 둘러보기</summary>
+      <div class="more-guides-body">
+        <nav aria-label="여행 가이드">
+          <a href="/guides/2026-korean-travel-trends">2026 인기 여행지</a>
+          <a href="/guides/10-month-overseas-travel">10월 추천</a>
+          <a href="/guides/11-month-overseas-travel">11월 추천</a>
+          <a href="/guides/12-month-overseas-travel">12월 추천</a>
+          <a href="/guides/1-month-overseas-travel">1월 추천</a>
+          <a href="/guides/2-month-overseas-travel">2월 추천</a>
+          <a href="/guides/winter-overseas-travel">겨울 해외여행</a>
+          <a href="/guides/2027-seollal-overseas-travel">2027 설 연휴</a>
+          <a href="/guides/no-jet-lag-overseas-travel">시차 없는 여행지</a>
+        </nav>
+        <nav aria-label="추천 여행지">
+          <a href="/trips"><b>전체 여행지 388곳</b></a><a href="/trips/tokyo">도쿄</a><a href="/trips/osaka">오사카</a><a href="/trips/fukuoka">후쿠오카</a><a href="/trips/kyoto">교토</a><a href="/trips/sapporo">삿포로</a><a href="/trips/okinawa">오키나와</a><a href="/trips/danang">다낭</a><a href="/trips/nhatrang">나트랑</a><a href="/trips/phuquoc">푸꾸옥</a><a href="/trips/hanoi">하노이</a><a href="/trips/sapa">사파</a><a href="/trips/hochiminh">호치민</a><a href="/trips/bangkok">방콕</a><a href="/trips/chiangmai">치앙마이</a><a href="/trips/phuket">푸껫</a><a href="/trips/taipei">타이베이</a><a href="/trips/hongkong">홍콩</a><a href="/trips/macau">마카오</a><a href="/trips/singapore">싱가포르</a><a href="/trips/bali">발리</a><a href="/trips/cebu">세부</a><a href="/trips/boracay">보라카이</a><a href="/trips/kotakinabalu">코타키나발루</a><a href="/trips/kualalumpur">쿠알라룸푸르</a><a href="/trips/shanghai">상하이</a><a href="/trips/beijing">베이징</a><a href="/trips/qingdao">칭다오</a><a href="/trips/ulaanbaatar">울란바토르</a><a href="/trips/jeju">제주</a><a href="/trips/guam">괌</a><a href="/trips/saipan">사이판</a><a href="/trips/dubai">두바이</a><a href="/trips/paris">파리</a><a href="/trips/london">런던</a><a href="/trips/rome">로마</a><a href="/trips/barcelona">바르셀로나</a><a href="/trips/camino">산티아고 순례길</a><a href="/trips/prague">프라하</a><a href="/trips/vienna">빈</a><a href="/trips/budapest">부다페스트</a><a href="/trips/interlaken">인터라켄</a><a href="/trips/santorini">산토리니</a><a href="/trips/dubrovnik">두브로브니크</a><a href="/trips/lisbon">리스본</a><a href="/trips/istanbul">이스탄불</a><a href="/trips/reykjavik">레이캬비크</a><a href="/trips/newyork">뉴욕</a><a href="/trips/losangeles">로스앤젤레스</a><a href="/trips/lasvegas">라스베이거스</a><a href="/trips/sanfrancisco">샌프란시스코</a><a href="/trips/vancouver">밴쿠버</a><a href="/trips/honolulu">호놀룰루</a><a href="/trips/cancun">칸쿤</a><a href="/trips/mexicocity">멕시코시티</a><a href="/trips/sydney">시드니</a><a href="/trips/melbourne">멜버른</a><a href="/trips/queenstown">퀸스타운</a><a href="/trips/capetown">케이프타운</a>
+        </nav>
+      </div>
+    </details>
+
+    <section class="faq" aria-labelledby="faqh">
+      <details class="faq-all"><summary><h2 id="faqh">자주 묻는 질문</h2></summary>
+      <details><summary>키워드트립은 왜 330곳인가요?</summary><p>나라의 기준보다 여행자의 경험을 기준으로 골랐기 때문입니다. 여행자 클럽 TCC(Travelers' Century Club)의 330개 국가·지역 분류를 따라, 하와이·갈라파고스·티베트처럼 입국 절차나 지리·문화가 뚜렷이 다른 곳은 각각 하나의 여행지로 셉니다. 330곳 모두가 독립국은 아닙니다. 그 위에 별도로 고른 추천 도시는 이용자 요청을 받아 계속 늘려 가고 있습니다.</p></details>
+<details><summary>형광색은 무엇을 뜻하나요?</summary><p>그린은 무비자, 블루는 출발 전 사전 신청(ETA·ESTA·e비자·도착비자), 옐로우는 비자나 별도 허가 필요, 오렌지는 여행금지·경보, 핑크는 키워드트립 추천과 팁입니다.</p></details>
+<details><summary>지금 여행 가기 좋은 해외 여행지는 어디인가요?</summary><p>'지금 적기' 버튼을 누르면 현지 기준 이번 달이 여행 적기인 도시만 보여 줍니다. 적기는 각 도시의 일반적인 기후와 성수기 기준입니다.</p></details>
+<details><summary>몬테네그로는 어떤 돈을 쓰나요?</summary><p>몬테네그로는 EU 회원국이 아니지만 유로를 씁니다. 코소보도 같은 방식이고, 안도라·모나코·산마리노·바티칸은 협정으로 유로를 씁니다. 한국인은 몬테네그로에 90일 무비자로 입국할 수 있습니다.</p></details>
+<details><summary>한국인은 태국에 며칠까지 무비자로 머물 수 있나요?</summary><p>2026년 9월 15일 태국 무비자 개편으로 미국·일본 등은 30일로 줄었지만, 한국은 양자협정에 따라 90일 무비자가 유지됩니다. 입국 전 디지털 입국카드(TDAC) 제출은 필수입니다.</p></details>
+<details><summary>유럽 여행에 ETIAS가 지금 필요한가요?</summary><p>아직 아닙니다. EU 집행위원회는 현재 ETIAS가 운영 중이 아니며 구체적인 시작일은 시행 수개월 전에 공지한다고 안내합니다. 현재 공식 신청 창구도 없습니다. EES는 2026년 4월 10일 전면 운영되었습니다.</p></details>
+<details><summary>일본 출국세와 면세 제도는 어떻게 바뀌었나요?</summary><p>2026년 7월 1일 이후 일본 출국에는 국제관광여객세 3,000엔이 적용됩니다. 다만 2026년 6월 30일까지 발권된 일부 대상 항공권 등에는 종전 1,000엔이 적용되는 경과조치가 있습니다. 2026년 11월 1일부터 면세 제도는 출국 시 환급 방식으로 전환될 예정입니다.</p></details>
+<details><summary>달러가 통용되는 나라는 어디인가요?</summary><p>에콰도르, 엘살바도르, 동티모르, 파나마(지폐), 팔라우, 마셜제도, 미크로네시아는 미국 달러를 씁니다. 캄보디아는 달러가 사실상 주 통화이고 거스름돈은 리엘로 받는 경우가 많습니다.</p></details>
+    <details><summary>찾는 여행지가 없으면 어떻게 하나요?</summary><p>요청해 주시면 업데이트합니다. 홍콩·도쿄·후쿠오카처럼 추천 도시 목록은 이용자 요청으로 늘어났습니다. 소개 영역의 '여행지 요청하기' 버튼으로 보내 주세요.</p></details>
+</details>
+    </section>
+  </main>
+  <footer><a href="/trips">전체 여행지 목록</a> · <a href="/about">서비스·출처·업데이트 기준</a> · <a href="/privacy">개인정보처리방침</a><br>정보 기준일 2026년 10월 20일. 규정은 예고 없이 바뀌니 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">외교부 해외안전여행</a>에서 최신 공지를 확인하세요.<br><span class="fsrc">입국 정보: IATA Timatic 기반 공개 정리와 외교부 여행경보 공지. 환율: ECB 기준환율·ExchangeRate-API 교차 확인. 적기·계절은 일반 기후 기준.</span></footer>
+</div>
+
+<form class="dock" id="dock" role="search">
+  <label class="sbox">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+    <input class="search" id="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="어디로 여행하시나요?" aria-label="여행지 검색">
+  </label>
+  <button type="button" class="mic" id="mic" aria-label="음성으로 검색" aria-pressed="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
+  </button>
+  <p class="toast" id="toast" role="status" aria-live="polite"></p>
+</form>
+<div class="pp" id="pp" role="dialog" aria-modal="true" aria-labelledby="ppT" hidden>
+  <div class="pp-card">
+    <div class="pp-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></div>
+    <h2 id="ppT">말로 찾아볼까요?</h2>
+    <p id="ppD">"유럽 무비자", "따뜻한 해변"처럼 말하면 바로 찾아 드려요. 다음 화면에서 마이크 사용을 <b>허용</b>해 주세요. 음성은 검색에만 쓰이고 저장되지 않아요.</p>
+    <button class="btn" id="ppOk">마이크 허용하기</button>
+    <button class="pp-no" id="ppNo">나중에</button>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="scrim" id="fScrim"></div>
+<section class="sheet fsheet" id="finder" role="dialog" aria-modal="true" aria-labelledby="fTitle" aria-hidden="true">
+  <div class="grab"></div>
+  <div class="inner">
+    <div class="fhead"><h2 id="fTitle">여행최적화</h2><button type="button" class="x" id="fClose" aria-label="닫기">✕</button></div>
+    <div id="fBody"></div>
+    <p class="fnote">예산·비행시간은 서울 출발 기준 대략값입니다.</p>
+  </div>
+  <div class="fbar"><button type="button" class="freset" id="fReset" hidden>초기화</button><button type="button" class="fgo" id="fGo">전체 보기</button></div>
+</section>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle" aria-hidden="true">
+  <div class="band" id="band"><div class="grab"></div>
+  <div class="inner">
+    <div class="sh-head">
+      <h2 id="shTitle"></h2>
+      <button class="x" id="close" aria-label="닫기">✕</button>
+    </div>
+    <p class="clock" id="shClock">--:--</p>
+    <p class="clock-sub" id="shDate"></p>
+  </div></div>
+  <div class="inner">
+    <dl class="facts">
+      <div><dt>서울과 시차</dt><dd id="fDiff"></dd></div>
+      <div><dt>지금 현지는</dt><dd id="fSeason"></dd></div>
+      <div id="fNowRow"><dt>지금 가도 될까</dt><dd id="fNow"></dd></div>
+      <div><dt>통화</dt><dd id="fCur"></dd></div>
+    </dl>
+    <div id="monthsWrap"><div class="months" id="months" aria-label="월별 여행 적기"></div>
+    <p class="legend"><span style="color:var(--cbg)">●</span> 적기　○ 이번 달</p></div>
+    <div class="info" id="info"></div>
+    <section class="wantbox" id="wantbox" hidden>
+      <button class="wantbtn" id="wantBtn" type="button" aria-pressed="false">♡ 가고 싶어요</button>
+      <div class="wantpanel" id="wantPanel" hidden>
+        <form class="subform" id="subForm" hidden novalidate>
+          <div class="subhead"><p class="wantq" id="askQ"></p><button type="button" class="subx" id="askNo" aria-label="닫기">×</button></div>
+          <label class="sublab" for="subName">이름</label>
+          <input class="subin" id="subName" name="name" type="text" autocomplete="name" maxlength="30" placeholder="이름을 입력해 주세요">
+          <label class="sublab" for="subWay">답변 받을 방법</label>
+          <select class="subin subsel" id="subWay" name="way"><option value="phone">휴대폰 문자</option><option value="email">이메일</option></select>
+          <label class="sublab" for="subContact" id="subContactLab">답변 받을 전화번호</label>
+          <input class="subin" id="subContact" name="contact" type="tel" inputmode="tel" autocomplete="tel" autocapitalize="off" spellcheck="false" placeholder="전화번호를 입력해 주세요">
+          <label class="sublab" for="subMsg">남기실 말 (선택)</label>
+          <div class="submsg"><textarea class="subin subta" id="subMsg" name="message" rows="3" maxlength="300" placeholder="편안하게 알려주세요."></textarea><button type="button" class="submic" id="subMic" aria-label="말로 입력하기" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button></div>
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="subck"><input type="checkbox" id="subReq"><span>(필수) 개인정보 수집·이용 동의</span><button type="button" class="submore" id="subMore" aria-expanded="false">보기</button></label>
+          <p class="subterms" id="subTerms" hidden>수집 항목: 이름, 휴대폰 번호 또는 이메일, 남기신 말, 찜한 여행지<br>목적: 찜한 여행지의 입국·환율·특가 등 변경 정보 안내(문자 또는 이메일)<br>보유 기간: 수신 거부 시 즉시 파기<br>동의를 거부할 수 있으며, 거부하면 알림을 받을 수 없습니다. <a href="/privacy">개인정보처리방침</a></p>
+          <label class="subck"><input type="checkbox" id="subAd"><span>(선택) 여행 정보·혜택 이메일/문자 수신</span></label>
+          <button class="wantsave" id="subBtn" type="submit" disabled>알림 받기</button>
+          <a class="wantsave wantgo" id="subGo" hidden>관심 여행지 등록</a>
+          <p class="suberr" id="subErr" role="alert" hidden></p>
+        </form>
+        <p class="wantdone" id="wantDone" hidden></p>
+      </div>
+    </section>
+    <section class="bookbox prepbox" id="prepbox" aria-labelledby="prepTitle" hidden>
+      <h4 id="prepTitle">떠나기 전 서류</h4>
+      <p class="booklead" id="prepLead">비자·입국 신청과 예방접종은 정부 공식 창구에서 하세요.</p>
+      <div class="bookgrid prepgrid" id="prepGrid"></div>
+    </section>
+    <section class="bookbox" id="bookbox" aria-label="예약">
+      <p class="booklead">목적지를 정했다면 가격과 현지 체험을 바로 비교하세요.</p>
+      <div class="bookgrid">
+        <a class="bookbtn" id="flightA" target="_blank" rel="sponsored nofollow noopener">항공권 가격</a>
+        <a class="bookbtn" id="stayA" target="_blank" rel="sponsored nofollow noopener">숙소 가격</a>
+        <a class="bookbtn" id="actA" target="_blank" rel="sponsored nofollow noopener">투어·입장권</a>
+      </div>
+      <p class="bookdisc">제휴 링크</p>
+      <button class="tripshare" id="shareTripBtn" type="button">이 여행지 친구에게 보내기</button>
+    </section>
+    <p class="links"><a id="mapA" target="_blank" rel="noopener">지도</a><a id="wxA" target="_blank" rel="noopener">날씨</a><a href="#" data-mail="subject=%5BKeywordTrip%5D%20협업%20제안%20문의">협업 제안 문의</a></p>
+  </div>
+</section>
+
+<script src="/assets/data.js" defer></script>
+<script src="/assets/search.js" defer></script>
+<script src="/assets/affiliate.js" defer></script>
+<script src="/assets/answers.js" defer></script>
+<script src="/assets/finder.js" defer></script>
+<script src="/assets/app.js" defer></script>
+<script id="kt-mail">document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[data-mail]");if(!a)return;e.preventDefault();var q=a.getAttribute("data-mail");location.href="mailto:"+["junginaha","gmail.com"].join("@")+(q?"?"+q:"")});</script>
+</body>
+</html>
