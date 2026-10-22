@@ -4,3 +4,4 @@ scripts/
 .github/
 social/state.json
 toss/
+supabase/

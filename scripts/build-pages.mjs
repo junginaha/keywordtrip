@@ -347,7 +347,6 @@ function topicPage(c, t) {
       { "@type": "ListItem", position: 3, name: `${name} ${t.label}`, item: u }] },
     { "@type": "FAQPage", mainEntity: qa.map(o => ({ "@type": "Question", name: o.q, acceptedAnswer: { "@type": "Answer", text: o.a } })) },
   ] };
-  const others = TOPICS.filter(o => o.key !== t.key);
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -476,7 +475,7 @@ ${DEST.map(d => `## ${d.city} (${d.en})
 - URL: ${url(d)}
 - 지역: ${d.reg}${d.country ? "" : ` / ${d.c}`}
 - 입국: ${vShort(d)} — ${visaOf(d)}
-- 여행 적기: ${mText(d.best)}${d.wet ? ` / 우기: ${mText(d.wet)}` : ""}
+${chkLine(d) ? `- 입국 체크: ${chkLine(d)}\n` : ""}${officialOf(d).length ? `- 공식 확인처: ${officialOf(d).map(([l, h]) => `${l} ${h}`).join(" · ")}\n` : ""}- 여행 적기: ${mText(d.best)}${d.wet ? ` / 우기: ${mText(d.wet)}` : ""}
 - 통화: ${curName(d)}${rateLine(d) ? ` (${rateLine(d)}, ${fxDate} 기준)` : ""}
 - 시차: ${tzLine(d)}
 - 키워드: ${d.kw.join(", ")}`).join("\n\n")}

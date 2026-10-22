@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /social/
 
 # 검색·AI 답변 서비스 크롤러 명시 허용 (공개 여행 정보만, /api 제외)
 User-agent: Googlebot
@@ -20,5 +21,6 @@ User-agent: Applebot
 User-agent: Applebot-Extended
 Allow: /
 Disallow: /api/
+Disallow: /social/
 
 Sitemap: https://keywordtrip.com/sitemap.xml

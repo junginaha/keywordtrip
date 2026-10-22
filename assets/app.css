@@ -109,8 +109,7 @@ footer .fsrc{display:block;margin-top:6px;opacity:.8}
 .conv input,.divider h2{font-family:var(--display)}
 .divider h2{font-weight:400;font-size:26px;margin:0}
 .divider span{font-size:13px;color:var(--muted)}
-.hook.ban,.info .rate{font-size:13px;font-weight:700}
-.hook.ban{color:var(--pink);margin-top:4px}
+.info .rate{font-size:13px;font-weight:700}
 .info{margin:8px 0 24px}
 .info section{padding:14px 0;border-top:1px solid var(--line)}
 .info h4{font-weight:500;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -208,7 +207,6 @@ html{-webkit-tap-highlight-color:transparent;text-size-adjust:100%}
 .info .rate{background:var(--blue)!important;color:var(--night)!important}
 .alert{background:var(--orange)!important}
 .alert.soft{background:0 0!important;color:var(--orange)!important;border-color:var(--orange)!important}
-.hook.ban{display:none}
 .about{margin:-8px 0 20px}
 .about summary{cursor:pointer;list-style:none;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .about summary::after{content:"+";color:var(--pink);font-weight:700}
@@ -418,8 +416,7 @@ body{line-height:1.65;-webkit-text-size-adjust:100%}
 @media (max-width:360px){.fchip,.fsel{padding:0 11px;font-size:13.5px}.fbar{padding-left:18px;padding-right:18px}}
 .fchip[data-v=""][aria-pressed=true]{background:0 0;color:var(--ink);border-color:#3a4566;font-weight:500}
 @media (max-width:380px){.findbtn .fbt{display:none}.findbtn{padding:0 8px}}
-.wantgo{display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box}
-.wantgo[hidden],.subform .subck[hidden],.subform .subin[hidden],.subform .wantsave[hidden]{display:none}
+.subform .subck[hidden],.subform .sublab[hidden],.subform .submsg[hidden],.subform .subin[hidden],.subform .wantsave[hidden]{display:none}
 .bookbox .bookdisc{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 .prepbox .prepgrid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .prepbox .bookbtn{font-weight:600}

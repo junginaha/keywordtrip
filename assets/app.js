@@ -247,7 +247,6 @@ function renderWant(x){
   const show=el=>{panel.hidden=!el;[form,done].forEach(e=>e.hidden=e!==el)};
   setBtn(!!LS.get("kt_want_"+x.id)); show(null);
   $("#askQ").textContent="꼭 필요한 새로운 정보가 나오면 보내드릴까요?";
-  $("#subGo").href="/trips/"+encodeURIComponent(x.id);
   btn.onclick=async()=>{
     if(LS.get("kt_want_"+x.id)){LS.del("kt_want_"+x.id);setBtn(false);show(null);return}
     LS.set("kt_want_"+x.id,{at:Date.now()}); setBtn(true);
@@ -268,7 +267,7 @@ function renderWant(x){
     const no=LS.get("kt_sub_no");
     if(!fresh&&no&&Date.now()-no<ASK_AGAIN) return; // 닫은 카드는 상세를 다시 열 때 7일간 자동으로 띄우지 않음(하트를 새로 누르면 다시 뜸)
     const ready=await subIsReady();
-    form.querySelectorAll(".subin,.subck,#subBtn").forEach(e=>e.hidden=!ready); $("#subGo").hidden=true;
+    form.querySelectorAll(".subin,.subck,.sublab,.submsg,#subBtn").forEach(e=>e.hidden=!ready);
     show(form); if(ready&&fresh) nm.focus({preventScroll:true}); else if(!ready){const msg=$("#subErr");msg.textContent="현재 등록할 수 없습니다. 잠시 후 다시 시도해 주세요.";msg.hidden=false;}
   };
   if(LS.get("kt_want_"+x.id)) afterHeart(false);
