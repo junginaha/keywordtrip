@@ -1,0 +1,18 @@
+{
+  "name": "keytrip-toss",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "node scripts/prepare.mjs && vite build",
+    "build:ait": "node scripts/prepare.mjs && ait build"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "^3.8.0",
+    "@toss/tds-mobile": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "typescript": "^5.7.0"
+  }
+}
