@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>키트립 | 내 여행 최적화</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f7fafb;color:#172b35;font-family:system-ui,-apple-system,sans-serif}main{max-width:580px;margin:auto;padding:24px 18px 64px}h1{font-size:28px;margin:8px 0}p{line-height:1.6}label{display:block;margin-top:18px;font-weight:650}select,button{font:inherit;width:100%;padding:14px;border:1px solid #cbd9df;border-radius:12px;background:white;margin-top:7px}button{background:#076a77;color:white;border:0;font-weight:750;margin-top:22px}article{background:white;padding:18px;border-radius:16px;margin-top:12px;border:1px solid #e3eaee}article h2{margin:4px 0;font-size:20px}.muted{font-size:13px;color:#526a73}.tag{font-size:12px;color:#08707b}</style></head>
+<body><main><p class="tag">KEYTRIP · 여행 큐레이션</p><h1>내 예산으로 어디 갈까?</h1><p>여행 시기와 예산을 선택하면 기존 여행지 데이터에서 최대 세 곳을 추천합니다.</p>
+<label for="month">여행 시기</label><select id="month"><option value="0">언제든</option><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
+<label for="budget">1인 예상 총예산</label><select id="budget"><option value="0">상관없음</option><option value="50">50만 원 이하</option><option value="100">100만 원 이하</option><option value="200">200만 원 이하</option><option value="300">300만 원 이하</option></select>
+<label for="theme">관심 여행</label><select id="theme"><option value="">상관없음</option><option value="바다">바다·휴양</option><option value="맛집">음식·맛집</option><option value="박물관">문화·예술</option><option value="자연">자연·풍경</option></select>
+<button id="go" type="button">여행지 추천받기</button><section id="results" aria-live="polite"></section>
+<p class="muted">예산은 실제 견적이 아닌 대략적인 탐색 기준입니다. 항공권·숙박료, 비자·입국 요건은 예약 전 다시 확인하세요. 이 시범 화면은 로그인·결제·연락처 수집을 하지 않습니다.</p></main>
+<script src="../assets/data.js"></script><script>
+(function(){
+ const results=document.getElementById("results");
+ const price={JP:75,TW:80,VN:90,TH:110,PH:110,MY:120,HK:120,SG:170,ID:150,CN:90,KR:55};
+ const escape=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ document.getElementById("go").addEventListener("click",()=>{
+   if(typeof DEST==="undefined"||!Array.isArray(DEST)){results.textContent="여행지 데이터를 불러오지 못했습니다.";return;}
+   const m=+document.getElementById("month").value,b=+document.getElementById("budget").value,t=document.getElementById("theme").value;
+   const rows=DEST.filter(x=>!x.country&&x.city&&(!m||(Array.isArray(x.best)&&x.best.includes(m)))&&(!b||(price[x.cc]??250)<=b)&&(!t||[x.head,x.hook,...(x.kw||[])].join(" ").includes(t))).slice(0,3);
+   results.innerHTML=rows.length?'<h2>추천 여행지</h2>'+rows.map(x=>'<article><p class="tag">'+escape(x.c)+'</p><h2>'+escape(x.city)+'</h2><p>'+escape(x.hook||x.head)+'</p><p class="muted">예산 참고값: 약 '+(price[x.cc]??250)+'만 원부터 (추정·비실시간)</p></article>').join(""):'<p role="status">조건에 맞는 여행지가 없습니다. 예산이나 시기를 넓혀 보세요.</p>';
+ });
+})();
+</script></body></html>
