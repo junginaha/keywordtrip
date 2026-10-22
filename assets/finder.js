@@ -74,11 +74,12 @@
   const KTF = window.KTF = {
     get active() { return !!(S.when || S.who || petOn() || S.themes.size || S.budget || S.entry || S.flight || etcText()); },
     get n() { return [S.when, S.who, S.budget, S.entry, S.flight].filter(Boolean).length + (petOn() ? 1 : 0) + S.themes.size + (etcText() ? 1 : 0); },
-    get text() { return etcText().replace(new RegExp(PET_WORDS.source + "\\S*", "gi"), " ").replace(/\s+/g, " ").trim(); },
+    get text() { return etcText().replace(new RegExp("(?:" + PET_WORDS.source + ")\\S*", "gi"), " ").replace(/\s+/g, " ").trim(); },
     ok(x) {
       if (!this.active) return true;
       const c = classOf(x);
       if (c === "orange" || isWarn(x)) return false;
+      if (/불가|금지/.test(vt(x)[1] || "")) return false; /* 방문 불가 지역 제외 */
       if (DUP[x.id]) return false; /* 추천 도시와 겹치는 지역 항목은 숨김 */
       if (S.months && !(x.best || []).some(m => S.months.includes(m))) return false;
       if ((S.when === "now" || S.entry === "easy") && c !== "green") return false;
