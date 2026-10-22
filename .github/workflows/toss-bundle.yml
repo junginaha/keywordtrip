@@ -1,0 +1,41 @@
+# 앱인토스 미니앱(keywordtrip) 번들 자동 빌드·업로드
+# - 매주 월요일 08:41(KST)과 수동 실행 시, 최신 사이트 내용으로 keywordtrip.ait를 만든다.
+# - 만든 파일은 이 실행의 Artifacts에서 받을 수 있다.
+# - 저장소 Secrets에 AIT_API_KEY가 있으면 앱인토스 콘솔에 업로드까지 한다.
+#   검토 요청과 출시는 콘솔에서 사람이 누른다(자동으로 하지 않는다).
+name: toss-bundle
+
+on:
+  schedule:
+    - cron: "41 23 * * 0"
+  workflow_dispatch:
+
+concurrency:
+  group: toss-bundle
+  cancel-in-progress: false
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build bundle
+        working-directory: toss
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keywordtrip-ait
+          path: toss/keywordtrip.ait
+          retention-days: 30
+      - name: Upload to Apps in Toss console
+        if: ${{ env.AIT_API_KEY != '' }}
+        working-directory: toss
+        run: npx ait deploy --api-key "$AIT_API_KEY" --location keywordtrip.ait -m "자동 업로드 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') · ${GITHUB_SHA::7}"
+    env:
+      AIT_API_KEY: ${{ secrets.AIT_API_KEY }}
