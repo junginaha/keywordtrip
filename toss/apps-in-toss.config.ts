@@ -9,6 +9,7 @@ export default defineConfig({
     withBackButton: true,
     withHomeButton: true,
     withTitle: true,
+    theme: "dark",
   },
   webView: {
     bounces: false,
