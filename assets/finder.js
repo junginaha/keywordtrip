@@ -60,17 +60,21 @@
   }
 
   /* 상태 */
-  const S = { when: "", months: null, who: "", themes: new Set(), budget: "", entry: "", flight: "", etc: { who: "", theme: "", budget: "", entry: "" } };
+  const S = { when: "", months: null, who: "", pet: false, themes: new Set(), budget: "", entry: "", flight: "", etc: { who: "", theme: "", budget: "", entry: "" } };
   const nowM = () => +new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Seoul", month: "numeric" }).format(new Date());
   function setWhen(v) {
     S.when = v;
     S.months = v === "this" || v === "now" ? [nowM()] : v === "next" ? [nowM() % 12 + 1] : /^m\d+$/.test(v) ? [+v.slice(1)] : null;
   }
+  // 반려견 동반: "반려견과" 선택 또는 기타 칸에 강아지·반려견 등을 적은 경우. 입국 요건 등급은 INFO.pet (정부 검역기관 기준)
+  const PET_WORDS = /강아지|반려견|애견|애완|반려동물|펫|멍멍|댕댕|dog|pet/i;
+  const petOn = () => S.pet || PET_WORDS.test(Object.values(S.etc).join(" "));
+  const petTier = x => { const P = INFO.pet || {}, e = P[x.cc] || (P.EU && (P.EU.cc || []).includes(x.cc) ? P.EU : null); return e && e.tier; };
   const etcText = () => Object.values(S.etc).map(s => s.trim()).filter(Boolean).join(" ");
   const KTF = window.KTF = {
-    get active() { return !!(S.when || S.who || S.themes.size || S.budget || S.entry || S.flight || etcText()); },
-    get n() { return [S.when, S.who, S.budget, S.entry, S.flight].filter(Boolean).length + S.themes.size + (etcText() ? 1 : 0); },
-    get text() { return etcText(); },
+    get active() { return !!(S.when || S.who || petOn() || S.themes.size || S.budget || S.entry || S.flight || etcText()); },
+    get n() { return [S.when, S.who, S.budget, S.entry, S.flight].filter(Boolean).length + (petOn() ? 1 : 0) + S.themes.size + (etcText() ? 1 : 0); },
+    get text() { return etcText().replace(new RegExp(PET_WORDS.source + "\\S*", "gi"), " ").replace(/\s+/g, " ").trim(); },
     ok(x) {
       if (!this.active) return true;
       const c = classOf(x);
@@ -82,6 +86,7 @@
       if (S.budget) { const [lo, hi] = BUDGET[S.budget], [a, b] = budget(x); if (b < lo || a > hi) return false; }
       if ((S.who === "kids" || S.who === "parents") && c === "yellow") return false;
       if (S.themes.size && ![...S.themes].some(t => THEME[t](x))) return false;
+      if (petOn()) { const t = petTier(x); if (!t || t === "banned" || t === "unclear") return false; }
       return true;
     },
     score(x) {
@@ -94,12 +99,14 @@
       if (S.flight === "short") s -= fly(x) / 2;
       if (!x.country) s += 1.2; /* 추천 도시 먼저 */
       if (isBest(x)) s += 0.8;
+      if (petOn()) s += { easy: 4, titer: 0.5, quarantine: -2 }[petTier(x)] || 0;
       return s;
     },
     summary() {
       const L = [];
       if (S.when) L.push(S.when === "now" ? "지금 바로" : S.when === "this" ? "이번 달" : S.when === "next" ? "다음 달" : S.months[0] + "월");
       if (S.who) L.push(LBL.who[S.who]);
+      if (petOn()) L.push("반려견과");
       S.themes.forEach(t => L.push(LBL.theme[t]));
       if (S.budget) L.push(LBL.budget[S.budget]);
       if (S.entry) L.push("비자 걱정 없이");
@@ -107,7 +114,7 @@
       if (etcText()) L.push(`"${etcText()}"`);
       return L;
     },
-    reset() { setWhen(""); S.who = S.budget = S.entry = S.flight = ""; S.themes.clear(); for (const k in S.etc) S.etc[k] = ""; },
+    reset() { setWhen(""); S.pet = false; S.who = S.budget = S.entry = S.flight = ""; S.themes.clear(); for (const k in S.etc) S.etc[k] = ""; },
   };
 
   /* UI */
@@ -125,7 +132,7 @@
     const m = /^m\d+$/.test(S.when) ? +S.when.slice(1) : 0;
     const monthSel = `<label class="fsel${m ? " on" : ""}"><span>${m ? m + "월" : "날짜 선택"}</span><select id="fMonth" aria-label="여행 월 선택"><option value="">날짜 선택</option>${Array.from({ length: 12 }, (_, i) => `<option value="m${i + 1}"${m === i + 1 ? " selected" : ""}>${i + 1}월</option>`).join("")}</select></label>`;
     return row("언제", "", chip("when", "now", "지금 바로", S.when === "now") + chip("when", "this", "이번 달", S.when === "this") + chip("when", "next", "다음 달", S.when === "next") + monthSel)
-      + row("누구와", "", Object.entries(LBL.who).map(([v, l]) => chip("who", v, l, S.who === v)).join("") + etc("who"))
+      + row("누구와", "", Object.entries(LBL.who).map(([v, l]) => chip("who", v, l, S.who === v)).join("") + chip("pet", "1", "반려견과", petOn()) + etc("who"))
       + row("어떤 여행", "여러 개 가능", Object.entries(LBL.theme).map(([v, l]) => chip("theme", v, l, S.themes.has(v))).join("") + etc("theme"))
       + row("예산", "1인 4~5일 대략", Object.entries(LBL.budget).map(([v, l]) => chip("budget", v, l, S.budget === v)).join("") + etc("budget"))
       + row("입국", "", chip("entry", "easy", "비자 신경 쓰기 싫어요", S.entry === "easy") + chip("entry", "", "상관없어요", !S.entry) + etc("entry"))
@@ -178,6 +185,7 @@
     if (g === "when") setWhen(S.when === v ? "" : v);
     else if (g === "theme") S.themes.has(v) ? S.themes.delete(v) : S.themes.add(v);
     else if (g === "who") S.who = S.who === v ? "" : v;
+    else if (g === "pet") S.pet = !S.pet;
     else S[g] = S[g] === v ? "" : v;
     paint();
   });
