@@ -56,6 +56,7 @@ function visaOf(x) {
   const base = INFO.sch.includes(x.cc) ? INFO.schTxt : (INFO.visa[x.cc] || "");
   return [base, INFO.note[x.cc], INFO.xvisa[x.id]].filter(Boolean).join(" ") || "출발 전 목적지 정부·이민기관의 공식 안내에서 입국 조건을 확인하세요.";
 }
+function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` (${+d[1]}월 ${+d[2]}일 확인)`:"")}
 function officialOf(x) {
   const a = [...((INFO.official || {})[x.cc] || []), ...((INFO.sch.includes(x.cc) && INFO.schLinks) || [])];
   a.push(["외교부 해외안전여행 (여행경보·최신 공지)", "https://www.0404.go.kr/"]);
@@ -207,7 +208,8 @@ ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국�
 <h2>한국인 입국 조건</h2>
 <p class="badge" style="--vc:${CLS[vc].hex}">${esc(status)}</p>
 <p>${esc(visa)}</p>
-<p class="offl"><span>공식 확인처</span>${officialOf(x).map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</p>
+${chkLine(x) ? `<p class="checked">${esc(chkLine(x))}</p>
+` : ""}<p class="offl"><span>공식 확인처</span>${officialOf(x).map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</p>
 </section>
 ${x.cur && x.cur !== "KRW" ? `<section class="card">
 <h2>돈과 결제</h2>

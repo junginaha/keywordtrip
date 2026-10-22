@@ -38,6 +38,7 @@ function vt(x){if(x._v) return x._v;
   return x._v=v}
 function classOf(x){return vt(x)[0]}
 function vShort(x){const [c,l,s]=vt(x);if(c==="orange")return l;if(c==="yellow")return l;return l+(s?" "+s:"")}
+function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` (${+d[1]}월 ${+d[2]}일 확인)`:"")}
 function officialOf(x){const a=[...((INFO.official||{})[x.cc]||[]),...((INFO.sch.includes(x.cc)&&INFO.schLinks)||[])];a.push(["외교부 해외안전여행 (여행경보·최신 공지)","https://www.0404.go.kr/"]);return a}
 function moneyOf(x){
   let m=(INFO.xmoney[x.id])||INFO.money[x.cc]||"";
@@ -215,7 +216,7 @@ function renderInfo(x){
   let h=briefHTML(x);
   if(isBan(x)) h+=`<div class="alert"><b>${x.cc==="NE"?"대부분 지역 여행금지":"여행금지국가"}</b> 대한민국 정부의 예외적 여권 사용 허가 없이 방문하면 여권법 위반으로 처벌될 수 있습니다.</div>`;
   else if(isWarn(x)) h+=`<div class="alert soft"><b>일부 지역 여행금지·경보</b> 아래 입국 정보의 금지 지역과 외교부 최신 경보를 확인하세요.</div>`;
-  h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p><p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
+  h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p>${chkLine(x)?`<p class="src">${chkLine(x)}</p>`:""}<p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
   h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 · ${fxSrcText(x.cur)}. 은행 매매기준율과 같은 개념의 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
   if(tips.length) h+=`<section><h4 class="h-tip">키워드트립 팁</h4><ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul></section>`;
   $("#info").innerHTML=h;
