@@ -1,7 +1,9 @@
 // Live FX on own domain. KRW base, verified across sources (see _fxcore.js). Edge-cached 30 min.
 import { buildRates } from "./_fxcore.js";
+import { cors } from "./_cors.js";
 
 export default async function handler(req, res) {
+  if (cors(req, res)) return;
   try {
     const j = await buildRates({ KOREAEXIM_KEY: process.env.KOREAEXIM_KEY });
     res.setHeader("Cache-Control", "public, s-maxage=1800, stale-while-revalidate=43200");

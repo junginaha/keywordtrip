@@ -2,8 +2,10 @@
 // The page sends at most one click per destination per day per browser (repeat taps are dropped client-side).
 import { redis } from "./_store.js";
 import { bump } from "./_metrics.js";
+import { cors } from "./_cors.js";
 
 export default async function handler(req, res) {
+  if (cors(req, res)) return;
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") { res.setHeader("Allow", "POST"); return res.status(405).end(); }
   try {

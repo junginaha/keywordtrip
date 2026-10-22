@@ -1,6 +1,8 @@
 // Privacy-safe outbound partner click event logger.
 // No email, phone, IP, cookie, or user account data is written by this handler.
+import { cors } from "./_cors.js";
 export default async function handler(req, res) {
+  if (cors(req, res)) return;
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "method_not_allowed" });

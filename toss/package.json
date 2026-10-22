@@ -1,0 +1,15 @@
+{
+  "name": "keytrip-apps-in-toss",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs && ait build",
+    "deploy": "ait deploy"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "3.9.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

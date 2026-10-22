@@ -1,0 +1,8 @@
+/* Toss mini app only. Hides features that run outside Toss rules:
+   contact collection (♡ 가고 싶어요 알림) and the browser-only voice search. */
+.in-toss #wantbox,
+.in-toss .wantcta,
+.in-toss #mic,
+.in-toss #pp { display: none !important; }
+.in-toss .sbox { flex: 1; }
+html.in-toss { -webkit-text-size-adjust: 100%; touch-action: manipulation; }

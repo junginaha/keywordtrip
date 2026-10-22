@@ -1,11 +1,13 @@
 // Anonymous search-query counter. Stores only the normalized query text and its result count —
 // no IP, cookie, account, or device data. Personal-looking input (emails, phone numbers, long digits) is dropped.
 import { redis } from "./_store.js";
+import { cors } from "./_cors.js";
 
 const clean = s => String(s || "").normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim().slice(0, 40);
 const personal = s => /@|\d{6,}|\d{2,4}[- ]\d{3,4}[- ]\d{4}/.test(s);
 
 export default async function handler(req, res) {
+  if (cors(req, res)) return;
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") { res.setHeader("Allow", "POST"); return res.status(405).end(); }
   try {
