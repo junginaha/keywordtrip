@@ -42,7 +42,7 @@
   };
   function cta(kind, id) {
     const A = window.KTAffiliate, ci = QA.cities[id]; if (!A || !ci) return "";
-    if (kind === "flight" && ci.ap) return `<a class="ans-cta" href="${esc(A.trip(`/flights/airport-icn-${ci.ap}/`, `flight-${id}`))}" target="_blank" rel="${A.REL}" data-p="flights" data-d="${esc(id)}">서울 → ${esc(ci.n)} 항공편 확인</a>`;
+    if (kind === "flight" && ci.ap) return `<a class="ans-cta" href="${esc(A.LINKS.flights({ id }))}" target="_blank" rel="${A.REL}" data-p="flights" data-d="${esc(id)}">서울 → ${esc(ci.n)} 항공편 확인</a>`;
     if (kind === "stay") return `<a class="ans-cta" href="${esc(A.trip("/global-search/searchlist/search", `stay-${id}`, { keyword: ci.en + " hotel" }))}" target="_blank" rel="${A.REL}" data-p="stay" data-d="${esc(id)}">${esc(ci.n)} 호텔 보기</a>`;
     return "";
   }

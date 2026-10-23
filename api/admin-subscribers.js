@@ -4,7 +4,7 @@
 import crypto from "node:crypto";
 import { config, listSubscribers } from "./_sub.js";
 import { redis } from "./_store.js";
-import { readStats } from "./_metrics.js";
+import { readStats, readOut } from "./_metrics.js";
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const shell = body => `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>구독자 리스트 | 키워드트립</title><style>
@@ -92,6 +92,15 @@ async function readSearch(db) {
   const pairs = a => { const o = []; for (let i = 0; i < (a || []).length; i += 2) o.push([a[i], +a[i + 1]]); return o; };
   return { month, total: +total || 0, mon: pairs(mon), zero: pairs(zeroMon), all: pairs(all) };
 }
+function outSection(o) {
+  if (!o) return "";
+  const n = v => (v ?? 0).toLocaleString("ko-KR"), t = o.totals;
+  return `<h2>예약 버튼 클릭 (최근 14일) <span class="muted" style="font-weight:400;font-size:13px">${esc(md(o.from))}–${esc(md(o.to))} · 클릭 수만 저장 · 예약·수익은 각 제휴 관리 화면에서 확인</span></h2>
+<div class="kpi"><div><b>${n(t.flights)}</b>항공권 (트립닷컴)</div><div><b>${n(t.stay)}</b>숙소 (트립닷컴)</div><div><b>${n(t.activity)}</b>투어·입장권 (클룩)</div></div>
+<div class="wrap"><table><thead><tr><th>#</th><th>여행지</th><th>항공권</th><th>숙소</th><th>투어</th><th>합계</th></tr></thead><tbody>
+${o.top.map((r, i) => `<tr><td>${i + 1}</td><td data-id="${esc(r.destination)}">${esc(r.destination)}</td><td>${n(r.flights)}</td><td>${n(r.stay)}</td><td>${n(r.activity)}</td><td>${n(r.total)}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">아직 없어요</td></tr>`}
+</tbody></table></div>`;
+}
 function searchSection(sq) {
   if (!sq) return "";
   const tb = (title, rows) => `<div><h3>${title}</h3><div class="wrap"><table><tbody>${rows.map(([q, c], i) => `<tr><td>${i + 1}</td><td><a href="/?q=${encodeURIComponent(q)}" target="_blank" style="color:inherit">${esc(q)}</a></td><td>${c}</td></tr>`).join("") || `<tr><td class="muted">아직 없어요</td></tr>`}</tbody></table></div></div>`;
@@ -118,6 +127,7 @@ export default async function handler(req, res) {
   const db = redis();
   if (db && form.format !== "csv") stats = await readStats(db, 14).catch(e => { console.error("admin-stats", String(e).slice(0, 300)); return null; });
   const search = db && form.format !== "csv" ? await readSearch(db).catch(() => null) : null;
+  const outs = db && form.format !== "csv" ? await readOut(db, 14).catch(() => null) : null;
   try {
     list = await listSubscribers(cfg);
   } catch (e) {
@@ -146,6 +156,7 @@ export default async function handler(req, res) {
 <p><form method="post" class="inline"><input type="hidden" name="key" value="${esc(form.key)}"><input type="hidden" name="format" value="csv"><button>CSV 내려받기</button></form>
 <span class="muted"> 특가·광고 메시지는 '특가 수신 동의 Y'에게만, 밤 9시~아침 8시 발송 금지.</span></p>
 ${metricsSection(stats)}
+${outSection(outs)}
 ${searchSection(search)}
 <h2>관심 여행지 순위 (누적 구독자)</h2><div class="wrap"><table><thead><tr><th>#</th><th>여행지</th><th>구독자</th></tr></thead><tbody>
 ${top.map(([d, n], i) => `<tr><td>${i + 1}</td><td data-id="${esc(d)}">${esc(d)}</td><td>${n}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">아직 없어요</td></tr>`}

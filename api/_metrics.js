@@ -13,6 +13,36 @@ export async function bump(kind, destination) {
   await db.pipeline([["HINCRBY", key, destination, "1"], ["EXPIRE", key, TTL]]);
 }
 
+// Partner (affiliate) clicks per day: kt:m:out:YYYY-MM-DD → hash { "<provider>|<destination>": count }. Counts only.
+const PROVIDERS = new Set(["flights", "stay", "activity"]);
+export async function bumpOut(provider, destination) {
+  const db = redis();
+  const p = String(provider || ""), d = String(destination || "").replace(/[^a-z0-9-]/gi, "").slice(0, 64);
+  if (!db || !PROVIDERS.has(p) || !d) return;
+  const key = `kt:m:out:${kstDate()}`;
+  await db.pipeline([["HINCRBY", key, `${p}|${d}`, "1"], ["EXPIRE", key, TTL]]);
+}
+// Last `days` KST days of partner clicks: { totals:{flights,stay,activity}, daily:[{date,flights,stay,activity}], top:[{destination,flights,stay,activity,total}] }
+export async function readOut(db, days = 14) {
+  const dates = [];
+  for (let i = days - 1; i >= 0; i--) dates.push(kstDate(Date.now() - i * 864e5));
+  const res = await db.pipeline(dates.map(d => ["HGETALL", `kt:m:out:${d}`]));
+  const totals = { flights: 0, stay: 0, activity: 0 }, per = {};
+  const daily = dates.map((date, i) => {
+    const row = { date, flights: 0, stay: 0, activity: 0 }, a = res[i] || [];
+    for (let j = 0; j < a.length; j += 2) {
+      const [p, d] = String(a[j]).split("|"), n = +a[j + 1] || 0;
+      if (!(p in row)) continue;
+      row[p] += n; totals[p] += n;
+      const t = per[d] || (per[d] = { destination: d, flights: 0, stay: 0, activity: 0, total: 0 });
+      t[p] += n; t.total += n;
+    }
+    return row;
+  });
+  const top = Object.values(per).sort((a, b) => b.total - a.total).slice(0, 15);
+  return { from: dates[0], to: dates[dates.length - 1], totals, daily, top };
+}
+
 const pct = (s, c) => (c ? Math.round((s / c) * 1000) / 10 : null);
 
 // Last `days` KST days, oldest first. conversion_pct = sign-ups ÷ ♡ clicks × 100 (null when no clicks).

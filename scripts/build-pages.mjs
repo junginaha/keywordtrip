@@ -303,7 +303,7 @@ function keywordBar(x, cur) {
   if (c.grab) chips.splice(4, 0, `<a href="${topicUrl(c, "transportation")}#grab">Grab</a>`);
   return `<nav class="kwbar" aria-label="${esc(c.name)} 여행 핵심 키워드">${chips.join("")}</nav>\n`;
 }
-const flightCta = (id, label) => AIRPORT[id] ? `<a class="bookbtn" href="${esc(AFF.trip(`/flights/airport-icn-${AIRPORT[id]}/`, `flight-${id}`))}" target="_blank" rel="${AFF.REL}" data-p="flights" data-d="${esc(id)}">서울 → ${esc(label)} 항공편 확인</a>` : "";
+const flightCta = (id, label) => AIRPORT[id] ? `<a class="bookbtn" href="${esc(AFF.LINKS.flights({ id }))}" target="_blank" rel="${AFF.REL}" data-p="flights" data-d="${esc(id)}">서울 → ${esc(label)} 항공편 확인</a>` : "";
 const hotelCta = (id, kw, label) => `<a class="bookbtn" href="${esc(AFF.trip("/global-search/searchlist/search", `stay-${id}`, { keyword: kw }))}" target="_blank" rel="${AFF.REL}" data-p="stay" data-d="${esc(id)}">${esc(label)}</a>`;
 const beacon = `<script>document.querySelectorAll(".bookbtn").forEach(a=>a.addEventListener("click",()=>{try{navigator.sendBeacon("/api/outbound",new Blob([JSON.stringify({provider:a.dataset.p,destination:a.dataset.d})],{type:"application/json"}))}catch(e){}}))</script>`;
 

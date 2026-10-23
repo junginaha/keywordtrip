@@ -1,6 +1,7 @@
 // Privacy-safe outbound partner click event logger.
 // No email, phone, IP, cookie, or user account data is written by this handler.
 import { cors } from "./_cors.js";
+import { bumpOut } from "./_metrics.js";
 export default async function handler(req, res) {
   if (cors(req, res)) return;
   if (req.method !== "POST") {
@@ -17,6 +18,7 @@ export default async function handler(req, res) {
       at: new Date().toISOString()
     };
     console.log(JSON.stringify(clean));
+    await bumpOut(clean.provider, clean.destination).catch(() => {});
     res.setHeader("Cache-Control", "no-store");
     return res.status(204).end();
   } catch (e) {
