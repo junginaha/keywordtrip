@@ -35,8 +35,8 @@
   var KLOOK = { aid: "137536", aff_adid: "1484668" };
   function klook(x) {
     var target = "https://www.klook.com/ko/search/result/?query=" + encodeURIComponent(q(x));
-    // aff_sid = "activity-<destination id>" so the Klook report splits results by destination (like Trip.com trip_sub1)
-    return "https://affiliate.klook.com/redirect?aid=" + KLOOK.aid + "&aff_adid=" + KLOOK.aff_adid + "&aff_sid=" + encodeURIComponent("activity-" + String(x.id).replace(/[^a-z0-9-]/gi, "")) + "&k_site=" + encodeURIComponent(target);
+    // Klook's redirect ignores/blanks aff_sid (tested 2026-10-23), so per-destination split is done by our own click counts (/api/outbound).
+    return "https://affiliate.klook.com/redirect?aid=" + KLOOK.aid + "&aff_adid=" + KLOOK.aff_adid + "&k_site=" + encodeURIComponent(target);
   }
   var KLOOK_ON = !!KLOOK.aid;
 
