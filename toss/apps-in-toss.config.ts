@@ -1,7 +1,7 @@
 import { defineConfig } from "@apps-in-toss/web-framework/config";
 
 export default defineConfig({
-  appName: "keywordtrip",
+  appName: "keytrip",
   brand: {
     primaryColor: "#FF1FAF",
   },

@@ -1,11 +1,11 @@
-# 키워드트립 · 앱인토스 미니앱 (keywordtrip)
+# 키워드트립 · 앱인토스 미니앱 (keytrip)
 
 사이트 원본은 그대로 두고, 토스 앱 안에서 필요한 동작만 바꿔 번들을 만듭니다.
 
 ```bash
 cd toss
 npm install
-npm run build        # dist 생성 → keywordtrip.ait
+npm run build        # dist 생성 → keytrip.ait
 npx ait deploy --api-key <콘솔 API 키>   # 업로드 (검수 신청은 콘솔에서)
 ```
 
