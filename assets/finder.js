@@ -66,8 +66,8 @@
     S.when = v;
     S.months = v === "this" || v === "now" ? [nowM()] : v === "next" ? [nowM() % 12 + 1] : /^m\d+$/.test(v) ? [+v.slice(1)] : null;
   }
-  // 반려견 동반: "반려견과" 선택 또는 기타 칸에 강아지·반려견 등을 적은 경우. 입국 요건 등급은 INFO.pet (정부 검역기관 기준)
-  const PET_WORDS = /강아지|반려견|애견|애완|반려동물|펫|멍멍|댕댕|dog|pet/i;
+  // 반려동물 동반: "반려동물과" 선택 또는 기타 칸에 강아지·고양이 등을 적은 경우. 입국 요건 등급은 INFO.pet (정부 검역기관의 개·고양이 기준)
+  const PET_WORDS = /강아지|반려견|애견|애완|반려동물|반려묘|고양이|냥이|펫|멍멍|댕댕|dog|cat|pet/i;
   const petOn = () => S.pet || PET_WORDS.test(Object.values(S.etc).join(" "));
   const petTier = x => { const P = INFO.pet || {}, e = P[x.cc] || (P.EU && (P.EU.cc || []).includes(x.cc) ? P.EU : null); return e && e.tier; };
   const etcText = () => Object.values(S.etc).map(s => s.trim()).filter(Boolean).join(" ");
@@ -107,7 +107,7 @@
       const L = [];
       if (S.when) L.push(S.when === "now" ? "지금 바로" : S.when === "this" ? "이번 달" : S.when === "next" ? "다음 달" : S.months[0] + "월");
       if (S.who) L.push(LBL.who[S.who]);
-      if (petOn()) L.push("반려견과");
+      if (petOn()) L.push("반려동물과");
       S.themes.forEach(t => L.push(LBL.theme[t]));
       if (S.budget) L.push(LBL.budget[S.budget]);
       if (S.entry) L.push("비자 걱정 없이");
@@ -133,7 +133,7 @@
     const m = /^m\d+$/.test(S.when) ? +S.when.slice(1) : 0;
     const monthSel = `<label class="fsel${m ? " on" : ""}"><span>${m ? m + "월" : "날짜 선택"}</span><select id="fMonth" aria-label="여행 월 선택"><option value="">날짜 선택</option>${Array.from({ length: 12 }, (_, i) => `<option value="m${i + 1}"${m === i + 1 ? " selected" : ""}>${i + 1}월</option>`).join("")}</select></label>`;
     return row("언제", "", chip("when", "now", "지금 바로", S.when === "now") + chip("when", "this", "이번 달", S.when === "this") + chip("when", "next", "다음 달", S.when === "next") + monthSel)
-      + row("누구와", "", Object.entries(LBL.who).map(([v, l]) => chip("who", v, l, S.who === v)).join("") + chip("pet", "1", "반려견과", petOn()) + etc("who"))
+      + row("누구와", "", Object.entries(LBL.who).map(([v, l]) => chip("who", v, l, S.who === v)).join("") + chip("pet", "1", "반려동물과", petOn()) + etc("who"))
       + row("어떤 여행", "여러 개 가능", Object.entries(LBL.theme).map(([v, l]) => chip("theme", v, l, S.themes.has(v))).join("") + etc("theme"))
       + row("예산", "1인 4~5일 대략", Object.entries(LBL.budget).map(([v, l]) => chip("budget", v, l, S.budget === v)).join("") + etc("budget"))
       + row("입국", "", chip("entry", "easy", "비자 신경 쓰기 싫어요", S.entry === "easy") + chip("entry", "", "상관없어요", !S.entry) + etc("entry"))
