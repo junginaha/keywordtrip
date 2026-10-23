@@ -5,7 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          L=$(curl -s -o /dev/null -w "%{redirect_url}" "https://affiliate.klook.com/redirect?aid=137536&aff_adid=1484668&aff_sid=activity-danang&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3DDa%2520Nang")
-          echo "::notice::$(echo $L | grep -o 'aff_sid=[^&]*') | $(echo $L | cut -c1-80)"
-          T=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" "https://kr.trip.com/flights/seoul-to-tokyo/airfares-sel-tyo/")
-          echo "::notice::trip $T"
+          B="https://affiliate.klook.com/redirect?aid=137536&aff_adid=1484668"
+          K="k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3DDaNang"
+          for p in "sid=t1" "aff_sid=t2" "aff_pid=t3" "aff_label=t4" "label=t5" "sub_id=t6" "aff_sub_id=t7"; do
+            L=$(curl -s -o /dev/null -w "%{redirect_url}" "$B&$p&$K")
+            echo "::notice::$p => $(echo $L | grep -o 'aff_pid=[^&]*&aff_sid=[^&]*') $(echo $L | grep -o 't[0-9]' | head -1)"
+          done
