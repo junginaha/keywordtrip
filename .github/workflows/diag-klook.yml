@@ -1,0 +1,11 @@
+name: diag-klook
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          L=$(curl -s -o /dev/null -w "%{redirect_url}" "https://affiliate.klook.com/redirect?aid=137536&aff_adid=1484668&aff_sid=activity-danang&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3DDa%2520Nang")
+          echo "::notice::$(echo $L | grep -o 'aff_sid=[^&]*') | $(echo $L | cut -c1-80)"
+          T=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" "https://kr.trip.com/flights/seoul-to-tokyo/airfares-sel-tyo/")
+          echo "::notice::trip $T"
