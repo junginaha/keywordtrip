@@ -6,3 +6,5 @@
 .in-toss #pp { display: none !important; }
 .in-toss .sbox { flex: 1; }
 html.in-toss { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
+/* 토스 내비게이션 바에 뒤로가기가 있으므로 페이지 자체 뒤로가기 링크는 숨김 (앱인토스 검수: 뒤로가기 중복 금지) */
+.in-toss .back { display: none !important; }
