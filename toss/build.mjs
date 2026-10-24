@@ -3,6 +3,7 @@
 import { build } from "esbuild";
 import fs from "node:fs";
 import path from "node:path";
+import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -17,6 +18,41 @@ for (const item of COPY) {
   if (fs.existsSync(src)) fs.cpSync(src, path.join(OUT, item), { recursive: true });
 }
 
+// Pages that ship inside the bundle, as site paths ("/trips/bali"). Anything else opens live.
+const BUNDLED_PAGES = [];
+(function list(dir) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const f = path.join(dir, e.name);
+    if (e.isDirectory()) list(f);
+    else if (e.name.endsWith(".html")) {
+      let p = "/" + path.relative(OUT, f).split(path.sep).join("/").replace(/\.html$/, "").replace(/(^|\/)index$/, "");
+      if (p.length > 1) p = p.replace(/\/+$/, "");
+      BUNDLED_PAGES.push(p || "/");
+    }
+  }
+})(OUT);
+const APP_NAME = (fs.readFileSync(path.join(here, "apps-in-toss.config.ts"), "utf8").match(/appName:\s*"([^"]+)"/) || [])[1] || "keytrip";
+
+// Offline fallback for live data: the same values as assets/data.js, as JSON (never executed).
+{
+  const src = fs.readFileSync(path.join(SITE, "assets/data.js"), "utf8");
+  const ctx = vm.createContext({});
+  vm.runInContext(src, ctx);
+  const data = vm.runInContext("({DEST,INFO,REGIONS,CUR})", ctx);
+  fs.writeFileSync(path.join(OUT, "assets/data.json"), JSON.stringify(data));
+}
+
+// Shell page for destinations added to the site after this bundle was built.
+{
+  const base = fs.readFileSync(path.join(OUT, "trips/index.html"), "utf8");
+  const shell = base
+    .replace(/<title>[\s\S]*?<\/title>/i, "<title>키워드트립</title>")
+    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/gi, "")
+    .replace(/<main\b[\s\S]*<\/main>/i, '<main class="w"><p class="sub">여행지 정보를 불러오고 있어요…</p></main>');
+  if (shell === base) throw new Error("remote shell: <main> not found in trips/index.html");
+  fs.writeFileSync(path.join(OUT, "trips/remote.html"), shell);
+}
+
 // Bridge script (bundles the Apps in Toss SDK) + Toss-only stylesheet.
 await build({
   entryPoints: [path.join(here, "src/bridge.js")],
@@ -26,6 +62,7 @@ await build({
   target: ["es2019", "safari14"],
   minify: true,
   legalComments: "none",
+  define: { __KT_PAGES__: JSON.stringify(BUNDLED_PAGES), __KT_APP__: JSON.stringify(APP_NAME) },
 });
 fs.copyFileSync(path.join(here, "src/toss.css"), path.join(OUT, "assets/toss.css"));
 
@@ -72,6 +109,20 @@ function transform(file) {
   pages++;
 }
 walk(OUT);
+
+// Home: start the site scripts after live data is in place (data.js is replaced by live JSON).
+{
+  const indexFile = path.join(OUT, "index.html");
+  let html = fs.readFileSync(indexFile, "utf8");
+  const tags = [...html.matchAll(/<script src="(\/assets\/[a-z-]+\.js)" defer><\/script>\s*/g)];
+  const srcs = tags.map((m) => m[1]);
+  if (!srcs.includes("/assets/data.js") || !srcs.includes("/assets/app.js")) throw new Error("index.html script block changed: " + srcs.join(","));
+  for (const m of tags) html = html.replace(m[0], "");
+  const bootTag = `<script>window.KTToss.boot(${JSON.stringify(srcs.filter((s) => s !== "/assets/data.js"))});</script>\n`;
+  html = html.replace(/(<script id="kt-mail">)/, bootTag + "$1");
+  if (!html.includes("KTToss.boot(")) throw new Error("boot tag not placed");
+  fs.writeFileSync(indexFile, html);
+}
 
 // Share: Toss deep link instead of the website URL.
 const appJs = path.join(OUT, "assets/app.js");

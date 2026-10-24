@@ -8,17 +8,24 @@
  *  - official sites and partner links open in the external browser
  *  - share uses a Toss deep link (intoss://keywordtrip)
  *  - bottom sheets close on the Toss back button before leaving the page
+ *  - destination data and pages are read live from keywordtrip.com (see live.js)
  */
 import { Device, Share, getTossShareLink, openURL as legacyOpenURL } from "@apps-in-toss/web-framework";
+import { boot, hydratePage, isLivePage, qaResponse, routeFor } from "./live.js";
 
 const SITE = "https://keywordtrip.com";
-const APP = "keywordtrip";
+// The app name is the first label of the Toss host (<appName>.apps.tossmini.com).
+// eslint-disable-next-line no-undef
+const CONFIG_APP = typeof __KT_APP__ !== "undefined" ? __KT_APP__ : "keytrip";
+const APP = /\.(?:private-)?apps\.tossmini\.com$/.test(location.hostname) ? location.hostname.split(".")[0] : CONFIG_APP;
 const SITE_HOSTS = new Set(["keywordtrip.com", "www.keywordtrip.com"]);
 
 /* ---------- 1. API calls → keywordtrip.com ---------- */
 const isApi = (p) => typeof p === "string" && p.startsWith("/api/");
 const nativeFetch = window.fetch.bind(window);
 window.fetch = function (input, init) {
+  const qa = qaResponse(input);
+  if (qa) return qa;
   try {
     if (typeof input === "string" && isApi(input)) input = SITE + input;
     else if (input instanceof URL && input.origin === location.origin && isApi(input.pathname)) input = SITE + input.pathname + input.search;
@@ -40,14 +47,8 @@ if (navigator.sendBeacon) {
   };
 }
 
-/* ---------- 2. Clean URLs → bundled files ---------- */
-function bundlePath(pathname) {
-  if (!pathname || pathname === "/") return "/index.html";
-  if (/\.[a-z0-9]+$/i.test(pathname)) return pathname;
-  if (pathname.endsWith("/")) return pathname + "index.html";
-  if (pathname === "/trips") return "/trips/index.html";
-  return pathname + ".html";
-}
+/* ---------- 2. Clean URLs → bundled files (or the live page for new destinations) ---------- */
+const bundlePath = routeFor;
 
 /* ---------- 3. External links ---------- */
 function openExternal(url) {
@@ -88,8 +89,16 @@ window.addEventListener(
     if (SITE_HOSTS.has(u.hostname) || u.origin === location.origin) {
       if (u.origin === location.origin && u.pathname === location.pathname && u.search === location.search && u.hash) return; // in-page anchor
       e.preventDefault();
-      location.href = bundlePath(u.pathname) + u.search + u.hash;
+      const target = bundlePath(u.pathname);
+      location.href = (target.includes("?") && u.search ? target + "&" + u.search.slice(1) : target + u.search) + u.hash;
       return;
+    }
+
+    // Partner clicks on live-loaded pages: same anonymous click count the site's own page script sends.
+    if (isLivePage() && a.classList.contains("bookbtn") && a.dataset.p) {
+      try {
+        nativeFetch(SITE + "/api/outbound", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ provider: a.dataset.p, destination: a.dataset.d }), keepalive: true }).catch(() => {});
+      } catch (err) {}
     }
 
     // Partner and official sites: keep the element's own click handlers (tracking) and open outside.
@@ -141,12 +150,13 @@ function watchSheet(sel, closeSel) {
   });
 }
 
-window.KTToss = { app: APP, shareTrip, openExternal, bundlePath };
+window.KTToss = { app: APP, shareTrip, openExternal, bundlePath, boot: (srcs) => boot(srcs, nativeFetch) };
 document.documentElement.classList.add("in-toss");
 
 function ready() {
   watchSheet("#sheet", "#close");
   watchSheet("#finder", "#fClose");
+  if (!document.getElementById("sheet")) hydratePage(nativeFetch);
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ready);
 else ready();
