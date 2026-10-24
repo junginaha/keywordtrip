@@ -6,7 +6,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const CONSOLE_APP = "keytrip";       // appName of this app in the Apps in Toss console — never change without the console
+const CONSOLE_APP = "keywordtrip";       // appName of this app in the Apps in Toss console — never change without the console
 const LABEL = "키워드트립";           // Korean app name, used in the release file name
 
 const here = path.dirname(fileURLToPath(import.meta.url));
