@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node build.mjs && ait build",
+    "build": "node build.mjs && ait build && node verify-ait.mjs",
     "deploy": "ait deploy"
   },
   "dependencies": {
