@@ -31,11 +31,11 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: keywordtrip-ait
-          path: toss/keywordtrip.ait
+          path: toss/*.ait
           retention-days: 30
       - name: Upload to Apps in Toss console
         if: ${{ env.AIT_API_KEY != '' }}
         working-directory: toss
-        run: npx ait deploy --api-key "$AIT_API_KEY" --location keywordtrip.ait -m "자동 업로드 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') · ${GITHUB_SHA::7}"
+        run: npx ait deploy --api-key "$AIT_API_KEY" --location "$(ls *.ait | head -1)" -m "자동 업로드 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') · ${GITHUB_SHA::7}"
     env:
       AIT_API_KEY: ${{ secrets.AIT_API_KEY }}
