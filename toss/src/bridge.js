@@ -12,6 +12,7 @@
  */
 import { Device, Share, getTossShareLink, openURL as legacyOpenURL } from "@apps-in-toss/web-framework";
 import { boot, hydratePage, isLivePage, qaResponse, routeFor } from "./live.js";
+import { trackOutbound, trackShare } from "./growth.js";
 
 const SITE = "https://keywordtrip.com";
 // The app name is the first label of the Toss host (<appName>.apps.tossmini.com).
@@ -102,6 +103,7 @@ window.addEventListener(
     }
 
     // Partner and official sites: keep the element's own click handlers (tracking) and open outside.
+    trackOutbound(a, u);
     e.preventDefault();
     openExternal(u.href);
   },
@@ -110,6 +112,7 @@ window.addEventListener(
 
 /* ---------- 4. Share with a Toss deep link ---------- */
 async function shareTrip(x) {
+  trackShare(x.id);
   const text = (x.head || x.hook || x.city + " 여행") + " · " + (x.kw || []).join(" · ");
   let link = "";
   try {
