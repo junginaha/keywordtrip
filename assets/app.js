@@ -200,9 +200,9 @@ $("#close").onclick=closeSheet; $("#scrim").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&cur) closeSheet()});
 
 function briefHTML(x){
-  const now=new Date(), m=monthIn(x.tz), [c,l,s]=vt(x);
+  const m=monthIn(x.tz), [c,l,s]=vt(x);
   const rows=[];
-  rows.push(["지금",`${fmt(x.tz,{month:"long",day:"numeric",weekday:"short"}).format(now)} ${timeIn(x.tz)}, ${season(x,m)}`]);
+  rows.push(["계절",`현지는 지금 ${season(x,m)}`]);
   if(x.best) rows.push(["시기",isBest(x)?`${m}월은 일반 기후 기준 추천 시기`:`다음 일반 기후 기준 추천 시기 ${nextBest(x,m)}월`]);
   const prep=l==="입국 조건 확인 필요"?"목적지 정부·이민기관에서 확인":{green:"무비자 체류 범위와 별도 입국 절차 확인",blue:"출발 전 또는 도착 시 절차 확인",yellow:"비자·입국 허가 조건 확인",orange:"외교부 최신 여행경보와 방문 허가 확인"}[c];
   rows.push(["입국",`${vShort(x)}. ${prep}`]);
