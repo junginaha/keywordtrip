@@ -92,7 +92,7 @@ ${CSS}
 <a class="back" href="/">← KeywordTrip</a>
 <section class="hero"><p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(h1)}</h1><p>${esc(lead)}</p></section>
 <div class="answer"><b>한 줄 답</b><p>${esc(answer)}</p></div>
-<p class="note">여행 적기·우기는 평균 기후와 계절성 기준, 입국 조건은 키워드트립 데이터(${esc(INFO.rev || TODAY)} 확인) 기준입니다. 출발 전 항공편, 현지 날씨, 입국 규정, <a href="https://www.0404.go.kr/" target="_blank" rel="noopener">외교부 여행경보</a>를 다시 확인하세요.</p>
+<p class="note">여행 적기·우기는 평균 기후와 계절성 기준, 입국 조건은 키워드트립 데이터 기준, ${esc(INFO.rev || TODAY)} 확인. 출발 전 항공편, 현지 날씨, 입국 규정, <a href="https://www.0404.go.kr/" target="_blank" rel="noopener">외교부 여행경보</a>를 다시 확인하세요.</p>
 ${body}
 <section class="faq"><h2>자주 묻는 질문</h2>
 ${faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
@@ -124,17 +124,17 @@ for (const m of [1, 2]) {
     title: `${m}월 해외여행 추천 ${pick.length}곳 | 가까운 곳·먼 곳 나눠 보기 | 키워드트립`,
     h1: `${m}월 해외여행 추천 ${pick.length}곳`,
     eyebrow: `2027 · MONTHLY TRIP`,
-    lead: `인기순위가 아니라 평균 기후 기준으로 ${m}월이 여행 적기인 도시만 골라, 시차 2시간 이내 가까운 곳과 장거리로 나눴습니다.`,
+    lead: `평균 기후로 ${m}월이 여행 적기인 도시만 골라, 시차 2시간 이내 가까운 곳과 장거리로 나눴습니다.`,
     answer: `${m}월에 가기 좋은 해외여행지는 가까운 곳이면 ${names(nearL)}, 장거리면 ${names(farL)}입니다. 모두 ${m}월이 키워드트립 기준 여행 적기입니다.`,
     desc: `${m}월 해외여행지 추천: ${names(nearL)} 등 가까운 곳과 ${names(farL)} 등 장거리 ${pick.length}곳을 여행 적기·입국 조건·시차로 비교하세요.`,
     sections: [
-      { title: `가까운 곳 (시차 2시간 이내 단거리) ${nearL.length}곳`, sub: "짧은 연휴나 3박 4일 일정에 맞습니다.", items: nearL, month: m },
+      { title: `가까운 곳 ${nearL.length}곳 · 시차 2시간 이내`, sub: "짧은 연휴나 3박 4일 일정에 맞습니다.", items: nearL, month: m },
       { title: `장거리 ${farL.length}곳`, sub: "7일 이상 일정일 때 고려하세요.", items: farL, month: m },
     ],
     faq: [
       [`${m}월에 가기 좋은 가까운 해외여행지는?`, `시차 2시간 이내이면서 ${m}월이 여행 적기인 곳은 ${nearL.map(x => x.city).join("·")}입니다.`],
       [`${m}월 동남아 여행, 우기는 괜찮나요?`, `${eun(pick.filter(x => SEA.includes(x.cc)).map(x => x.city).join("·") || "해당 도시")} ${m}월이 키워드트립 기준 여행 적기입니다. 발리는 ${m}월이 우기라 이 목록에서 뺐습니다.`],
-      [`${m}월 해외여행지의 입국 조건은?`, `목록의 도시 대부분은 한국 여권 무비자이고, 미국(ESTA)·호주(ETA)·뉴질랜드(NZeTA)처럼 사전 신청이 필요한 곳은 각 도시 카드에 표시했습니다.`],
+      [`${m}월 해외여행지의 입국 조건은?`, `목록의 도시 대부분은 한국 여권 무비자이고, 미국 ESTA, 호주 ETA, 뉴질랜드 NZeTA처럼 사전 신청이 필요한 곳은 각 도시 카드에 표시했습니다.`],
     ],
     cta: [`/?q=${encodeURIComponent(m + "월 여행")}`, `${m}월 여행지 더 찾아보기 →`],
   }));
@@ -148,7 +148,7 @@ for (const m of [1, 2]) {
   const cold = pick.filter(x => !warm.includes(x));
   out.push(page({
     slug: "winter-overseas-travel",
-    title: `겨울 해외여행 추천 ${pick.length}곳 | 따뜻한 곳·겨울다운 곳 (12~2월) | 키워드트립`,
+    title: `겨울 해외여행 추천 ${pick.length}곳 | 12~2월 따뜻한 곳·겨울다운 곳 | 키워드트립`,
     h1: `겨울 해외여행 추천 ${pick.length}곳`,
     eyebrow: "2026–2027 · WINTER",
     lead: "12월·1월·2월 중 한 달 이상이 여행 적기인 도시를 '추위를 피하는 곳'과 '겨울을 즐기는 곳'으로 나눴습니다.",
@@ -175,19 +175,19 @@ for (const m of [1, 2]) {
     slug: "2027-seollal-overseas-travel",
     title: `2027 설 연휴 해외여행 추천 ${pick.length}곳 | 2월 6~9일 4일, 3박 4일로 가기 좋은 곳 | 키워드트립`,
     h1: `2027 설 연휴 해외여행 ${pick.length}곳`,
-    eyebrow: "2027 · 설 연휴 2/6(토)~2/9(화)",
-    lead: "2027년 설 연휴는 2월 6일(토)부터 대체공휴일 2월 9일(화)까지 4일입니다. 3박 4일에 맞게 시차 2시간 이내이면서 2월이 여행 적기인 곳만 골랐습니다.",
-    answer: `2027 설 연휴(2/6~2/9, 4일)에는 ${names(pick)} 등 ${pick.length}곳이 시차 2시간 이내이면서 2월이 여행 적기입니다. 연휴 항공권은 일찍 마감되니 지금 가격부터 비교하세요.`,
-    desc: `2027 설 연휴 해외여행지 추천: 2월 6일(토)~9일(화) 4일 연휴, 3박 4일로 다녀오기 좋은 ${names(pick)} 등 ${pick.length}곳. 입국 조건·시차·2월 날씨 기준.`,
+    eyebrow: "2027 · 설 연휴 2/6 토 ~ 2/9 화",
+    lead: "2027년 설 연휴는 2월 6일 토요일부터 대체공휴일인 2월 9일 화요일까지 4일입니다. 3박 4일에 맞게 시차 2시간 이내이면서 2월이 여행 적기인 곳만 골랐습니다.",
+    answer: `2027 설 연휴 4일, 2월 6~9일에는 ${names(pick)} 등 ${pick.length}곳이 시차 2시간 이내이면서 2월이 여행 적기입니다. 연휴 항공권은 일찍 마감되니 지금 가격부터 비교하세요.`,
+    desc: `2027 설 연휴 해외여행지 추천: 2월 6일 토요일부터 9일 화요일까지 4일 연휴, 3박 4일로 다녀오기 좋은 ${names(pick)} 등 ${pick.length}곳. 입국 조건·시차·2월 날씨 기준.`,
     sections: [{ title: "", items: pick, month: 2 }],
     faq: [
-      ["2027년 설 연휴는 며칠인가요?", "2027년 설날은 2월 7일(일)이고, 연휴는 2월 6일(토)부터 2월 9일(화)까지 4일입니다. 2월 9일은 대체공휴일입니다."],
+      ["2027년 설 연휴는 며칠인가요?", "4일입니다. 설날인 2월 7일이 일요일이라, 2월 6일 토요일부터 대체공휴일 2월 9일 화요일까지 쉽니다."],
       ["설 연휴 3박 4일 해외여행 어디가 좋나요?", `시차 2시간 이내이면서 2월이 여행 적기인 곳은 ${pick.map(x => x.city).join("·")}입니다.`],
       ["설 연휴에 시차 없이 갈 수 있는 곳은?", `시차 1시간 이내로는 ${ga(zero.map(x => x.city).join("·"))} 있습니다.`],
       ["설 연휴 항공권은 언제 사야 하나요?", "명절 연휴 출발편은 수요가 몰려 일찍 마감되는 경우가 많습니다. 특정 시점이 항상 싸다고 단정할 수는 없으니, 여러 날짜의 가격을 지금 비교해 두는 것이 안전합니다."],
     ],
     cta: ["/?q=2%EC%9B%94%20%EC%97%AC%ED%96%89", "2월 여행지 더 찾아보기 →"],
-    cites: [["2027년 공휴일 (kholidayz)", "https://kholidayz.com/year/2027/seollal"]],
+    cites: [["2027년 공휴일 · kholidayz", "https://kholidayz.com/year/2027/seollal"]],
   }));
 }
 
@@ -202,13 +202,13 @@ for (const m of [1, 2]) {
     eyebrow: "NO JET LAG",
     lead: "서울과 시차가 0~1시간인 도시만 모았습니다. 아이·부모님과 함께 가거나, 주말을 붙인 짧은 여행에 피로가 적습니다.",
     answer: `서울과 시차가 아예 없는 곳은 ${zero.map(x => x.city).join("·")}, 1시간 차이는 ${pick.filter(x => !zero.includes(x)).map(x => x.city).join("·")}입니다.`,
-    desc: `시차 없는 해외여행지: ${zero.map(x => x.city).join("·")}(시차 0)와 ${names(pick.filter(x => !zero.includes(x)))} 등(1시간). 도시별 여행 적기와 입국 조건까지.`,
+    desc: `시차 없는 해외여행지: 시차 0은 ${zero.map(x => x.city).join("·")}, 1시간은 ${names(pick.filter(x => !zero.includes(x)))} 등. 도시별 여행 적기와 입국 조건까지.`,
     sections: [
       { title: `시차 0시간 ${zero.length}곳`, items: zero },
       { title: `시차 1시간 ${pick.length - zero.length}곳`, items: pick.filter(x => !zero.includes(x)) },
     ],
     faq: [
-      ["한국과 시차가 없는 나라는?", `키워드트립 추천 도시 중 시차가 없는 곳은 일본(${zero.map(x => x.city).join("·")})입니다.`],
+      ["한국과 시차가 없는 나라는?", `키워드트립 추천 도시 중 시차가 없는 곳은 일본의 ${zero.map(x => x.city).join("·")}입니다.`],
       ["시차 1시간인 해외여행지는?", `${eun(pick.filter(x => !zero.includes(x)).map(x => x.city).join("·"))} 서울과 1시간 차이입니다.`],
       ["아이와 가기 좋은 시차 적은 해외여행지는?", "시차가 적으면 수면 리듬이 덜 흐트러집니다. 이 목록의 도시 중 여행하려는 달이 여행 적기에 들어가는 곳을 고르세요."],
     ],

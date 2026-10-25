@@ -56,10 +56,10 @@ function visaOf(x) {
   const base = INFO.sch.includes(x.cc) ? INFO.schTxt : (INFO.visa[x.cc] || "");
   return [base, INFO.note[x.cc], INFO.xvisa[x.id]].filter(Boolean).join(" ") || "출발 전 목적지 정부·이민기관의 공식 안내에서 입국 조건을 확인하세요.";
 }
-function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` (${+d[1]}월 ${+d[2]}일 확인)`:"")}
+function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` · ${+d[1]}월 ${+d[2]}일 확인`:"")}
 function officialOf(x) {
   const a = [...((INFO.official || {})[x.cc] || []), ...((INFO.sch.includes(x.cc) && INFO.schLinks) || [])];
-  a.push(["외교부 해외안전여행 (여행경보·최신 공지)", "https://www.0404.go.kr/"]);
+  a.push(["외교부 해외안전여행 · 여행경보와 최신 공지", "https://www.0404.go.kr/"]);
   return a;
 }
 function moneyOf(x) {
@@ -69,7 +69,7 @@ function moneyOf(x) {
 }
 function tipsOf(x) {
   const a = [...(INFO.xtips[x.id] || []), ...(INFO.tips[x.id] || []), ...((x.country && !x.sub && INFO.tips[x.cc]) || [])];
-  if (INFO.left.includes(x.cc)) a.push("자동차는 좌측 통행(운전석이 오른쪽). 렌터카 운전과 길 건널 때 오른쪽부터 확인.");
+  if (INFO.left.includes(x.cc)) a.push("자동차는 좌측 통행, 운전석은 오른쪽. 길을 건널 땐 오른쪽부터 보세요.");
   return [...new Set(a)];
 }
 function offsetMin(tz, d) {
@@ -85,7 +85,7 @@ function diffText(tz, d) {
 function tzLine(x) {
   const jan = new Date(Date.UTC(2026, 0, 15)), jul = new Date(Date.UTC(2026, 6, 15));
   const a = diffText(x.tz, jan), b = diffText(x.tz, jul);
-  return a === b ? a : `${b} (서머타임 기간) · ${a} (그 외 기간)`;
+  return a === b ? a : `서머타임 ${b} · 그 외 ${a}`;
 }
 const mText = ms => ms.map(m => m + "월").join(" · ");
 // 전압·콘센트 (INFO.pwr: [전압, 주파수, 콘센트형]) — 한국 플러그는 C·F형
@@ -94,7 +94,7 @@ function pwrOf(x) {
   const t = p[2].split("·"), ok = t.filter(k => "CEF".includes(k));
   const plug = ok.length === t.length ? "한국 플러그 그대로 사용" : ok.length ? "멀티 어댑터 권장" : "어댑터 필요";
   const low = /^1[0-2]\d?V/.test(p[0]);
-  return { v: `${p[0]} · ${p[1]}`, s: `콘센트 ${p[2]}형 · ${plug}`, a: `${p[0]}, ${p[1]}이고 콘센트는 ${p[2]}형이라 ${plug === "한국 플러그 그대로 사용" ? "한국 플러그를 그대로 쓸 수 있습니다" : plug === "멀티 어댑터 권장" ? "한국 플러그가 맞지 않는 곳이 있어 멀티 어댑터가 있으면 안심입니다" : "한국 플러그에는 어댑터가 필요합니다"}.${low ? " 전압이 한국(220V)보다 낮아 충전기·기기가 프리볼트(100–240V)인지 확인하세요." : ""}` };
+  return { v: `${p[0]} · ${p[1]}`, s: `콘센트 ${p[2]}형 · ${plug}`, a: `${p[0]}, ${p[1]}이고 콘센트는 ${p[2]}형이라 ${plug === "한국 플러그 그대로 사용" ? "한국 플러그를 그대로 쓸 수 있습니다" : plug === "멀티 어댑터 권장" ? "한국 플러그가 맞지 않는 곳이 있어 멀티 어댑터가 있으면 안심입니다" : "한국 플러그에는 어댑터가 필요합니다"}.${low ? " 전압이 한국의 220V보다 낮습니다. 충전기가 100–240V 프리볼트인지 확인하세요." : ""}` };
 }
 // 운전 방향 (INFO.left: 좌측 통행)
 function driveOf(x) {
@@ -210,7 +210,7 @@ ${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
 <p class="hook">${esc(lead)}</p>
 </header>
 ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
-<div><dt>입국 (한국 여권)</dt><dd><i class="dot" style="--vc:${CLS[vc].hex}"></i>${esc(status)}</dd></div>
+<div><dt>입국 · 한국 여권</dt><dd><i class="dot" style="--vc:${CLS[vc].hex}"></i>${esc(status)}</dd></div>
 <div><dt>여행 적기</dt><dd>${esc(best)}</dd></div>
 <div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${fxSpan(x)} · <span data-fx-when>${fxDate}</span> 기준</small>` : ""}</dd></div>
 <div><dt>시차</dt><dd>${esc(tzl)}</dd></div>
@@ -260,7 +260,7 @@ function directory() {
   const row = d => `<li><a href="/trips/${d.id}"><i class="dot" style="--vc:${CLS[vt(d)[0]].hex}"></i><b>${esc(d.city)}</b><small>${esc(vShort(d))} · 적기 ${esc(bestSpan(d.best))}</small></a></li>`;
   const byReg = REG.map(r => [r, countries.filter(d => d.reg === r).sort((a, b) => a.city.localeCompare(b.city, "ko"))]).filter(([, a]) => a.length);
   const title = `해외 여행지 전체 목록 ${DEST.length}곳 | 비자·여행 적기 한눈에 | 키워드트립`;
-  const desc = `키워드트립 추천 도시 ${curated.length}곳과 TCC 기준 ${countries.length}개 국가·지역의 한국인 입국 조건(무비자·사전 신청·비자)과 여행 적기를 한 페이지에서 비교하세요.`;
+  const desc = `키워드트립 추천 도시 ${curated.length}곳과 TCC 기준 ${countries.length}개 국가·지역의 한국인 입국 조건과 여행 적기를 한 페이지에서 비교하세요.`;
   const ld = { "@context": "https://schema.org", "@graph": [
     { "@type": "CollectionPage", "@id": HOST + "/trips#webpage", url: HOST + "/trips", name: title, description: desc, inLanguage: "ko-KR", dateModified: TODAY, isPartOf: { "@id": HOST + "/#website" } },
     { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "키워드트립", item: HOST + "/" }, { "@type": "ListItem", position: 2, name: "전체 여행지", item: HOST + "/trips" }] }] };
@@ -300,7 +300,7 @@ function directory() {
 </header>
 <section class="dir"><h2>키워드트립 추천 도시 <small>${curated.length}곳</small></h2><ul>${curated.map(row).join("")}</ul></section>
 ${byReg.map(([r, a]) => `<section class="dir"><h2>${r} <small>${a.length}곳</small></h2><ul>${a.map(row).join("")}</ul></section>`).join("\n")}
-<p class="trust">국가·지역 분류는 여행자 클럽 TCC(Travelers' Century Club) 기준이라 독립국이 아닌 곳도 포함됩니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트 기준 보기 →</a></p>
+<p class="trust">국가·지역 분류는 여행자 클럽 TCC, 즉 Travelers' Century Club 기준이라 독립국이 아닌 곳도 포함됩니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · KeywordTrip</p>
 </main>
 </body>

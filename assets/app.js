@@ -38,16 +38,16 @@ function vt(x){if(x._v) return x._v;
   return x._v=v}
 function classOf(x){return vt(x)[0]}
 function vShort(x){const [c,l,s]=vt(x);if(c==="orange")return l;if(c==="yellow")return l;return l+(s?" "+s:"")}
-function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` (${+d[1]}월 ${+d[2]}일 확인)`:"")}
-function officialOf(x){const a=[...((INFO.official||{})[x.cc]||[]),...((INFO.sch.includes(x.cc)&&INFO.schLinks)||[])];a.push(["외교부 해외안전여행 (여행경보·최신 공지)","https://www.0404.go.kr/"]);return a}
+function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` · ${+d[1]}월 ${+d[2]}일 확인`:"")}
+function officialOf(x){const a=[...((INFO.official||{})[x.cc]||[]),...((INFO.sch.includes(x.cc)&&INFO.schLinks)||[])];a.push(["외교부 해외안전여행 · 여행경보와 최신 공지","https://www.0404.go.kr/"]);return a}
 function moneyOf(x){
   let m=(INFO.xmoney[x.id])||INFO.money[x.cc]||"";
   if(!m&&x.cur==="XOF") m=INFO.cfaW; if(!m&&x.cur==="XAF") m=INFO.cfaC; if(!m&&x.cur==="XCD") m=INFO.xcd;
   return m;
 }
-function tipsOf(x){const a=[...(INFO.xtips[x.id]||[]),...(INFO.tips[x.id]||[]),...((x.country&&!x.sub&&INFO.tips[x.cc])||[])];if(INFO.left.includes(x.cc))a.push("자동차는 좌측 통행(운전석이 오른쪽). 렌터카 운전과 길 건널 때 오른쪽부터 확인.");return [...new Set(a)]}
+function tipsOf(x){const a=[...(INFO.xtips[x.id]||[]),...(INFO.tips[x.id]||[]),...((x.country&&!x.sub&&INFO.tips[x.cc])||[])];if(INFO.left.includes(x.cc))a.push("자동차는 좌측 통행, 운전석은 오른쪽. 길을 건널 땐 오른쪽부터 보세요.");return [...new Set(a)]}
 /* FX: bank-style KRW quotes (100엔 = 850.42원) */
-const FX_SRC={koreaexim:"한국수출입은행 매매기준율",ecb:"유럽중앙은행(ECB) 기준환율",erapi:"ExchangeRate-API 시장 중간값"};
+const FX_SRC={koreaexim:"한국수출입은행 매매기준율",ecb:"유럽중앙은행 기준환율",erapi:"ExchangeRate-API 시장 중간값"};
 const FX_UNIT={JPY:100,VND:100,IDR:100};
 function krwPer(code){const r=INFO.fx.r[code];return r?1/r:null}
 function unitFor(code){if(FX_UNIT[code])return FX_UNIT[code];const per=krwPer(code);for(const m of [1,100,1000,10000,100000]){if(per*m>=1)return m}return 100000}
@@ -55,7 +55,7 @@ function curLabel(code,n){const nm=CUR[code]||code;return n.toLocaleString("ko-K
 function wonText(v){return v.toLocaleString("ko-KR",{minimumFractionDigits:v>=10000?0:2,maximumFractionDigits:v>=10000?0:2})+"원"}
 function quote(code){const per=krwPer(code);if(!per)return "";const u=unitFor(code);return `${curLabel(code,u)} = ${wonText(per*u)}`}
 function rateLine(x){return x.cur&&x.cur!=="KRW"?quote(x.cur):""}
-function fxSrcText(code){const k=(INFO.fx.s&&INFO.fx.s[code])||"erapi";const c=INFO.fx.chk&&INFO.fx.chk[code];return FX_SRC[k]+(c?` (${FX_SRC[c].split(" ")[0]}와 교차 확인)`:"")}
+function fxSrcText(code){const k=(INFO.fx.s&&INFO.fx.s[code])||"erapi";const c=INFO.fx.chk&&INFO.fx.chk[code];return FX_SRC[k]+(c?` · ${FX_SRC[c].split(" ")[0]}와 교차 확인`:"")}
 function fxTimeText(){return fmt("Asia/Seoul",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(INFO.fx.t))}
 /* list */
 let bestOnly=false, query="";
@@ -181,7 +181,7 @@ function openSheet(id,from){
   $("#fSeason").textContent=`${m}월, ${season(x,m)}`;
   $("#fNowRow").hidden=!x.best; $("#monthsWrap").hidden=!x.best;
   if(x.best) $("#fNow").textContent=isBest(x)?"지금이 적기":`다음 적기 ${nextBest(x,m)}월`;
-  $("#fCur").textContent=`${CUR[x.cur]||""} (${x.cur})`;
+  $("#fCur").textContent=`${CUR[x.cur]||""} · ${x.cur}`;
   renderInfo(x); renderWant(x); renderPrep(x); renderBooking(x); setDestinationMeta(x);
   $("#months").innerHTML=Array.from({length:12},(_,i)=>`<span class="${(x.best||[]).includes(i+1)?"b":""} ${i+1===m?"now":""}" title="${i+1}월">${i+1}</span>`).join("");
   $("#mapA").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.en);
@@ -203,13 +203,13 @@ function briefHTML(x){
   const m=monthIn(x.tz), [c,l,s]=vt(x);
   const rows=[];
   if(x.best) rows.push(["시기",isBest(x)?`${m}월은 일반 기후 기준 추천 시기`:`다음 일반 기후 기준 추천 시기 ${nextBest(x,m)}월`]);
-  const prep=l==="입국 조건 확인 필요"?"목적지 정부·이민기관에서 확인":{green:"무비자 체류 범위와 별도 입국 절차 확인",blue:"출발 전 또는 도착 시 절차 확인",yellow:"비자·입국 허가 조건 확인",orange:"외교부 최신 여행경보와 방문 허가 확인"}[c];
+  const prep=l==="입국 조건 확인 필요"?"목적지 정부·이민기관에서 확인":{green:"체류 일수와 입국신고 확인",blue:"출발 전이나 도착 때 신청",yellow:"비자나 입국 허가가 먼저",orange:"외교부 최신 여행경보부터 확인"}[c];
   rows.push(["입국",`${vShort(x)}. ${prep}`]);
   const per=krwPer(x.cur);
   if(per) rows.push(["환율",quote(x.cur)]);
   const pw=(INFO.pwr||{})[x.cc];
   if(pw) rows.push(["전압",`${pw[0]} · ${pw[1]} · 콘센트 ${pw[2]}형`]);
-  if(!(INFO.noroad||[]).includes(x.cc)) rows.push(["운전",INFO.left.includes(x.cc)?"좌측 통행 · 운전석 오른쪽 (한국과 반대)":"우측 통행 · 운전석 왼쪽 (한국과 같음)"]);
+  if(!(INFO.noroad||[]).includes(x.cc)) rows.push(["운전",INFO.left.includes(x.cc)?"좌측 통행 · 한국과 반대":"우측 통행 · 한국과 같음"]);
   return `<section class="fbrief"><h4 class="h-tip">이번 달 브리핑</h4><dl>${rows.map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl></section>`;
 }
 function renderInfo(x){
@@ -217,8 +217,8 @@ function renderInfo(x){
   let h=briefHTML(x);
   if(isBan(x)) h+=`<div class="alert"><b>${x.cc==="NE"?"대부분 지역 여행금지":"여행금지국가"}</b> 대한민국 정부의 예외적 여권 사용 허가 없이 방문하면 여권법 위반으로 처벌될 수 있습니다.</div>`;
   else if(isWarn(x)) h+=`<div class="alert soft"><b>일부 지역 여행금지·경보</b> 아래 입국 정보의 금지 지역과 외교부 최신 경보를 확인하세요.</div>`;
-  h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 (한국 여권)</h4><p>${v}</p>${chkLine(x)?`<p class="src">${chkLine(x)}</p>`:""}<p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
-  h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} (${x.cur})</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 · ${fxSrcText(x.cur)}. 은행 매매기준율과 같은 개념의 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
+  h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 · 한국 여권</h4><p>${v}</p>${chkLine(x)?`<p class="src">${chkLine(x)}</p>`:""}<p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
+  h+=`<section><h4 class="h-money">돈</h4><p><b>${CUR[x.cur]||x.cur} · ${x.cur}</b>${rl?` <span class="rate">${rl}</span>`:""}</p>${mo?`<p>${mo}</p>`:""}${rl?`<div class="conv"><label><span>원</span><input id="cvK" inputmode="decimal" value="10,000" aria-label="원화 금액"></label><span class="eq">=</span><label><span>${x.cur}</span><input id="cvL" inputmode="decimal" aria-label="${x.cur} 금액"></label></div><p class="src">${fxTimeText()} 기준 · ${fxSrcText(x.cur)}. 은행 매매기준율 같은 중간값이라, 실제 환전·카드 결제엔 수수료가 붙습니다.</p>`:`<p class="src">${x.cc==="KP"?"북한 원화는 공개 시장 환율이 없습니다.":"이 통화는 공개 시장 환율이 제공되지 않습니다."}</p>`}</section>`;
   if(tips.length) h+=`<section><h4 class="h-tip">키워드트립 팁</h4><ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul></section>`;
   $("#info").innerHTML=h;
   if(rl){
@@ -401,7 +401,7 @@ function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.ad
 (function(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition, mic=$("#mic"), pp=$("#pp");
   const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent);
-  const howTo=isIOS?"설정 앱 → Safari(또는 사용 중인 브라우저) → 마이크에서 허용해 주세요.":"주소창 왼쪽 자물쇠(사이트 정보) → 마이크 → 허용으로 바꿔 주세요.";
+  const howTo=isIOS?"설정 앱 → 사용 중인 브라우저 → 마이크에서 허용해 주세요.":"주소창 왼쪽 자물쇠 → 마이크 → 허용으로 바꿔 주세요.";
   let rec=null, on=false;
   const store={get(){try{return localStorage.getItem("kt_mic")}catch(e){return null}},set(v){try{localStorage.setItem("kt_mic",v)}catch(e){}}};
   const stop=()=>{on=false;mic.setAttribute("aria-pressed","false");try{rec&&rec.stop()}catch(e){}};
