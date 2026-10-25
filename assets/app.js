@@ -38,7 +38,7 @@ function vt(x){if(x._v) return x._v;
   return x._v=v}
 function classOf(x){return vt(x)[0]}
 function vShort(x){const [c,l,s]=vt(x);if(c==="orange")return l;if(c==="yellow")return l;return l+(s?" "+s:"")}
-function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` · ${+d[1]}월 ${+d[2]}일 확인`:"")}
+function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")}
 function officialOf(x){const a=[...((INFO.official||{})[x.cc]||[]),...((INFO.sch.includes(x.cc)&&INFO.schLinks)||[])];a.push(["외교부 해외안전여행 · 여행경보와 최신 공지","https://www.0404.go.kr/"]);return a}
 function moneyOf(x){
   let m=(INFO.xmoney[x.id])||INFO.money[x.cc]||"";

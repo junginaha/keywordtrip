@@ -56,7 +56,7 @@ function visaOf(x) {
   const base = INFO.sch.includes(x.cc) ? INFO.schTxt : (INFO.visa[x.cc] || "");
   return [base, INFO.note[x.cc], INFO.xvisa[x.id]].filter(Boolean).join(" ") || "출발 전 목적지 정부·이민기관의 공식 안내에서 입국 조건을 확인하세요.";
 }
-function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")+(d.length===3?` · ${+d[1]}월 ${+d[2]}일 확인`:"")}
+function chkLine(x){const C=INFO.check||{},eu=(INFO.pet&&INFO.pet.EU&&INFO.pet.EU.cc)||[];const c=C[x.cc]||(eu.includes(x.cc)?C.EU:null),tr=(INFO.transit||{})[x.cc];if(!c&&!tr)return "";const a=[];if(c){a.push("여권 "+c[0]);a.push("귀국편 "+c[1]);if(c[2])a.push(c[2])}if(tr)a.push("경유 시 "+tr);const d=(INFO.checkDate||"").split("-");return a.join(" · ")}
 function officialOf(x) {
   const a = [...((INFO.official || {})[x.cc] || []), ...((INFO.sch.includes(x.cc) && INFO.schLinks) || [])];
   a.push(["외교부 해외안전여행 · 여행경보와 최신 공지", "https://www.0404.go.kr/"]);
@@ -126,7 +126,7 @@ const fxSrc = c => FX_SRC[(INFO.fx.s && INFO.fx.s[c]) || "erapi"];
 const fxSpan = x => `<span data-fx="${x.cur}">${esc(rateLine(x))}</span>`;
 const fxWhen = x => `<span data-fx-when>${fxDate}</span> 기준 · <span data-fx-src="${x.cur}">${esc(fxSrc(x.cur))}</span>`;
 const josa = (w, a, b) => { const c = [...String(w).replace(/\s*\(.*\)$/, "")].pop() || ""; const k = c.charCodeAt(0) - 0xAC00; return w + (k >= 0 && k <= 11171 ? (k % 28 ? a : b) : b); };
-const curName = x => `${CUR[x.cur] || x.cur} (${x.cur})`;
+const curName = x => `${CUR[x.cur] || x.cur} · ${x.cur}`;
 const placeName = x => x.country ? x.city : `${x.city}`;
 const ctx = x => x.country ? (x.cap ? `${x.c}` : x.reg) : `${x.c} · ${x.reg}`;
 
