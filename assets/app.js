@@ -208,7 +208,9 @@ function briefHTML(x){
   rows.push(["입국",`${vShort(x)}. ${prep}`]);
   const per=krwPer(x.cur);
   if(per) rows.push(["환율",quote(x.cur)]);
-  if(INFO.left.includes(x.cc)) rows.push(["도로","좌측 통행"]);
+  const pw=(INFO.pwr||{})[x.cc];
+  if(pw) rows.push(["전압",`${pw[0]} · ${pw[1]} · 콘센트 ${pw[2]}형`]);
+  if(!(INFO.noroad||[]).includes(x.cc)) rows.push(["운전",INFO.left.includes(x.cc)?"좌측 통행 · 운전석 오른쪽 (한국과 반대)":"우측 통행 · 운전석 왼쪽 (한국과 같음)"]);
   return `<section class="fbrief"><h4 class="h-tip">이번 달 브리핑</h4><dl>${rows.map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl></section>`;
 }
 function renderInfo(x){

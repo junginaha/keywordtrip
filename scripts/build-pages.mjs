@@ -88,6 +88,21 @@ function tzLine(x) {
   return a === b ? a : `${b} (서머타임 기간) · ${a} (그 외 기간)`;
 }
 const mText = ms => ms.map(m => m + "월").join(" · ");
+// 전압·콘센트 (INFO.pwr: [전압, 주파수, 콘센트형]) — 한국 플러그는 C·F형
+function pwrOf(x) {
+  const p = (INFO.pwr || {})[x.cc]; if (!p) return null;
+  const t = p[2].split("·"), ok = t.filter(k => "CEF".includes(k));
+  const plug = ok.length === t.length ? "한국 플러그 그대로 사용" : ok.length ? "멀티 어댑터 권장" : "어댑터 필요";
+  const low = /^1[0-2]\d?V/.test(p[0]);
+  return { v: `${p[0]} · ${p[1]}`, s: `콘센트 ${p[2]}형 · ${plug}`, a: `${p[0]}, ${p[1]}이고 콘센트는 ${p[2]}형이라 ${plug === "한국 플러그 그대로 사용" ? "한국 플러그를 그대로 쓸 수 있습니다" : plug === "멀티 어댑터 권장" ? "한국 플러그가 맞지 않는 곳이 있어 멀티 어댑터가 있으면 안심입니다" : "한국 플러그에는 어댑터가 필요합니다"}.${low ? " 전압이 한국(220V)보다 낮아 충전기·기기가 프리볼트(100–240V)인지 확인하세요." : ""}` };
+}
+// 운전 방향 (INFO.left: 좌측 통행)
+function driveOf(x) {
+  if ((INFO.noroad || []).includes(x.cc)) return null;
+  return INFO.left.includes(x.cc)
+    ? { v: "좌측 통행 · 운전석 오른쪽", s: "한국과 반대 · 회전·로터리 방향 주의", a: "차량은 좌측 통행이고 운전석이 오른쪽입니다. 한국과 반대라 우회전·로터리 진입 방향과 길 건널 때 오른쪽부터 확인하세요." }
+    : { v: "우측 통행 · 운전석 왼쪽", s: "한국과 같음", a: "차량은 우측 통행이고 운전석이 왼쪽으로 한국과 같습니다." };
+}
 function bestSpan(ms) { // compress into ranges in seasonal order, e.g. 11월~2월
   const set = new Set(ms); if (set.size === 12) return "연중";
   let start = 1; while (set.has(start) && set.size < 12) start = start % 12 + 1; // first non-best month
@@ -134,7 +149,7 @@ function page(x) {
   const lead = x.hook || `${x.kw.join(", ")}로 기억되는 곳.`;
   const title = `${name} 여행 | ${kw} · 여행 적기·비자·환율 | 키워드트립`;
   const desc = `${name} 여행 적기는 ${best}. 한국 여권 기준 ${status}${x.cur && x.cur !== "KRW" ? `, 통화는 ${CUR[x.cur] || x.cur}` : ""}. ${x.kw.join("·")} 키워드로 고르는 ${name}의 입국·환율·시차·현지 팁을 한눈에.`;
-  const visa = visaOf(x), money = moneyOf(x), tips = tipsOf(x), rate = rateLine(x), tzl = tzLine(x);
+  const visa = visaOf(x), money = moneyOf(x), tips = tipsOf(x), rate = rateLine(x), tzl = tzLine(x), pw = pwrOf(x), dr = driveOf(x);
   const warn = vc === "orange" || isWarn(x);
   const faqs = [
     ...(FAQ[x.id] || []),
@@ -142,6 +157,8 @@ function page(x) {
     [`한국인은 ${name}에 비자 없이 갈 수 있나요?`, `${status}. ${visa}`],
     ...(x.cur && x.cur !== "KRW" ? [[`${name}에서는 어떤 돈을 쓰나요?`, `통화는 ${curName(x)}입니다.${rate ? ` ${fxDate} 기준 ${rate}.` : ""}${money ? " " + money : ""}`]] : []),
     [`${josa(name, "과", "와")} 서울의 시차는 얼마인가요?`, `${tzl}.`],
+    ...(pw ? [[`${name} 전압과 콘센트는 어떻게 되나요?`, `${josa(name, "은", "는")} ${pw.a}`]] : []),
+    ...(dr ? [[`${josa(name, "은", "는")} 운전석이 왼쪽인가요, 오른쪽인가요?`, dr.a]] : []),
   ];
   const { same, near } = related(x);
   const ld = { "@context": "https://schema.org", "@graph": [
@@ -197,7 +214,7 @@ ${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국�
 <div><dt>여행 적기</dt><dd>${esc(best)}</dd></div>
 <div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${fxSpan(x)} · <span data-fx-when>${fxDate}</span> 기준</small>` : ""}</dd></div>
 <div><dt>시차</dt><dd>${esc(tzl)}</dd></div>
-</dl>
+${pw ? `<div${dr ? "" : ' style="grid-column:1/-1"'}><dt>전압·콘센트</dt><dd>${esc(pw.v)}<small>${esc(pw.s)}</small></dd></div>\n` : ""}${dr ? `<div><dt>운전</dt><dd>${esc(dr.v)}<small>${esc(dr.s)}</small></dd></div>\n` : ""}</dl>
 <section class="card">
 <h2>${esc(name)} 여행 적기는 언제인가요?</h2>
 <ol class="months" aria-label="월별 여행 적기">${months12(x)}</ol>
@@ -478,7 +495,7 @@ ${DEST.map(d => `## ${d.city} (${d.en})
 ${chkLine(d) ? `- 입국 체크: ${chkLine(d)}\n` : ""}${officialOf(d).length ? `- 공식 확인처: ${officialOf(d).map(([l, h]) => `${l} ${h}`).join(" · ")}\n` : ""}- 여행 적기: ${mText(d.best)}${d.wet ? ` / 우기: ${mText(d.wet)}` : ""}
 - 통화: ${curName(d)}${rateLine(d) ? ` (${rateLine(d)}, ${fxDate} 기준)` : ""}
 - 시차: ${tzLine(d)}
-- 키워드: ${d.kw.join(", ")}`).join("\n\n")}
+${pwrOf(d) ? `- 전압·콘센트: ${pwrOf(d).v}, ${pwrOf(d).s}\n` : ""}${driveOf(d) ? `- 운전: ${driveOf(d).v}\n` : ""}- 키워드: ${d.kw.join(", ")}`).join("\n\n")}
 `;
 write("llms-full.txt", full);
 
