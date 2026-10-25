@@ -17,7 +17,7 @@ import { trackOutbound, trackShare } from "./growth.js";
 const SITE = "https://keywordtrip.com";
 // The app name is the first label of the Toss host (<appName>.apps.tossmini.com).
 // eslint-disable-next-line no-undef
-const CONFIG_APP = typeof __KT_APP__ !== "undefined" ? __KT_APP__ : "keytrip";
+const CONFIG_APP = typeof __KT_APP__ !== "undefined" ? __KT_APP__ : "keywordtrip";
 const APP = /\.(?:private-)?apps\.tossmini\.com$/.test(location.hostname) ? location.hostname.split(".")[0] : CONFIG_APP;
 const SITE_HOSTS = new Set(["keywordtrip.com", "www.keywordtrip.com"]);
 

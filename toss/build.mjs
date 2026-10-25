@@ -31,7 +31,7 @@ const BUNDLED_PAGES = [];
     }
   }
 })(OUT);
-const APP_NAME = (fs.readFileSync(path.join(here, "apps-in-toss.config.ts"), "utf8").match(/appName:\s*"([^"]+)"/) || [])[1] || "keytrip";
+const APP_NAME = (fs.readFileSync(path.join(here, "apps-in-toss.config.ts"), "utf8").match(/appName:\s*"([^"]+)"/) || [])[1] || "keywordtrip";
 
 // Offline fallback for live data: the same values as assets/data.js, as JSON (never executed).
 {

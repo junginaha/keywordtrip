@@ -1,9 +1,9 @@
 // CORS for the Apps in Toss mini app. The bundle runs on Toss domains
 // (<appName>.apps.tossmini.com, and private-apps for console QR tests), not keywordtrip.com,
 // so only these origins are allowed to call the public API.
-// Both app names are listed because the console app name was changed once (keywordtrip → keytrip).
+// Toss console app name: keywordtrip (the only KeywordTrip mini app).
 const ALLOWED = new Set(
-  ["keytrip", "keywordtrip"].flatMap((app) => [
+  ["keywordtrip"].flatMap((app) => [
     `https://${app}.apps.tossmini.com`,
     `https://${app}.private-apps.tossmini.com`,
   ]),
