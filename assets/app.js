@@ -45,7 +45,7 @@ function moneyOf(x){
   if(!m&&x.cur==="XOF") m=INFO.cfaW; if(!m&&x.cur==="XAF") m=INFO.cfaC; if(!m&&x.cur==="XCD") m=INFO.xcd;
   return m;
 }
-function tipsOf(x){const a=[...(INFO.xtips[x.id]||[]),...(INFO.tips[x.id]||[]),...((x.country&&!x.sub&&INFO.tips[x.cc])||[])];if(INFO.left.includes(x.cc))a.push("자동차는 좌측 통행, 운전석은 오른쪽. 길을 건널 땐 오른쪽부터 보세요.");return [...new Set(a)]}
+function tipsOf(x){const a=[...(INFO.xtips[x.id]||[]),...(INFO.tips[x.id]||[]),...((x.country&&!x.sub&&INFO.tips[x.cc])||[])];return [...new Set(a)]}
 /* FX: bank-style KRW quotes (100엔 = 850.42원) */
 const FX_SRC={koreaexim:"한국수출입은행 매매기준율",ecb:"유럽중앙은행 기준환율",erapi:"ExchangeRate-API 시장 중간값"};
 const FX_UNIT={JPY:100,VND:100,IDR:100};
@@ -202,7 +202,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&cur) closeSheet()})
 function briefHTML(x){
   const m=monthIn(x.tz), [c,l,s]=vt(x);
   const rows=[];
-  if(x.best) rows.push(["시기",isBest(x)?`${m}월은 일반 기후 기준 추천 시기`:`다음 일반 기후 기준 추천 시기 ${nextBest(x,m)}월`]);
   const prep=l==="입국 조건 확인 필요"?"목적지 정부·이민기관에서 확인":{green:"체류 일수와 입국신고 확인",blue:"출발 전이나 도착 때 신청",yellow:"비자나 입국 허가가 먼저",orange:"외교부 최신 여행경보부터 확인"}[c];
   rows.push(["입국",`${vShort(x)}. ${prep}`]);
   const per=krwPer(x.cur);

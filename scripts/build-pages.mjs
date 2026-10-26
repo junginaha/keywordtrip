@@ -69,7 +69,6 @@ function moneyOf(x) {
 }
 function tipsOf(x) {
   const a = [...(INFO.xtips[x.id] || []), ...(INFO.tips[x.id] || []), ...((x.country && !x.sub && INFO.tips[x.cc]) || [])];
-  if (INFO.left.includes(x.cc)) a.push("자동차는 좌측 통행, 운전석은 오른쪽. 길을 건널 땐 오른쪽부터 보세요.");
   return [...new Set(a)];
 }
 function offsetMin(tz, d) {
