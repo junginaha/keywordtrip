@@ -11,6 +11,10 @@ const { DEST, INFO } = new Function(fs.readFileSync(path.join(root, "assets/data
 const TODAY = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+new Function(fs.readFileSync(path.join(root, "assets/affiliate.js"), "utf8"))();
+const AFF = globalThis.KTAffiliate;
+const flightUrl = x => AFF.trip(AFF.AIRPORT[x.id] ? "/flights/airport-icn-" + AFF.AIRPORT[x.id] + "/" : "/flights/", "guide-flight-" + x.id);
+
 const CITIES = DEST.filter(x => !x.country && x.cc !== "KR" && !INFO.ban.includes(x.cc) && x.cc !== "KP");
 
 /* same entry rules as scripts/build-pages.mjs */
@@ -37,19 +41,19 @@ const near = (x, month) => Math.abs(diffMin(x, month)) <= 120 && x.hemi !== "S";
 const SEA = ["VN", "TH", "PH", "MY", "SG", "ID", "KH", "LA", "BN"];
 const byNear = month => (a, b) => Math.abs(diffMin(a, month)) - Math.abs(diffMin(b, month)) || CITIES.indexOf(a) - CITIES.indexOf(b);
 
-const CSS = `*{box-sizing:border-box}body{margin:0;background:#0C1020;color:#F2F3F8;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.65;word-break:keep-all}.w{max-width:720px;margin:auto;padding:26px 20px 60px}a{color:inherit}.back{font-size:13px;color:#8A90A8;text-decoration:none}.hero{padding:46px 0 24px}.hero .eyebrow{color:#39FF14}.hero h1{font-size:clamp(32px,8.5vw,60px);line-height:1.1;margin:8px 0 14px}.hero p{margin:0;color:#C8CCDA}.answer{padding:18px;border:1px solid #39FF14;border-radius:14px;margin:0 0 18px}.answer b{color:#39FF14}.answer p{margin:6px 0 0}.note{padding:16px;border:1px solid #20263D;border-radius:14px;color:#AEB4C7;font-size:13px;margin-bottom:28px}h2.sec{font-size:20px;margin:34px 0 4px;color:#2DE2FF}.city{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:22px 0;border-top:1px solid #20263D}.no{font-size:13px;color:#8A90A8;padding-top:4px}.city h3{font-size:25px;margin:0 0 5px}.city h3 a{text-decoration:none}.eyebrow{font-size:12px;color:#FF1FAF;margin:0 0 3px}.hook{margin:0 0 10px;color:#DADDEA}.facts{margin:0 0 10px;padding:0;list-style:none;font-size:14px;color:#C8CCDA}.facts li{margin:2px 0}.facts b{color:#F2F3F8;font-weight:600}.warn{color:#FFE600}.kw{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.kw span{font-size:12px;border:1px solid #2A324F;border-radius:999px;padding:4px 8px}.go{font-size:13px;color:#2DE2FF;text-decoration:none;font-weight:700}.faq{margin-top:36px;border-top:1px solid #20263D;padding-top:10px}.faq h2{font-size:20px}.faq h3{font-size:16px;margin:18px 0 4px}.faq p{margin:0;color:#C8CCDA}.cta{display:block;margin:30px 0 10px;padding:15px 18px;background:#FF1FAF;color:#0C1020;text-align:center;border-radius:12px;text-decoration:none;font-weight:800}.more{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.more a{font-size:13px;border:1px solid #2A324F;border-radius:999px;padding:6px 11px;text-decoration:none}.fine{font-size:12px;color:#8A90A8;margin-top:26px}@media(max-width:430px){.w{padding-left:18px;padding-right:18px}.city{grid-template-columns:32px 1fr}.city h3{font-size:22px}}`;
+const CSS = `*{box-sizing:border-box}body{margin:0;background:#0C1020;color:#F2F3F8;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.65;word-break:keep-all}.w{max-width:720px;margin:auto;padding:26px 20px 60px}a{color:inherit}.back{font-size:13px;color:#8A90A8;text-decoration:none}.hero{padding:46px 0 24px}.hero .eyebrow{color:#39FF14}.hero h1{font-size:clamp(32px,8.5vw,60px);line-height:1.1;margin:8px 0 14px}.hero p{margin:0;color:#C8CCDA}.answer{padding:18px;border:1px solid #39FF14;border-radius:14px;margin:0 0 18px}.answer b{color:#39FF14}.answer p{margin:6px 0 0}.note{padding:16px;border:1px solid #20263D;border-radius:14px;color:#AEB4C7;font-size:13px;margin-bottom:28px}h2.sec{font-size:20px;margin:34px 0 4px;color:#2DE2FF}.city{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:22px 0;border-top:1px solid #20263D}.no{font-size:13px;color:#8A90A8;padding-top:4px}.city h3{font-size:25px;margin:0 0 5px}.city h3 a{text-decoration:none}.eyebrow{font-size:12px;color:#FF1FAF;margin:0 0 3px}.hook{margin:0 0 10px;color:#DADDEA}.facts{margin:0 0 10px;padding:0;list-style:none;font-size:14px;color:#C8CCDA}.facts li{margin:2px 0}.facts b{color:#F2F3F8;font-weight:600}.warn{color:#FFE600}.kw{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.kw span{font-size:12px;border:1px solid #2A324F;border-radius:999px;padding:4px 8px}.go{font-size:13px;color:#2DE2FF;text-decoration:none;font-weight:700}.links{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0}.go.fl{color:#39FF14}.faq{margin-top:36px;border-top:1px solid #20263D;padding-top:10px}.faq h2{font-size:20px}.faq h3{font-size:16px;margin:18px 0 4px}.faq p{margin:0;color:#C8CCDA}.cta{display:block;margin:30px 0 10px;padding:15px 18px;background:#FF1FAF;color:#0C1020;text-align:center;border-radius:12px;text-decoration:none;font-weight:800}.more{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.more a{font-size:13px;border:1px solid #2A324F;border-radius:999px;padding:6px 11px;text-decoration:none}.fine{font-size:12px;color:#8A90A8;margin-top:26px}.clist{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.clist li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #20263D;font-size:15px}.clist a{text-decoration:none;font-weight:600}.clist span{color:#AEB4C7;font-size:13px;white-space:nowrap}@media(max-width:430px){.w{padding-left:18px;padding-right:18px}.city{grid-template-columns:32px 1fr}.city h3{font-size:22px}}`;
 
 // guide index shown at the bottom of every generated guide (internal links)
 const ALL_GUIDES = [
   ["2027-seollal-overseas-travel", "2027 설 연휴"], ["winter-overseas-travel", "겨울 해외여행"], ["no-jet-lag-overseas-travel", "시차 없는 여행지"],
   ["11-month-overseas-travel", "11월"], ["12-month-overseas-travel", "12월"], ["1-month-overseas-travel", "1월"], ["2-month-overseas-travel", "2월"],
-  ["2026-korean-travel-trends", "2026 인기 여행지"],
+  ["2026-korean-travel-trends", "2026 인기 여행지"], ["visa-free-countries-korean-passport", "무비자 국가"], ["2027-holiday-overseas-travel", "2027 연휴 캘린더"],
 ];
 
 function cityBlock(x, i, month) {
   const wet = month && (x.wet || []).includes(month);
   const dm = month ? diffMin(x, month) : diffMin(x, 1);
-  return `<article class="city"><span class="no">${String(i + 1).padStart(2, "0")}</span><div><p class="eyebrow">${esc(x.c)}</p><h3><a href="/trips/${x.id}">${esc(x.city)} 여행</a></h3><p class="hook">${esc(x.hook)}</p><ul class="facts"><li><b>입국</b> ${esc(vShort(x))}</li><li><b>시차</b> ${esc(diffText(dm))}</li><li><b>여행 적기</b> ${esc(mText(x.best))}${wet ? ` <span class="warn">· ${month}월은 우기에 걸림</span>` : ""}</li></ul><p class="kw">${x.kw.map(k => `<span>${esc(k)}</span>`).join("")}</p><a class="go" href="/trips/${x.id}">${esc(x.city)} 입국·환율·날씨 보기 →</a></div></article>`;
+  return `<article class="city"><span class="no">${String(i + 1).padStart(2, "0")}</span><div><p class="eyebrow">${esc(x.c)}</p><h3><a href="/trips/${x.id}">${esc(x.city)} 여행</a></h3><p class="hook">${esc(x.hook)}</p><ul class="facts"><li><b>입국</b> ${esc(vShort(x))}</li><li><b>시차</b> ${esc(diffText(dm))}</li><li><b>여행 적기</b> ${esc(mText(x.best))}${wet ? ` <span class="warn">· ${month}월은 우기에 걸림</span>` : ""}</li></ul><p class="kw">${x.kw.map(k => `<span>${esc(k)}</span>`).join("")}</p><p class="links"><a class="go" href="/trips/${x.id}">${esc(x.city)} 입국·환율·날씨 →</a><a class="go fl" href="${esc(flightUrl(x))}" target="_blank" rel="${AFF.REL}">항공권 가격 →</a></p></div></article>`;
 }
 
 function page({ slug, title, h1, eyebrow, lead, answer, desc, sections, faq, cta, cites = [] }) {
@@ -61,7 +65,7 @@ function page({ slug, title, h1, eyebrow, lead, answer, desc, sections, faq, cta
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "키워드트립", item: `${HOST}/` }, { "@type": "ListItem", position: 2, name: h1, item: `${HOST}/guides/${slug}` }] },
   ];
   let n = 0;
-  const body = sections.map(s => `${s.title ? `<h2 class="sec">${esc(s.title)}</h2>${s.sub ? `<p class="hook">${esc(s.sub)}</p>` : ""}` : ""}\n${s.items.map(x => cityBlock(x, n++, s.month)).join("\n")}`).join("\n");
+  const body = sections.map(s => `${s.title ? `<h2 class="sec">${esc(s.title)}</h2>${s.sub ? `<p class="hook">${esc(s.sub)}</p>` : ""}` : ""}\n${s.compact ? `<ul class="clist">${s.items.map(x => `<li><a href="/trips/${x.id}">${esc(x.city)}</a><span>${esc(s.label(x))}</span></li>`).join("")}</ul>` : s.items.map(x => cityBlock(x, n++, s.month)).join("\n")}`).join("\n");
   const html = `<!doctype html>
 <html lang="ko">
 <head>
@@ -100,6 +104,7 @@ ${faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
 <a class="cta" href="${esc(cta[0])}">${esc(cta[1])}</a>
 <nav class="more" aria-label="다른 여행 가이드">${ALL_GUIDES.filter(g => g[0] !== slug).map(([s, l]) => `<a href="/guides/${s}">${esc(l)}</a>`).join("")}<a href="/trips">전체 여행지</a></nav>
 ${cites.length ? `<p class="fine">출처: ${cites.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}</a>`).join(" · ")}</p>` : ""}
+${sections.some(s => !s.compact) ? `<p class="fine">항공권 가격 링크는 ${esc(AFF.DISCLOSURE)}입니다.</p>` : ""}
 <p class="fine">KeywordTrip · 키워드로 고르고 바로 떠나는 여행 · 업데이트 ${TODAY}</p>
 </main>
 </body>
@@ -213,6 +218,95 @@ for (const m of [1, 2]) {
       ["아이와 가기 좋은 시차 적은 해외여행지는?", "시차가 적으면 수면 리듬이 덜 흐트러집니다. 이 목록의 도시 중 여행하려는 달이 여행 적기에 들어가는 곳을 고르세요."],
     ],
     cta: ["/trips", "전체 여행지 비교하기 →"],
+  }));
+}
+
+/* 한국 여권 무비자 국가 총정리 */
+{
+  const C = DEST.filter(x => x.country && !x.sub);
+  const days = x => { const s = vt(x)[2] || ""; const n = parseInt(s, 10) || 0; return /년/.test(s) ? n * 365 : /개월/.test(s) ? n * 30 : /주/.test(s) ? n * 7 : n; };
+  const ko = (a, b) => a.city.localeCompare(b.city, "ko");
+  const free = C.filter(x => vt(x)[0] === "green").sort((a, b) => days(b) - days(a) || ko(a, b));
+  const pre = C.filter(x => vt(x)[0] === "blue" && /ETA|ESTA|eTA|입국등록|입국허가/.test(vt(x)[1]) && !/비자/.test(vt(x)[1])).sort(ko);
+  const evisa = C.filter(x => vt(x)[0] === "blue" && !pre.includes(x)).sort(ko);
+  const need = C.filter(x => vt(x)[0] === "yellow").sort(ko);
+  const ban = C.filter(x => vt(x)[0] === "orange").sort(ko);
+  const pureFree = free.filter(x => vt(x)[1] === "무비자").length;
+  const lab = x => { const [, l, d] = vt(x); return d ? (l === "무비자" ? d : `${l} ${d}`) : l; };
+  out.push(page({
+    slug: "visa-free-countries-korean-passport",
+    title: `한국 여권 무비자 국가 총정리 ${free.length}곳 | 체류 일수·사전 신청까지 | 키워드트립`,
+    h1: `한국 여권 무비자 국가 ${free.length}곳`,
+    eyebrow: `PASSPORT · ${INFO.rev || TODAY} 기준`,
+    lead: `키워드트립이 다루는 ${C.length}개 국가·지역을 입국 조건별로 나눴습니다. 무비자라도 입국신고나 귀국편 요구는 따로 있으니, 나라를 눌러 상세를 확인하세요.`,
+    answer: `한국 여권은 ${C.length}개 국가·지역 중 ${pureFree}곳에 무비자로, ${free.length - pureFree}곳에 무료 도착비자나 입국허가로 들어갈 수 있습니다. 미국·캐나다·영국·호주·뉴질랜드처럼 출발 전 전자여행허가가 필요한 곳이 ${pre.length}곳입니다.`,
+    desc: `한국 여권 무비자 국가 ${free.length}곳과 체류 일수, 출발 전 ETA·ESTA가 필요한 ${pre.length}곳, e비자·도착비자 ${evisa.length}곳, 여행금지 ${ban.length}곳을 한 페이지에.`,
+    sections: [
+      { title: `무비자·무료 입국 ${free.length}곳`, sub: "체류 일수가 긴 순서. 솅겐 지역은 180일 중 90일입니다.", items: free, compact: true, label: lab },
+      { title: `출발 전 전자여행허가 ${pre.length}곳`, sub: "비자는 아니지만 승인 없이는 비행기를 못 탑니다. 공식 사이트·앱에서만 신청하세요.", items: pre, compact: true, label: lab },
+      { title: `e비자·도착비자 ${evisa.length}곳`, items: evisa, compact: true, label: lab },
+      { title: `비자·방문 허가 필요 ${need.length}곳`, items: need, compact: true, label: lab },
+      { title: `여행금지·경보 ${ban.length}곳`, sub: "외교부 여행금지 지역은 허가 없이 방문하면 처벌받을 수 있습니다.", items: ban, compact: true, label: lab },
+    ],
+    faq: [
+      ["한국 여권으로 무비자 입국할 수 있는 나라는 몇 곳인가요?", `키워드트립이 다루는 ${C.length}개 국가·지역 기준으로 무비자 ${pureFree}곳, 무료 도착비자·입국허가 ${free.length - pureFree}곳입니다. 나라마다 체류 일수와 입국신고 절차가 다르니 출발 전 상세를 확인하세요.`],
+      ["미국은 무비자인가요?", "비자는 필요 없지만 출발 전 ESTA 승인이 필수입니다. 공식 사이트·앱에서 신청하고, 최대 90일 머물 수 있습니다."],
+      ["유럽은 며칠까지 무비자인가요?", "솅겐 지역 29개국을 합쳐 180일 중 90일입니다. 첫 입국 때 출입국시스템 EES에 지문과 얼굴을 등록하고, 사전허가 ETIAS는 2026년 4분기 시행 예정입니다."],
+      ["무비자인데 준비할 서류가 있나요?", "있습니다. 태국 TDAC, 말레이시아 MDAC, 대만 TWAC처럼 온라인 입국신고가 필수인 나라가 늘었고, 귀국편이나 여권 잔여기간 6개월을 요구하는 곳도 많습니다."],
+    ],
+    cta: ["/?q=%EB%AC%B4%EB%B9%84%EC%9E%90", "무비자 여행지 찾아보기 →"],
+    cites: [["외교부 해외안전여행", "https://www.0404.go.kr/"]],
+  }));
+}
+
+/* 2027 연휴 캘린더 */
+{
+  const B = [
+    ["1월 1~3일 · 신정", "금~일 3일", 1, 3],
+    ["2월 6~9일 · 설 연휴", "토~화 4일", 2, 4],
+    ["2월 27일~3월 1일 · 삼일절", "토~월 3일", 3, 3],
+    ["5월 1~3일 · 노동절", "토~월 3일, 3일은 대체공휴일", 5, 3],
+    ["7월 17~19일 · 제헌절", "토~월 3일, 19일은 대체공휴일", 7, 3],
+    ["8월 14~16일 · 광복절", "토~월 3일, 16일은 대체공휴일", 8, 3],
+    ["9월 14~16일 · 추석", "화~목 3일. 13일·17일 연차 2일이면 11~19일 9일", 9, 9],
+    ["10월 2~4일 · 개천절", "토~월 3일, 4일은 대체공휴일", 10, 3],
+    ["10월 9~11일 · 한글날", "토~월 3일, 11일은 대체공휴일", 10, 3],
+    ["12월 25~27일 · 성탄절", "토~월 3일, 27일은 대체공휴일", 12, 3],
+  ];
+  const used = new Set();
+  const sections = B.map(([title, sub, m, len]) => {
+    const ok = x => x.best.includes(m) && !(x.wet || []).includes(m);
+    let pick;
+    if (len >= 9) {
+      const nearP = CITIES.filter(x => ok(x) && near(x, m)).sort(byNear(m)).slice(0, 2);
+      const far = CITIES.filter(x => ok(x) && !near(x, m)).slice(0, 2);
+      pick = [...nearP, ...far];
+    } else {
+      const lim = len >= 4 ? 120 : 60;
+      const within = l => CITIES.filter(x => ok(x) && !["sapa", "camino"].includes(x.id) && Math.abs(diffMin(x, m)) <= l && x.hemi !== "S").sort(byNear(m));
+      const pool = within(lim), wide = within(120);
+      pick = [...new Set([...pool.filter(x => !used.has(x.id)), ...wide.filter(x => !used.has(x.id)), ...pool])].slice(0, 3);
+    }
+    pick.forEach(x => used.add(x.id));
+    return { title, sub: `${sub}. ${len >= 9 ? "가까운 곳 2, 먼 곳 2" : len >= 4 ? "시차 2시간 이내" : "2박 3일, 가까운 곳 위주"}`, items: pick, month: m };
+  });
+  out.push(page({
+    slug: "2027-holiday-overseas-travel",
+    title: "2027 연휴 해외여행 캘린더 | 3일 이상 연휴 10번, 언제 어디로 | 키워드트립",
+    h1: "2027 연휴 해외여행 캘린더",
+    eyebrow: "2027 · LONG WEEKENDS",
+    lead: "2027년에는 3일 이상 연휴가 10번 있습니다. 연휴마다 그달이 여행 적기이고 우기를 피하는 가까운 도시를 골랐습니다.",
+    answer: "2027년 3일 이상 연휴는 신정, 설, 삼일절, 노동절, 제헌절, 광복절, 추석, 개천절, 한글날, 성탄절의 10번입니다. 가장 긴 건 설 4일, 연차를 붙이면 추석이 9일까지 늘어납니다.",
+    desc: "2027년 공휴일·대체공휴일로 생기는 3일 이상 연휴 10번과, 연휴마다 그달이 여행 적기인 가까운 해외여행지. 설 4일, 추석은 연차 2일로 9일.",
+    sections,
+    faq: [
+      ["2027년 연휴는 몇 번인가요?", "3일 이상 연휴가 10번입니다. 대체공휴일이 7일이라 토요일 공휴일이 많아도 월요일까지 쉬는 연휴가 대부분입니다."],
+      ["2027년 가장 긴 연휴는?", "설 연휴 2월 6~9일 4일입니다. 추석은 9월 14~16일 화~목이라, 13일과 17일 연차 2일을 쓰면 11~19일 9일이 됩니다."],
+      ["2027년 노동절도 쉬나요?", "공휴일 안내 기준으로 5월 1일 노동절이 토요일이라 5월 3일 월요일이 대체공휴일입니다. 근무 형태에 따라 다를 수 있으니 회사 공지를 확인하세요."],
+      ["연휴 항공권은 언제 사야 하나요?", "명절과 연휴 출발편은 일찍 마감되는 경우가 많습니다. 특정 시점이 항상 싸다고 단정할 수 없으니 여러 날짜 가격을 미리 비교해 두세요."],
+    ],
+    cta: ["/trips", "전체 여행지 비교하기 →"],
+    cites: [["2027년 공휴일 · kholidayz", "https://kholidayz.com/year/2027"], ["2027년 공휴일 일정 · Shiftee", "https://shiftee.io/ko/blog/article/2027-public-holiday-calendar-holiday-pay-guide"]],
   }));
 }
 
