@@ -210,7 +210,7 @@ ${rate ? `<script src="/assets/trip-fx.js" defer></script>\n` : ""}</head>
 <p class="kw">${x.kw.map(k => `<span>${esc(k)}</span>`).join("")}</p>
 <p class="hook">${esc(lead)}</p>
 </header>
-${newsOf(x).map(a => `<p class="alert" role="note"><b>지금 주의</b> ${esc(a.t)} · <a href="${esc(a.src)}" target="_blank" rel="noopener">출처</a></p>\n`).join("")}${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 반드시 확인하세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
+${newsOf(x).map(a => `<p class="alert" role="note"><b>지금 주의</b> ${esc(a.t)} · <a href="${esc(a.src)}" target="_blank" rel="noopener">출처</a></p>\n`).join("")}${warn ? `<p class="alert" role="note">외교부 여행경보가 발령된 국가·지역입니다. 출발 전 <a href="https://www.0404.go.kr" target="_blank" rel="noopener">해외안전여행</a>에서 최신 단계를 확인해 주세요.</p>\n` : ""}<dl class="facts" aria-label="핵심 정보">
 <div><dt>입국 · 한국 여권</dt><dd><i class="dot" style="--vc:${CLS[vc].hex}"></i>${esc(status)}</dd></div>
 <div><dt>여행 적기</dt><dd>${esc(best)}</dd></div>
 <div><dt>통화</dt><dd>${esc(curName(x))}${rate ? `<small>${fxSpan(x)} · <span data-fx-when>${fxDate}</span> 기준</small>` : ""}</dd></div>

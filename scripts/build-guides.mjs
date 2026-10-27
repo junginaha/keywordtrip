@@ -246,7 +246,7 @@ for (const m of [1, 2]) {
       { title: `출발 전 전자여행허가 ${pre.length}곳`, sub: "비자는 아니지만 승인 없이는 비행기를 못 탑니다. 공식 사이트·앱에서만 신청하세요.", items: pre, compact: true, label: lab },
       { title: `e비자·도착비자 ${evisa.length}곳`, items: evisa, compact: true, label: lab },
       { title: `비자·방문 허가 필요 ${need.length}곳`, items: need, compact: true, label: lab },
-      { title: `여행금지·경보 ${ban.length}곳`, sub: "외교부 여행금지 지역은 허가 없이 방문하면 처벌받을 수 있습니다.", items: ban, compact: true, label: lab },
+      { title: `여행금지·경보 ${ban.length}곳`, sub: "외교부 여행금지 지역은 허가 없이 방문하면 처벌될 수 있습니다.", items: ban, compact: true, label: lab },
     ],
     faq: [
       ["한국 여권으로 무비자 입국할 수 있는 나라는 몇 곳인가요?", `키워드트립이 다루는 ${C.length}개 국가·지역 기준으로 무비자 ${pureFree}곳, 무료 도착비자·입국허가 ${free.length - pureFree}곳입니다. 나라마다 체류 일수와 입국신고 절차가 다르니 출발 전 상세를 확인하세요.`],
