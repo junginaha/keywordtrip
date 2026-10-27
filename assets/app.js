@@ -31,6 +31,7 @@ function visaOf(x){const cc=x.cc;const base=INFO.sch.includes(cc)?INFO.schTxt:(I
 const CLS={green:{c:"var(--green)",hex:"#39FF14",l:"무비자"},blue:{c:"var(--blue)",hex:"#2DE2FF",l:"사전 신청"},yellow:{c:"var(--yellow)",hex:"#FFE600",l:"비자·허가 필요"},orange:{c:"var(--orange)",hex:"#FF5E1A",l:"금지·경보"}};
 function isBan(x){return INFO.ban.includes(x.cc)}
 function isWarn(x){return INFO.warn.includes(x.cc)||INFO.warnId.includes(x.id)}
+function newsOf(x){const t=new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Seoul"});return (INFO.alerts||[]).filter(a=>a.until>=t&&(a.to.includes(x.id)||a.to.includes(x.cc)))}
 function vt(x){if(x._v) return x._v;
   let v=INFO.vtypeId[x.id]||null;
   if(!v&&isBan(x)) v=["orange",x.cc==="NE"?"대부분 여행금지":"여행금지",""];
@@ -213,7 +214,7 @@ function briefHTML(x){
 }
 function renderInfo(x){
   const v=visaOf(x), mo=moneyOf(x), rl=rateLine(x), tips=tipsOf(x);
-  let h=briefHTML(x);
+  let h=newsOf(x).map(a=>`<div class="alert soft"><b>지금 주의</b> ${a.t} <a href="${a.src}" target="_blank" rel="noopener">출처 ↗</a></div>`).join("")+briefHTML(x);
   if(isBan(x)) h+=`<div class="alert"><b>${x.cc==="NE"?"대부분 지역 여행금지":"여행금지국가"}</b> 대한민국 정부의 예외적 여권 사용 허가 없이 방문하면 여권법 위반으로 처벌될 수 있습니다.</div>`;
   else if(isWarn(x)) h+=`<div class="alert soft"><b>일부 지역 여행금지·경보</b> 아래 입국 정보의 금지 지역과 외교부 최신 경보를 확인하세요.</div>`;
   h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 · 한국 여권</h4><p>${v}</p>${chkLine(x)?`<p class="src">${chkLine(x)}</p>`:""}<p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
