@@ -14,7 +14,7 @@
     th: "bkk", bangkok: "bkk", chiangmai: "cnx", phuket: "hkt", tw: "tpe", taipei: "tpe",
     ph: "ceb", cebu: "ceb", boracay: "klo", sg: "sin", singapore: "sin", hk: "hkg", hongkong: "hkg", macau: "mfm",
     us: "lax", newyork: "jfk", losangeles: "lax", lasvegas: "las", sanfrancisco: "sfo", honolulu: "hnl",
-    fr: "cdg", paris: "cdg", it: "fco", rome: "fco",
+    fr: "cdg", paris: "cdg", it: "fco", rome: "fco", li: "zrh",
   };
 
   // City-to-city routes where one fixed airport would hide good options (Tokyo: Narita + Haneda, Seoul: Incheon + Gimpo).
