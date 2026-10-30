@@ -106,7 +106,7 @@ ${faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
 ${cites.length ? `<p class="fine">출처: ${cites.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}</a>`).join(" · ")}</p>` : ""}
 ${sections.some(s => !s.compact) ? `<p class="fine">항공권 가격 링크는 ${esc(AFF.DISCLOSURE)}입니다.</p>` : ""}
 <p class="fine">KeywordTrip · 키워드로 고르고 바로 떠나는 여행 · 업데이트 ${TODAY}</p>
-<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p>
+<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p><a class="maker" href="https://toroom19.com" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.55;color:inherit;text-decoration:none">키워드를 고른 사람 · Founder, To Room 19 Press ↗</a>
 </main>
 </body>
 </html>

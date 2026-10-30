@@ -249,7 +249,7 @@ ${faqs.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></d
 ${same.length ? `<section class="rel"><h2>${esc(x.country ? `${name}의 다른 여행지` : `${x.c} 더 보기`)}</h2><div class="grid">${same.map(link).join("")}</div></section>\n` : ""}${near.length ? `<section class="rel"><h2>${esc(x.reg)}의 다른 여행지</h2><div class="grid">${near.map(link).join("")}</div></section>\n` : ""}</details>
 <p class="trust">입국 정보: ${esc(INFO.visaSrc)}. 적기는 일반 기후·성수기 기준, 환율은 시장 중간값 참고치입니다. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips">전체 여행지 ${DEST.length}곳</a> · KeywordTrip</p>
-<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p>
+<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p><a class="maker" href="https://toroom19.com" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.55;color:inherit;text-decoration:none">키워드를 고른 사람 · Founder, To Room 19 Press ↗</a>
 </main>
 </body>
 </html>
@@ -304,7 +304,7 @@ function directory() {
 ${byReg.map(([r, a]) => `<section class="dir"><h2>${r} <small>${a.length}곳</small></h2><ul>${a.map(row).join("")}</ul></section>`).join("\n")}
 <p class="trust">국가·지역 분류는 여행자 클럽 TCC, 즉 Travelers' Century Club 기준이라 독립국이 아닌 곳도 포함됩니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · KeywordTrip</p>
-<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p>
+<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p><a class="maker" href="https://toroom19.com" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.55;color:inherit;text-decoration:none">키워드를 고른 사람 · Founder, To Room 19 Press ↗</a>
 </main>
 </body>
 </html>
@@ -411,7 +411,7 @@ ${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</
 <script>(function(){function o(){var h=location.hash.slice(1),e=h&&document.getElementById(h);if(!e)return;for(var n=e;n;n=n.parentElement)if(n.tagName==="DETAILS")n.open=true;e.scrollIntoView()}o();addEventListener("hashchange",o)})()</script>
 <p class="trust">가격·요금은 2026년 기준 대략값이며 바뀔 수 있습니다. 입국 정보: ${esc(INFO.visaSrc)}. <a href="/about">출처·업데이트·제휴 기준 보기 →</a></p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips/${c.id}">${esc(name)} 여행</a> · KeywordTrip</p>
-<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p>
+<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p><a class="maker" href="https://toroom19.com" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.55;color:inherit;text-decoration:none">키워드를 고른 사람 · Founder, To Room 19 Press ↗</a>
 </main>
 </body>
 </html>
