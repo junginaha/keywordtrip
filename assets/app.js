@@ -214,7 +214,7 @@ function briefHTML(x){
 }
 function renderInfo(x){
   const v=visaOf(x), mo=moneyOf(x), rl=rateLine(x), tips=tipsOf(x);
-  let h=newsOf(x).map(a=>`<div class="alert soft"><b>지금 주의</b> ${a.t} <a href="${a.src}" target="_blank" rel="noopener">출처 ↗</a></div>`).join("")+briefHTML(x);
+  let h=newsOf(x).map(a=>`<div class="alert soft"><b>지금 주의</b> ${a.t} <a href="${a.src}" target="_blank" rel="noopener">출처 ↗</a></div>`).join("")+(newsOf(x).length&&!isBan(x)?`<p class="alertcta">사건 사고는 예고 없이 생기고, 입국 규정과 뉴스는 수시로 바뀝니다. 가고 싶은 나라를 찜해 두면 카톡으로 알려 드립니다. <a href="#wantbox" onclick="event.preventDefault();const b=document.getElementById('wantBtn');b.scrollIntoView({behavior:'smooth',block:'center'});if(b.getAttribute('aria-pressed')!=='true')b.click()">카톡으로 알림 받기 · Get KakaoTalk alerts</a></p>`:"")+briefHTML(x);
   if(isBan(x)) h+=`<div class="alert"><b>${x.cc==="NE"?"대부분 지역 여행금지":"여행금지국가"}</b> 대한민국 정부의 예외적 여권 사용 허가 없이 방문하면 여권법 위반으로 처벌될 수 있습니다.</div>`;
   else if(isWarn(x)) h+=`<div class="alert soft"><b>일부 지역 여행금지·경보</b> 아래 입국 정보의 금지 지역과 외교부 최신 경보를 확인하세요.</div>`;
   h+=`<section><h4 class="h-in"><i class="vbadge" style="--vc:${CLS[classOf(x)].c}">${vShort(x)}</i>입국 · 한국 여권</h4><p>${v}</p>${chkLine(x)?`<p class="src">${chkLine(x)}</p>`:""}<p class="offl">${officialOf(x).map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join("")}</p></section>`;
