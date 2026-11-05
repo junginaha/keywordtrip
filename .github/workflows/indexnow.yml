@@ -30,8 +30,19 @@ jobs:
           event=os.environ.get("EVENT_NAME","")
           before=os.environ.get("BEFORE","")
           sha=os.environ.get("SHA","")
-          seed = event in {"workflow_dispatch","schedule"} or not before or set(before)=={"0"}
+          # Manual runs resubmit the whole sitemap. The daily schedule only sends pages whose
+          # sitemap <lastmod> is today (KST): resubmitting unchanged URLs every day is treated
+          # as low-quality pinging by IndexNow engines (Bing, Naver).
+          seed = event=="workflow_dispatch" or (event!="schedule" and (not before or set(before)=={"0"}))
           changed=[]
+          if event=="schedule":
+              import datetime
+              today=(datetime.datetime.utcnow()+datetime.timedelta(hours=9)).strftime("%Y-%m-%d")
+              xml=open("sitemap.xml",encoding="utf-8").read()
+              fresh=sorted(set(re.findall(r"<loc>(https://keywordtrip\.com/[^<]*)</loc><lastmod>"+today+"</lastmod>",xml)))
+              json.dump(fresh,open("indexnow-urls.json","w",encoding="utf-8"),ensure_ascii=False)
+              print("IndexNow URLs (updated today):",len(fresh))
+              raise SystemExit(0)
           if not seed:
               try:
                   changed=subprocess.check_output(["git","diff","--name-only",before,sha],text=True).splitlines()
