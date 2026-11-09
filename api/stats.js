@@ -3,7 +3,7 @@
 // Counts only — never contacts. Missing or wrong key → 404.
 import crypto from "node:crypto";
 import { redis } from "./_store.js";
-import { readStats } from "./_metrics.js";
+import { readStats, readOut } from "./_metrics.js";
 
 function keyOk(given) {
   const want = process.env.STATS_KEY;
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   const db = redis();
   if (!db) return res.status(503).json({ error: "store_not_configured" });
   try {
-    return res.status(200).json({ generated_at: new Date().toISOString(), ...(await readStats(db, 14)) });
+    return res.status(200).json({ generated_at: new Date().toISOString(), ...(await readStats(db, 14)), partner_clicks: await readOut(db, 14) });
   } catch (e) {
     console.error("stats", String(e).slice(0, 300));
     return res.status(500).json({ error: "server_error" });
