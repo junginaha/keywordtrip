@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       at: new Date().toISOString()
     };
     console.log(JSON.stringify(clean));
-    await bumpOut(clean.provider, clean.destination).catch(() => {});
+    await bumpOut(clean.provider, clean.destination).catch(e => console.error("partner_click_metric", String(e).slice(0, 240)));
     res.setHeader("Cache-Control", "no-store");
     return res.status(204).end();
   } catch (e) {
