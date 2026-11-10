@@ -201,7 +201,6 @@ ${it.sections.map(([h, li]) => `<section class="card tips">
 <h2>${esc(h)}</h2>
 <ul>${li.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
 </section>`).join("\n")}
-<a class="cta" href="/trips/${x.id}">${esc(name)} 여행 정보로 돌아가기 →</a>
 <p class="srcs">${esc(it.checked)} 확인 · 출처 ${it.src.map(([t, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(t)}</a>`).join(" · ")}</p>
 <p class="fine">마지막 수정 ${TODAY} · <a href="/trips/${x.id}">${esc(name)} 여행</a> · KeywordTrip</p>
 <p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p><a class="maker" href="https://toroom19.com" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.55;color:inherit;text-decoration:none">키워드를 고른 사람 · Founder, To Room 19 Press ↗</a>
