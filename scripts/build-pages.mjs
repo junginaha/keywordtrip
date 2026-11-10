@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { CORE, TOPICS, AIRPORT, TOPIC_WORDS, FLIGHT_WORDS } from "./data/core.mjs";
+import { INSIGHTS } from "./data/insights.mjs";
 
 const root = process.cwd();
 const HOST = "https://keywordtrip.com";
@@ -144,6 +145,70 @@ function related(x) {
 /* ---- page ---- */
 const months12 = x => Array.from({ length: 12 }, (_, i) => `<li class="${x.best.includes(i + 1) ? "on" : ""}${x.wet && x.wet.includes(i + 1) ? " wet" : ""}"><span>${i + 1}</span></li>`).join("");
 
+/* ---- 키워드트립 인사이트: chip -> sheet (headline + one line) -> detail page ---- */
+const insUrl = (x, it) => `/trips/${x.id}/tips/${it.k}`;
+function insightChips(x) {
+  const list = INSIGHTS[x.id];
+  if (!list) return "";
+  const chips = list.map(it => `<button type="button" class="insb" data-ins="${it.k}" aria-haspopup="dialog"><b>${esc(it.n)}</b>${esc(it.l)}</button>`).join("");
+  const sheets = list.map(it => `<dialog class="sheet" id="ins-${it.k}" aria-labelledby="ins-${it.k}-h"><article><button type="button" class="x" aria-label="닫기">✕</button><p class="ey">키워드트립 인사이트</p><h3 id="ins-${it.k}-h">${esc(it.h)}</h3><p>${esc(it.one)}</p><a class="perma" href="${insUrl(x, it)}">자세히 보기 →</a></article></dialog>`).join("\n");
+  return `<div class="ins" aria-label="${esc(placeName(x))} 인사이트">${chips}</div>
+${sheets}
+<script>document.querySelectorAll(".insb").forEach(b=>b.addEventListener("click",()=>{const d=document.getElementById("ins-"+b.dataset.ins);d&&d.showModal&&d.showModal()}));document.querySelectorAll(".sheet").forEach(d=>d.addEventListener("click",e=>{if(e.target===d||e.target.closest(".x"))d.close()}))</script>
+`;
+}
+function insightPage(x, it) {
+  const name = placeName(x), u = HOST + insUrl(x, it);
+  const title = `${it.h} | ${name} 여행 | 키워드트립`;
+  const desc = `${it.one}`;
+  const ld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "Article", "@id": u + "#article", url: u, headline: it.h, description: desc, inLanguage: "ko-KR", dateModified: TODAY, about: { "@id": url(x) + "#destination" }, isPartOf: { "@id": HOST + "/#website" }, citation: it.src.map(([t, h]) => ({ "@type": "CreativeWork", name: t, url: h })) },
+    { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "키워드트립", item: HOST + "/" }, { "@type": "ListItem", position: 2, name: `${name} 여행`, item: url(x) }, { "@type": "ListItem", position: 3, name: it.h, item: u }] }] };
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="${u}">
+<link rel="stylesheet" href="/assets/trip.css">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="KeywordTrip">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:url" content="${u}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:image" content="${HOST}/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0C1020">
+<script type="application/ld+json">${JSON.stringify(ld)}</script>
+</head>
+<body>
+<main class="w">
+<nav class="crumb" aria-label="현재 위치"><a href="/">키워드트립</a><span>›</span><a href="/trips/${x.id}">${esc(name)}</a><span>›</span><span>인사이트</span></nav>
+<header class="hero slim">
+<p class="eyebrow">키워드트립 인사이트 · ${esc(it.cat)}</p>
+<h1>${esc(it.h)}</h1>
+<p class="hook">${esc(it.one)}</p>
+</header>
+<dl class="facts" aria-label="핵심 정보">
+${it.facts.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("\n")}
+</dl>
+${it.sections.map(([h, li]) => `<section class="card tips">
+<h2>${esc(h)}</h2>
+<ul>${li.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
+</section>`).join("\n")}
+<p class="srcs">${esc(it.checked)} 확인 · 출처 ${it.src.map(([t, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(t)}</a>`).join(" · ")}</p>
+<p class="fine">마지막 수정 ${TODAY} · <a href="/trips/${x.id}">${esc(name)} 여행</a> · KeywordTrip</p>
+<p class="biz" style="margin:8px 0 0;font-size:11px;line-height:1.6;opacity:.55">사업자등록번호 561-40-01548</p><a class="maker" href="https://toroom19.com" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;line-height:1.6;opacity:.55;color:inherit;text-decoration:none">키워드를 고른 사람 · Founder, To Room 19 Press ↗</a>
+</main>
+</body>
+</html>
+`;
+}
 function page(x) {
   const name = placeName(x), [vc] = vt(x), status = vShort(x), u = url(x);
   const kw = x.kw.join("·"), best = bestSpan(x.best);
@@ -235,10 +300,9 @@ ${x.cur && x.cur !== "KRW" ? `<section class="card">
 ${rate ? `<p class="fxnote">${fxWhen(x)}. 은행 매매기준율과 같은 중간값이며, 실제 환전·카드 결제에는 수수료가 붙습니다.</p>` : ""}
 ${money ? `<p>${esc(money)}</p>` : ""}
 </section>
-` : ""}${tips.length ? `<section class="card tips">
+` : ""}${tips.length || INSIGHTS[x.id] ? `<section class="card tips">
 <h2>키워드트립 팁</h2>
-<ul>${tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
-</section>
+${tips.length ? `<ul>${tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>\n` : ""}${insightChips(x)}</section>
 ` : ""}${prepHtml(x, name)}${bookHtml(x, name)}${noBook(x) ? "" : `<a class="wantcta" href="/?d=${x.id}&amp;want=1" rel="nofollow">♡ 가고 싶어요 · ${esc(name)} 정보 알림 받기</a>`}<a class="cta" href="/?d=${x.id}">${esc(name)} 지금 현지 시각·실시간 환율 보기 →</a>
 <p class="sub">규정과 가격은 바뀔 수 있으니 출발·예약 전 최신 정보를 다시 확인하세요.</p>
 <details class="more"><summary>더 알아보기</summary>
@@ -421,6 +485,8 @@ ${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</
 /* ---- write pages ---- */
 for (const x of DEST) write(`trips/${x.id}.html`, page(x));
 write("trips/index.html", directory());
+const insightUrls = [];
+for (const x of DEST) for (const it of INSIGHTS[x.id] || []) { write(`trips/${x.id}/tips/${it.k}.html`, insightPage(x, it)); insightUrls.push(insUrl(x, it).slice(1)); }
 
 /* ---- homepage crawl links ---- */
 const idxPath = "index.html";
@@ -459,6 +525,7 @@ const sm = [
   entry("", "daily", "1.0"), entry("trips", "weekly", "0.9"),
   ...curated.map(d => entry("trips/" + d.id, "weekly", "0.8")),
   ...coreUrls.map(u => entry(u, "weekly", "0.7")),
+  ...insightUrls.map(u => entry(u, "monthly", "0.6")),
   ...countries.filter(d => !DUP[d.id]).map(d => entry("trips/" + d.id, "weekly", "0.6")),
   ...guides.map(g => entry(g, "monthly", "0.6")),
   entry("about", "monthly", "0.4"),
