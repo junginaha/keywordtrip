@@ -157,8 +157,10 @@ ${sheets}
 <script>document.querySelectorAll(".insb").forEach(b=>b.addEventListener("click",()=>{const d=document.getElementById("ins-"+b.dataset.ins);d&&d.showModal&&d.showModal()}));document.querySelectorAll(".sheet").forEach(d=>d.addEventListener("click",e=>{if(e.target===d||e.target.closest(".x"))d.close()}))</script>
 `;
 }
+// shared insights (e.g. one Japan rule on every Japanese city) point canonical to the first page that uses them
+const insOwner = it => DEST.find(d => (INSIGHTS[d.id] || []).includes(it));
 function insightPage(x, it) {
-  const name = placeName(x), u = HOST + insUrl(x, it);
+  const name = placeName(x), u = HOST + insUrl(x, it), canon = HOST + insUrl(insOwner(it), it);
   const title = `${it.h} | ${name} 여행 | 키워드트립`;
   const desc = `${it.one}`;
   const ld = { "@context": "https://schema.org", "@graph": [
@@ -172,13 +174,13 @@ function insightPage(x, it) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
-<link rel="canonical" href="${u}">
+<link rel="canonical" href="${canon}">
 <link rel="stylesheet" href="/assets/trip.css">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="KeywordTrip">
 <meta property="og:locale" content="ko_KR">
-<meta property="og:url" content="${u}">
+<meta property="og:url" content="${canon}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${HOST}/og.png">
@@ -486,7 +488,7 @@ ${qa.slice(1).map(o => `<details id="${o.id || qid(o.q)}"><summary>${esc(o.q)}</
 for (const x of DEST) write(`trips/${x.id}.html`, page(x));
 write("trips/index.html", directory());
 const insightUrls = [];
-for (const x of DEST) for (const it of INSIGHTS[x.id] || []) { write(`trips/${x.id}/tips/${it.k}.html`, insightPage(x, it)); insightUrls.push(insUrl(x, it).slice(1)); }
+for (const x of DEST) for (const it of INSIGHTS[x.id] || []) { write(`trips/${x.id}/tips/${it.k}.html`, insightPage(x, it)); if (insOwner(it) === x) insightUrls.push(insUrl(x, it).slice(1)); }
 
 /* ---- homepage crawl links ---- */
 const idxPath = "index.html";

@@ -1,6 +1,36 @@
 // 키워드트립 인사이트: destination id -> insight cards.
 // Surface = one chip; sheet = headline + one line; detail page = facts, sections, sources (tiny, bottom).
 // Every fact must come from the listed sources. Update `checked` when re-verified.
+
+const JP = [
+  {
+    k: "tax-free", n: "공항 환급", l: "일본 면세 방식 변경", cat: "바뀐 것", checked: "2026년 11월",
+    h: "일본 면세, 이제 공항에서 돌려받습니다",
+    one: "2026년 11월 1일 구매분부터 세금까지 내고 산 뒤, 출국할 때 공항에서 환급받습니다.",
+    facts: [["시행", "2026년 11월 1일 구매분부터"], ["최소 금액", "한 가게 하루 5,000엔 이상"], ["기한", "구매 후 90일 이내"]],
+    sections: [["알아 두기", ["산 물건은 뜯지 말고 공항까지 가져가기.", "짐 부치기 전에 공항 세관 키오스크에서 여권 스캔.", "카드로 결제하면 환급도 카드로 받기 편합니다."]]],
+    src: [["Time Out Tokyo", "https://www.timeout.com/tokyo/news/heres-everything-you-need-to-know-about-japans-new-tax-free-system-starting-in-november-101526"], ["MATCHA", "https://matcha-jp.com/en/27460"]],
+  },
+  {
+    k: "departure-tax", n: "3,000엔", l: "일본 출국세 인상", cat: "오른 것", checked: "2026년 11월",
+    h: "일본 출국세, 3,000엔으로 인상",
+    one: "2026년 7월 1일부터 1,000엔에서 3,000엔. 대부분 항공권 값에 포함됩니다.",
+    facts: [["금액", "1인 3,000엔"], ["시행", "2026년 7월 1일"], ["내는 법", "항공권에 포함"]],
+    sections: [["알아 두기", ["일본을 떠날 때마다 한 번 붙습니다."]]],
+    src: [["일본정부관광국 JNTO", "https://www.japan.travel/en/ca/news/japans-international-tourist-tax-is-increasing/"]],
+  },
+];
+const TH = [
+  {
+    k: "tdac", n: "3일 전", l: "태국 디지털 입국카드", cat: "입국", checked: "2026년 11월",
+    h: "태국 입국 전, 디지털 입국카드 TDAC",
+    one: "도착 3일 전부터 공식 사이트에서 무료로 제출합니다. 외국인은 모두 대상입니다.",
+    facts: [["제출", "도착 3일 전부터"], ["비용", "무료"], ["대상", "태국인이 아닌 모든 입국자"]],
+    sections: [["알아 두기", ["공식 사이트 tdac.immigration.go.th에서만 제출.", "돈을 받는 대행 사이트는 피하세요."]]],
+    src: [["태국 이민국 TDAC 공식 FAQ", "https://tdac.immigration.go.th/manual/en/faq.html"]],
+  },
+];
+
 export const INSIGHTS = {
   hongkong: [
     {
@@ -42,6 +72,18 @@ export const INSIGHTS = {
       facts: [["길이", "100km · 10개 구간"], ["구간 하나", "4.6~15.6km"], ["비상 연락", "999 · 112"]],
       sections: [["알아 두기", ["처음이면 2구간: 13.5km, 약 5시간, 해변을 지나는 코스.", "물·간식·우비·충전한 휴대폰 챙기기.", "혼자 걷지 말고, 출발 전 날씨 확인."]]],
       src: [["홍콩 정부 하이킹 포털", "https://www.hiking.gov.hk/trail/info/id/d0pFSWc1N1dWdkh3aStSajBvUHlmUT09"], ["홍콩 레저문화서비스부 하이킹 안전", "https://lcsd.gov.hk/en/healthy/hiking/safety.html"], ["Discover Hong Kong", "https://www.discoverhongkong.com/eng/see-do/great-outdoors/hikes/hiking-tips.jsp"], ["Wikipedia · MacLehose Trail", "https://en.wikipedia.org/wiki/MacLehose_Trail"]],
+    },
+  ],
+  tokyo: JP, osaka: JP, fukuoka: JP, kyoto: JP, sapporo: JP, okinawa: JP,
+  bangkok: TH, chiangmai: TH, phuket: TH,
+  taipei: [
+    {
+      k: "twac", n: "3일 전", l: "대만 온라인 입국카드", cat: "입국", checked: "2026년 11월",
+      h: "대만 입국 전, 온라인 입국카드 TWAC",
+      one: "2025년 10월 1일부터 필수. 도착 3일 전부터 공식 사이트에서 무료로 냅니다.",
+      facts: [["필수", "2025년 10월 1일부터"], ["제출", "도착 3일 전부터"], ["비용", "무료"]],
+      sections: [["알아 두기", ["공식 사이트 twac.immigration.gov.tw에서만 제출.", "돈을 받는 대행 사이트는 피하세요."]]],
+      src: [["BAL Immigration News", "https://www.bal.com/immigration-news/taiwan-new-online-taiwan-arrival-card-launched-to-streamline-immigration-clearance/"], ["대만 이민서 TWAC", "https://twac.immigration.gov.tw/"]],
     },
   ],
 };
